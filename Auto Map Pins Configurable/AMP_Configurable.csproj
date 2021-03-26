@@ -7,8 +7,8 @@
     <ProjectGuid>{5C1A1606-C579-4934-BED8-641C16F4848A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AutoPins</RootNamespace>
-    <AssemblyName>AutoPins</AssemblyName>
+    <RootNamespace>AMP_Configurable</RootNamespace>
+    <AssemblyName>AMP_Configurable</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -32,63 +32,50 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\Lib\0Harmony.dll</HintPath>
+      <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_utils">
+    <Reference Include="assembly_utils, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\assembly_utils.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_valheim">
+    <Reference Include="assembly_valheim, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\Lib\BepInEx.dll</HintPath>
+      <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
-    <Reference Include="UnityEngine">
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\unstripped_corlib\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.ImageConversionModule">
+    <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoPins.cs" />
-    <Compile Include="AutoPins.Patches.cs" />
+    <Compile Include="AMP_Configurable.cs" />
+    <Compile Include="AMP_Configurable.Patches.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_raspberry.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_egg.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_blueberry.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_cloudberry.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_copper.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_iron.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_obsidian.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_silver.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_thistle.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\mapicon_pin_tin.png" />
   </ItemGroup>
   <ItemGroup>
