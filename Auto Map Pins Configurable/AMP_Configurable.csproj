@@ -59,6 +59,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AMP_Configurable.cs" />
@@ -89,6 +93,19 @@
     <EmbeddedResource Include="Resources\silverore.png" />
     <EmbeddedResource Include="Resources\thistle.png" />
     <EmbeddedResource Include="Resources\TinOre.png" />
+    <EmbeddedResource Include="Resources\mushroom.png" />
+    <EmbeddedResource Include="Resources\seedcarrot.png" />
+    <EmbeddedResource Include="Resources\seedturnip.png" />
+    <EmbeddedResource Include="Resources\TrophyDraugr.png" />
+    <EmbeddedResource Include="Resources\TrophyGreydwarf.png" />
+    <EmbeddedResource Include="Resources\TrophySkeleton.png" />
+    <EmbeddedResource Include="Resources\TrophySurtling.png" />
+    <EmbeddedResource Include="Resources\surtling_core.png" />
+    <EmbeddedResource Include="Resources\TrophyFrostTroll.png" />
+    <EmbeddedResource Include="Resources\TrophySerpent.png" />
+    <EmbeddedResource Include="Resources\witheredbone.png" />
+    <EmbeddedResource Include="Resources\carrot.png" />
+    <EmbeddedResource Include="Resources\turnip.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
