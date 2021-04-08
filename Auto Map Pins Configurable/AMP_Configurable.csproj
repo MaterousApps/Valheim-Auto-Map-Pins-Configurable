@@ -59,6 +59,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\SteamLibrary_SSD\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
@@ -67,6 +71,8 @@
   <ItemGroup>
     <Compile Include="AMP_Configurable.cs" />
     <Compile Include="AMP_Configurable.Patches.cs" />
+    <Compile Include="AMP_Configurable.Modules.cs" />
+    <Compile Include="AMP_Configurable.Commands.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -106,6 +112,8 @@
     <EmbeddedResource Include="Resources\witheredbone.png" />
     <EmbeddedResource Include="Resources\carrot.png" />
     <EmbeddedResource Include="Resources\turnip.png" />
+    <EmbeddedResource Include="Resources\chitin.png" />
+    <EmbeddedResource Include="Resources\flametalore.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

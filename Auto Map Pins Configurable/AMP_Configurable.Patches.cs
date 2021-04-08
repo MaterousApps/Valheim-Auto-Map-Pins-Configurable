@@ -3,13 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using AMP_Configurable.Commands;
 
 namespace AMP_Configurable.Patches
 {
-    internal class Minimap_Patch
+    internal class Minimap_Patch : MonoBehaviour
     {
         public static int count = 0;
-        
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(Minimap), "ScreenToWorldPoint", new System.Type[] { typeof(Vector3) })]
+        public static Vector3 ScreenToWorldPoint(object instance, Vector3 screenPos) => throw new NotImplementedException();
+
 
         [HarmonyPatch(typeof(Minimap), "AddPin")]
         [HarmonyPrefix]
@@ -30,17 +35,21 @@ namespace AMP_Configurable.Patches
         private static void Minimap_UpdateProfilePins(
           ref List<Minimap.PinData> ___m_pins)
         {
-            count = 0;
+            
             while (count < ___m_pins.Count())
             {
+                //Debug.Log(string.Format("[AMP] m_pins Count {0}", ___m_pins.Count()));
                 foreach (Minimap.PinData pins in ___m_pins)
                 {
                     if ((int)pins.m_type >= 100)
                     {
+                        if(!Mod.savedPins.Contains(pins))
+                            Mod.savedPins.Add(pins);
+
                         //Debug.Log(string.Format("[AMP] Pin {0} has type of {1}", pins.m_name, pins.m_type));
                         PinnedObject.loadData(pins.m_type.ToString());
 
-                        if (pins.m_type == (Minimap.PinType)PinnedObject.pType)
+                        if (pins.m_type == (Minimap.PinType)PinnedObject.pType && !Mod.filteredPins.Contains(PinnedObject.aName))
                         {
                             pins.m_icon = PinnedObject.aIcon;
                             pins.m_worldSize = PinnedObject.pinSize;
@@ -50,10 +59,51 @@ namespace AMP_Configurable.Patches
                             }
                         }
                     }
+                    count++;
                 }
-                count++;
+                
             }
+
         }
+
+        [HarmonyPatch(typeof(Minimap), "UpdatePins")]
+        [HarmonyPrefix]
+        private static void Minimap_UpdatePins(
+          Minimap __instance,
+          ref List<Minimap.PinData> ___m_pins)
+        {
+            foreach(Minimap.PinData p in ___m_pins)
+            {
+                if(!Mod.filteredPins.Contains(p.m_type.ToString()))
+                {
+                    Mod.FilterPins();
+                }
+            }
+            
+
+        }
+
+        [HarmonyPatch(typeof(Minimap), "OnMapRightClick")]
+        [HarmonyPostfix]
+        private static void Minimap_OMRC(
+            Minimap __instance,
+            ref List<Minimap.PinData> ___m_pins)
+        {
+            ZLog.Log("[AMP] Right click");
+            Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
+
+            //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
+            Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 10, ___m_pins);
+
+            if (closestPin == null)
+                return;
+
+            __instance.RemovePin(closestPin);
+            Mod.addedPinLocs.Remove(closestPin.m_pos);
+            Mod.autoPins.Remove(closestPin);
+            Mod.remPinDict.Remove(closestPin.m_pos);
+        }
+
     }
 
     [HarmonyPatch(typeof(Destructible), "Start")]
@@ -111,12 +161,15 @@ namespace AMP_Configurable.Patches
                     break;
             }
 
-            __instance.gameObject.AddComponent<PinnedObject>().Init(aName, hoverTextComp.transform.position);
+            if (aName != "")
+            {
+                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, hoverTextComp.transform.position);
 
-            //if (!Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
-            //{
-            //    Mod.pinItems.Add(hoverTextComp.transform.position, aName);
-            //}
+                if (!Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
+                {
+                    Mod.pinItems.Add(hoverTextComp.transform.position, aName);
+                }
+            }
         }
     }
 
@@ -200,12 +253,15 @@ namespace AMP_Configurable.Patches
                     break;
             }
 
-            __instance.gameObject.AddComponent<PinnedObject>().Init(aName, pickableComp.transform.position);
+            if (aName != "")
+            {
+                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, pickableComp.transform.position);
 
-            //if (!Mod.pinItems.ContainsKey(pickableComp.transform.position))
-            //{
-            //    Mod.pinItems.Add(pickableComp.transform.position, aName);
-            //}
+                if (!Mod.pinItems.ContainsKey(pickableComp.transform.position))
+                {
+                    Mod.pinItems.Add(pickableComp.transform.position, aName);
+                }
+            }
         }
     }
 
@@ -273,12 +329,15 @@ namespace AMP_Configurable.Patches
                     break;
             }
 
-            __instance.gameObject.AddComponent<PinnedObject>().Init(aName, locComp.transform.position);
+            if (aName != "")
+            {
+                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, locComp.transform.position);
 
-            //if (!Mod.pinItems.ContainsKey(locComp.transform.position))
-            //{
-            //    Mod.pinItems.Add(locComp.transform.position, aName);
-            //}
+                if (!Mod.pinItems.ContainsKey(locComp.transform.position))
+                {
+                    Mod.pinItems.Add(locComp.transform.position, aName);
+                }
+            }
         }
     }
 
@@ -307,6 +366,7 @@ namespace AMP_Configurable.Patches
                     }
                     break;
                 case "Body Pile":
+                case "Body pile":
                     if (Mod.pinDraugr.Value)
                     {
                         aName = "Draugr";
@@ -323,12 +383,15 @@ namespace AMP_Configurable.Patches
                     break;
             }
 
-            __instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
+            if (aName != "")
+            {
+                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
 
-            //if (!Mod.pinItems.ContainsKey(spawnComp.transform.position))
-            //{
-            //    Mod.pinItems.Add(spawnComp.transform.position, aName);
-            //}
+                if (!Mod.pinItems.ContainsKey(spawnComp.transform.position))
+                {
+                    Mod.pinItems.Add(spawnComp.transform.position, aName);
+                }
+            }
         }
     }
 
@@ -348,94 +411,158 @@ namespace AMP_Configurable.Patches
             string aName = "";
 
             //Mod.Log.LogInfo(string.Format("[AMP - MineRock] Found {0} at {1} {2} {3}", mineText, mineComp.transform.position.x, mineComp.transform.position.y, mineComp.transform.position.z));
-            //switch (mineText)
-            //{
-            //    case "MineRock_Meteorite":
-            //    case "MineRock_Meteorite(Clone)":
-            //        if (Mod.pinSkeleton.Value)
-            //        {
-            //            aName = "Flametal";
-            //        }
-            //        break;
-            //    case "Spawner_DraugrPile":
-            //    case "Spawner_DraugrPile(Clone)":
-            //        if (Mod.pinDraugr.Value)
-            //        {
-            //            aName = "Draugr";
-            //        }
-            //        break;
-            //    case "Spawner_GreydwarfNest":
-            //    case "Spawner_GreydwarfNest(Clone)":
-            //        if (Mod.pinGreydwarf.Value)
-            //        {
-            //            aName = "Greydwarf";
-            //        }
-            //        break;
-            //    //case "Pickable_DragonEgg":
-            //    //case "Pickable_DragonEgg(Clone)":
-            //    //    if (Mod.pinDragonEgg.Value)
-            //    //    {
-            //    //        aName = "DragonEgg";
-            //    //    }
-            //    //    break;
-            //    default:
-            //        aName = "";
-            //        break;
-            //}
+            switch (mineText)
+            {
+                case "MineRock_Meteorite":
+                case "MineRock_Meteorite(Clone)":
+                    if (Mod.pinFlametal.Value)
+                    {
+                        aName = "Flametal";
+                    }
+                    break;
+                default:
+                    aName = "";
+                    break;
+            }
 
-            //(__instance.gameObject.AddComponent<PinnedObject>()).Init(aName);
+            if (aName != "")
+            {
+                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
+
+                if (!Mod.pinItems.ContainsKey(mineComp.transform.position))
+                {
+                    Mod.pinItems.Add(mineComp.transform.position, aName);
+                }
+            }
         }
     }
-    //internal class Player_Patches
-    //{
-    //    public static Vector3 currPos;
-    //    public static Vector3 prevPos;
-    //    private static int interval = 30;
 
-    //    [HarmonyPatch(typeof(Player), "Awake")]
-    //    internal class PlayerAwakePatch
-    //    {
-    //        private static void Postfix(ref Player __instance)
-    //        {
-    //            if (!Player.m_localPlayer)
-    //                return;
+    [HarmonyPatch(typeof(Leviathan), "Awake")]
+    internal class LeviathanPatchSpawn
+    {
+        private static void Postfix(ref Leviathan __instance)
+        {
+            Leviathan levComp = __instance.GetComponent<Leviathan>();
 
-    //            currPos = __instance.transform.position;
-    //            prevPos = __instance.transform.position;
+            if (!levComp)
+            {
+                return;
+            }
 
-    //        }
-    //    }
+            string levText = levComp.name;
+            string aName = "";
 
-    //    [HarmonyPatch(typeof(Player), "FixedUpdate")]
-    //    internal class PlayerUpdatePatch
-    //    {
-    //        private static void Postfix(ref Player __instance)
-    //        {
-    //            if (!Player.m_localPlayer)
-    //                return;
+            //Mod.Log.LogInfo(string.Format("[AMP - Leviathan] Found {0} at {1} {2} {3}", levText, levComp.transform.position.x, levComp.transform.position.y, levComp.transform.position.z));
+            switch (levText)
+            {
+                case "Leviathan":
+                case "Leviathan(Clone)":
+                    if (Mod.pinLeviathan.Value)
+                    {
+                        aName = "Leviathan";
+                    }
+                    break;
+                default:
+                    aName = "";
+                    break;
+            }
 
-    //            if (Time.frameCount % interval == 0)
-    //            {
-    //                currPos = __instance.transform.position;
+            if (aName != "")
+            {
+                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
 
-    //                if (Vector3.Distance(currPos, prevPos) > 5)
-    //                {
-    //                    Mod.hasMoved = true;
-    //                    prevPos = currPos;
-    //                }
-    //                else
-    //                {
-    //                    Mod.hasMoved = false;
-    //                }
+                if (!Mod.pinItems.ContainsKey(levComp.transform.position))
+                {
+                    Mod.pinItems.Add(levComp.transform.position, aName);
+                }
+            }
+        }
+    }
+    internal class Player_Patches
+    {
+        public static Vector3 currPos;
+        public static Vector3 prevPos;
+        private const int interval = 30;
 
-    //                if (Mod.hasMoved)
-    //                {
-    //                    //Mod.Log.LogInfo("Checking/Adding Pins");
-    //                    Mod.checkPins(currPos);
-    //                }
-    //            }
+        [HarmonyPatch(typeof(Player), "Awake")]
+        internal class PlayerAwakePatch
+        {
+            private static void Postfix(ref Player __instance)
+            {
+                if (!Player.m_localPlayer)
+                    return;
 
-    //        }
-    //    }
-    //}
+                currPos = __instance.transform.position;
+                prevPos = __instance.transform.position;
+
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), "Update")]
+        internal class PlayerUpdatePatch
+        {
+            private static void Postfix(ref Player __instance)
+            {
+                if (!Player.m_localPlayer)
+                    return;
+
+                if (Time.frameCount % interval == 0)
+                {
+                    currPos = __instance.transform.position;
+
+                    if (Vector3.Distance(currPos, prevPos) > 5)
+                    {
+                        Mod.hasMoved = true;
+                        prevPos = currPos;
+                    }
+                    else
+                    {
+                        Mod.hasMoved = false;
+                    }
+                }
+
+                if (Mod.hasMoved)
+                {
+                    Mod.checkPins(currPos);
+                }
+            }
+        }
+    }
+
+    internal static class AMPCommandPatcher
+    {
+        private static Harmony harmony;
+        private static bool initComplete;
+
+        public static Harmony Harmony
+        {
+            get => harmony;
+            set => harmony = value;
+        }
+
+        public static bool InitComplete
+        {
+            get => initComplete;
+            set => initComplete = value;
+        }
+
+        public static void InitPatch()
+        {
+            if (InitComplete)
+                return;
+            try
+            {
+                harmony = Harmony.CreateAndPatchAll(typeof(AMPCommandPatcher).Assembly, null);
+            }
+            catch (Exception ex)
+            {
+                AMP_Commands.PrintOut("Something failed, there is a strong possibility another mod blocked this operation.");
+
+            }
+            finally
+            {
+                InitComplete = true;
+            }
+        }
+    }
 }
