@@ -10,11 +10,18 @@ namespace AMP_Configurable.Patches
     internal class Minimap_Patch : MonoBehaviour
     {
         public static int count = 0;
+        public static bool checkedSavedPins = false;
 
         [HarmonyReversePatch]
         [HarmonyPatch(typeof(Minimap), "ScreenToWorldPoint", new System.Type[] { typeof(Vector3) })]
         public static Vector3 ScreenToWorldPoint(object instance, Vector3 screenPos) => throw new NotImplementedException();
 
+        [HarmonyPatch(typeof(Minimap), "Awake")]
+        [HarmonyPostfix]
+        private static void Minimap_Awake()
+        {
+            checkedSavedPins = false;
+        }
 
         [HarmonyPatch(typeof(Minimap), "AddPin")]
         [HarmonyPrefix]
@@ -36,7 +43,8 @@ namespace AMP_Configurable.Patches
           ref List<Minimap.PinData> ___m_pins)
         {
             
-            while (count < ___m_pins.Count())
+            //while (count < ___m_pins.Count())
+            if(!checkedSavedPins)
             {
                 //Debug.Log(string.Format("[AMP] m_pins Count {0}", ___m_pins.Count()));
                 foreach (Minimap.PinData pins in ___m_pins)
@@ -59,9 +67,9 @@ namespace AMP_Configurable.Patches
                             }
                         }
                     }
-                    count++;
+                    //count++;
                 }
-                
+                checkedSavedPins = true;
             }
 
         }
@@ -72,9 +80,12 @@ namespace AMP_Configurable.Patches
           Minimap __instance,
           ref List<Minimap.PinData> ___m_pins)
         {
+            if (Mod.filteredPins.Count() == 0)
+                return;
+
             foreach(Minimap.PinData p in ___m_pins)
             {
-                if(!Mod.filteredPins.Contains(p.m_type.ToString()))
+                if(Mod.filteredPins.Contains(p.m_type.ToString()))
                 {
                     Mod.FilterPins();
                 }

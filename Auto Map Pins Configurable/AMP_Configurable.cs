@@ -13,7 +13,7 @@ using AMP_Configurable.Patches;
 
 namespace AMP_Configurable
 {
-    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.0.4")]
+    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.0.7")]
     [BepInProcess("valheim.exe")]
     public class Mod : BaseUnityPlugin
     {
@@ -32,143 +32,120 @@ namespace AMP_Configurable
         public static ConfigEntry<bool> showCopperName;
         public static ConfigEntry<string> copperName;
         public static ConfigEntry<float> pinCopperSize;
-        public static bool filterCopper;
         public static ConfigEntry<bool> pinTin;
         public static ConfigEntry<bool> saveTin;
         public static ConfigEntry<bool> showTinName;
         public static ConfigEntry<string> tinName;
         public static ConfigEntry<float> pinTinSize;
-        public static bool filterTin;
         public static ConfigEntry<bool> pinObsidian;
         public static ConfigEntry<bool> saveObsidian;
         public static ConfigEntry<bool> showObsidianName;
         public static ConfigEntry<string> obsidianName;
         public static ConfigEntry<float> pinObsidianSize;
-        public static bool filterObsidian;
         public static ConfigEntry<bool> pinSilver;
         public static ConfigEntry<bool> saveSilver;
         public static ConfigEntry<bool> showSilverName;
         public static ConfigEntry<string> silverName;
         public static ConfigEntry<float> pinSilverSize;
-        public static bool filterSilver;
         public static ConfigEntry<bool> pinIron;
         public static ConfigEntry<bool> saveIron;
         public static ConfigEntry<bool> showIronName;
         public static ConfigEntry<string> ironName;
         public static ConfigEntry<float> pinIronSize;
-        public static bool filterIron;
         public static ConfigEntry<bool> pinFlametal;
         public static ConfigEntry<bool> saveFlametal;
         public static ConfigEntry<bool> showFlametalName;
         public static ConfigEntry<string> flametalName;
         public static ConfigEntry<float> pinFlametalSize;
-        public static bool filterFlametal;
         //***PICKABLES***//
         public static ConfigEntry<bool> pinBerries;
         public static ConfigEntry<bool> saveBerries;
         public static ConfigEntry<bool> showBerriesName;
         public static ConfigEntry<string> berriesName;
         public static ConfigEntry<float> pinBerriesSize;
-        public static bool filterBerries;
         public static ConfigEntry<bool> pinBlueberries;
         public static ConfigEntry<bool> saveBlueberries;
         public static ConfigEntry<bool> showBlueberriesName;
         public static ConfigEntry<string> blueberriesName;
         public static ConfigEntry<float> pinBlueberriesSize;
-        public static bool filterBlueberries;
         public static ConfigEntry<bool> pinCloudberries;
         public static ConfigEntry<bool> saveCloudberries;
         public static ConfigEntry<bool> showCloudberriesName;
         public static ConfigEntry<string> cloudberriesName;
         public static ConfigEntry<float> pinCloudberriesSize;
-        public static bool filterCloudberries;
         public static ConfigEntry<bool> pinThistle;
         public static ConfigEntry<bool> saveThistle;
         public static ConfigEntry<bool> showThistleName;
         public static ConfigEntry<string> thistleName;
         public static ConfigEntry<float> pinThistleSize;
-        public static bool filterThistle;
         public static ConfigEntry<bool> pinMushroom;
         public static ConfigEntry<bool> saveMushroom;
         public static ConfigEntry<bool> showMushroomName;
         public static ConfigEntry<string> mushroomName;
         public static ConfigEntry<float> pinMushroomSize;
-        public static bool filterMushroom;
         public static ConfigEntry<bool> pinCarrot;
         public static ConfigEntry<bool> saveCarrot;
         public static ConfigEntry<bool> showCarrotName;
         public static ConfigEntry<string> carrotName;
         public static ConfigEntry<float> pinCarrotSize;
-        public static bool filterCarrot;
         public static ConfigEntry<bool> pinTurnip;
         public static ConfigEntry<bool> saveTurnip;
         public static ConfigEntry<bool> showTurnipName;
         public static ConfigEntry<string> turnipName;
         public static ConfigEntry<float> pinTurnipSize;
-        public static bool filterTurnip;
         public static ConfigEntry<bool> pinDragonEgg;
         public static ConfigEntry<bool> saveDragonEgg;
         public static ConfigEntry<bool> showDragonEggName;
         public static ConfigEntry<string> dragonEggName;
         public static ConfigEntry<float> pinDragonEggSize;
-        public static bool filterDragonEgg;
         //***LOCATIONS***//
         public static ConfigEntry<bool> pinCrypt;
         public static ConfigEntry<bool> saveCrypt;
         public static ConfigEntry<bool> showCryptName;
         public static ConfigEntry<string> cryptName;
         public static ConfigEntry<float> pinCryptSize;
-        public static bool filterCrypt;
         public static ConfigEntry<bool> pinSunkenCrypt;
         public static ConfigEntry<bool> saveSunkenCrypt;
         public static ConfigEntry<bool> showSunkenCryptName;
         public static ConfigEntry<string> sunkenCryptName;
         public static ConfigEntry<float> pinSunkenCryptSize;
-        public static bool filterSunkenCrypt;
         public static ConfigEntry<bool> pinTrollCave;
         public static ConfigEntry<bool> saveTrollCave;
         public static ConfigEntry<bool> showTrollCaveName;
         public static ConfigEntry<string> trollCaveName;
         public static ConfigEntry<float> pinTrollCaveSize;
-        public static bool filterTrollCave;
         //***SPAWNERS***//
         public static ConfigEntry<bool> pinSkeleton;
         public static ConfigEntry<bool> saveSkeleton;
         public static ConfigEntry<bool> showSkeletonName;
         public static ConfigEntry<string> skeletonName;
         public static ConfigEntry<float> pinSkeletonSize;
-        public static bool filterSkeleton;
         public static ConfigEntry<bool> pinDraugr;
         public static ConfigEntry<bool> saveDraugr;
         public static ConfigEntry<bool> showDraugrName;
         public static ConfigEntry<string> draugrName;
         public static ConfigEntry<float> pinDraugrSize;
-        public static bool filterDraugr;
         public static ConfigEntry<bool> pinSurtling;
         public static ConfigEntry<bool> saveSurtling;
         public static ConfigEntry<bool> showSurtlingName;
         public static ConfigEntry<string> surtlingName;
         public static ConfigEntry<float> pinSurtlingSize;
-        public static bool filterSurtling;
         public static ConfigEntry<bool> pinGreydwarf;
         public static ConfigEntry<bool> saveGreydwarf;
         public static ConfigEntry<bool> showGreydwarfName;
         public static ConfigEntry<string> greydwarfName;
         public static ConfigEntry<float> pinGreydwarfSize;
-        public static bool filterGreydwarf;
         public static ConfigEntry<bool> pinSerpent;
         public static ConfigEntry<bool> saveSerpent;
         public static ConfigEntry<bool> showSerpentName;
         public static ConfigEntry<string> serpentName;
         public static ConfigEntry<float> pinSerpentSize;
-        public static bool filterSerpent;
         //***LEVIATHANS***//
         public static ConfigEntry<bool> pinLeviathan;
         public static ConfigEntry<bool> saveLeviathan;
         public static ConfigEntry<bool> showLeviathanName;
         public static ConfigEntry<string> leviathanName;
         public static ConfigEntry<float> pinLeviathanSize;
-        public static bool filterLeviathan;
 
         //***PUBLIC VARIABLES***//
         public static List<Minimap.PinData> autoPins;
@@ -456,7 +433,14 @@ namespace AMP_Configurable
 
         private static bool ShouldPinRender(Minimap.PinData pin)
         {
-            return filteredPins == null || filteredPins.Count == 0 || (uint)((IEnumerable<string>)filteredPins).Count(filter => !pin.m_type.ToString().ToLower().Replace(' ', '_').Contains(filter)) > 0U;
+            if (filteredPins == null || filteredPins.Count == 0)
+                return true;
+
+            if (!filteredPins.Contains(pin.m_type.ToString()))
+                return true;
+
+            return false;
+            //return (uint)((IEnumerable<string>)filteredPins).Count(filter => !pin.m_type.ToString().ToLower().Replace(' ', '_').Contains(filter)) > 0U;
         }
 
         public Mod()

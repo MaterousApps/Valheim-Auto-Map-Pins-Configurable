@@ -46,7 +46,7 @@ namespace AMP_Configurable.Commands
         {
             {
             "/AMP-Clear",
-            "- Clear all pins saved by the AMP mod (does not affect temporary pins)."
+            "[PIN] - Clear the selected type of saved pins. No parameter provided will return a list of available pins. -1 will clear all saved pins."
             },
             {
             "/AMP-ClearAll",
@@ -55,6 +55,10 @@ namespace AMP_Configurable.Commands
             {
             "/AMP-Filter",
             "[PIN] - Filter the selected Pin. No parameter provided will list all pins. -1 will show all pins."
+            },
+            {
+            "/AMP-FilterList",
+            "- Displays the list of currently filtered pins."
             }
         };
 
@@ -139,14 +143,60 @@ namespace AMP_Configurable.Commands
 
             if (strArray1[0].Equals("/AMP-Clear"))
             {
-                foreach (Minimap.PinData pins in Mod.savedPins)
+                if (strArray1.Length == 1)
                 {
-                    if ((int)pins.m_type >= 100 && pins.m_save)
+                    foreach (string text in filterList.OrderBy((q => q)).ToList())
+                        PrintOut(text);
+                }
+                else if (strArray1.Length >= 2)
+                {
+                    //display all pins
+                    if (strArray1[1].Equals("-1"))
                     {
-                        Minimap.instance.RemovePin(pins);
+                        foreach (Minimap.PinData pins in Mod.savedPins)
+                        {
+                            if ((int)pins.m_type >= 100 && pins.m_save)
+                            {
+                                Minimap.instance.RemovePin(pins);
+                            }
+                        }
+                        PrintOut("Cleared all saved pins.");
+                    }
+                    else
+                    {
+                        string str1 = string.Empty;
+                        string str2;
+                        if (strArray1.Length > 2)
+                        {
+                            foreach (string str3 in strArray1)
+                            {
+                                if (!str3.Equals(strArray1[0]))
+                                    str1 = str1 + " " + str3;
+                            }
+                            str2 = str1.Trim();
+                        }
+                        else
+                            str2 = strArray1[1];
+
+                        if (filterList.Contains(str2))
+                        {
+                            PinnedObject.loadData(str2);
+
+                            foreach (Minimap.PinData pins in Mod.savedPins)
+                            {
+                                if ((int)pins.m_type >= 100 && pins.m_save && (int)pins.m_type == PinnedObject.pType)
+                                {
+                                    Minimap.instance.RemovePin(pins);
+                                }
+                            }
+                            PrintOut("Cleared " + str2 + " pins");
+                        }
+                        else
+                            PrintOut("Failed to clear pins '" + str2 + "'. Check parameters! Ex. /AMP-Clear, /AMP-Clear -1, /AMP-Clear Berries");
                     }
                 }
-                PrintOut("Cleared all saved pins.");
+                else
+                    PrintOut("Failed to filter pins. Check parameters! Ex. /AMP-Clear, /AMP-Clear -1, /AMP-Clear Berries");
                 return true;
             }
 
@@ -202,15 +252,15 @@ namespace AMP_Configurable.Commands
                         {
                             PinnedObject.loadData(str2);
 
-                            if (Mod.filteredPins.Contains(str2))
+                            if (Mod.filteredPins.Contains(PinnedObject.pType.ToString()))
                             {
-                                PrintOut("Showing Filtered Pin: " + str2 + " with type: " + PinnedObject.pType);
+                                PrintOut("Showing Filtered Pin: " + str2);
                                 Mod.filteredPins.Remove(PinnedObject.pType.ToString());                                
                             } 
                             else
                             {
                                 Mod.filteredPins.Add(PinnedObject.pType.ToString());
-                                PrintOut("Filtering Pins: " + str2 + " with type: " + PinnedObject.pType);
+                                PrintOut("Filtering Pins: " + str2);
                             }                          
                         }
                         else
@@ -219,6 +269,25 @@ namespace AMP_Configurable.Commands
                 }
                 else
                     PrintOut("Failed to filter pins. Check parameters! Ex. /AMP-Filter, /AMP-Filter -1, /AMP-Filter Berries");
+                return true;
+            }
+
+            if (strArray1[0].Equals("/AMP-FilterList"))
+            {
+                string output = "";
+
+                for (int x = 0; x < Mod.filteredPins.Count(); x++)
+                {
+                    PinnedObject.loadData(Mod.filteredPins[x]);
+
+                    
+                    if (output == null || output == "")
+                        output = PinnedObject.aName;
+                    else
+                        output += ", " + PinnedObject.aName;
+                }
+
+                PrintOut("Currently filtering pins: " + output);
                 return true;
             }
 
