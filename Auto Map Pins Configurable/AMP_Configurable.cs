@@ -13,7 +13,7 @@ using AMP_Configurable.Patches;
 
 namespace AMP_Configurable
 {
-    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.0.7")]
+    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.0.9")]
     [BepInProcess("valheim.exe")]
     public class Mod : BaseUnityPlugin
     {
@@ -169,11 +169,11 @@ namespace AMP_Configurable
             modEnabled = Config.Bind("General", "Enabled", true, "Enable this mod");
             pinOverlapDistance = Config.Bind<float>("General", "PinOverlapDistance", 10, "Distance around pins to prevent overlapping of similar pins");
             pinIcons = Config.Bind("General", "PinIcons", 1, "Use [1] Game sprites(copper for copper, silver for silver, etc.) or [2] Colored pins (must be 1 or 2)");
-            pinRange = Config.Bind("General", "PinRange", 450, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 10\nMax 450\nRecommended 50-75");
-            if (pinRange.Value < 10)
-                pinRange.Value = 10;
-            if (pinRange.Value > 450)
-                pinRange.Value = 450;
+            pinRange = Config.Bind("General", "PinRange", 150, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 5\nMax 150\nRecommended 50-75");
+            if (pinRange.Value < 5)
+                pinRange.Value = 5;
+            if (pinRange.Value > 150)
+                pinRange.Value = 150;
             hideAllNames = Config.Bind("General", "HideAllNames", false, "This option will hide all names for all pins.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
             //nexusID = Config.Bind<int>("General", "NexusID", 774, "Nexus mod ID for updates");
             //***ORES***//
@@ -375,7 +375,8 @@ namespace AMP_Configurable
                 {
                     foreach (Minimap.PinData tempPin in autoPins)
                     {
-                        if (!remPinDict.ContainsKey(kvp.Key))
+
+                        if (!remPinDict.ContainsKey(kvp.Key) && !tempPin.m_save)
                         {
                             //Log.LogInfo(string.Format("Adding {0} at {1} to removal List", kvp.Value, kvp.Key));
                             remPinDict.Add(kvp.Key, tempPin);
@@ -411,17 +412,13 @@ namespace AMP_Configurable
             float num1 = 999999f;
             foreach (Minimap.PinData pin in pins)
             {
-                if ((int)pin.m_type > 100)
+                float num2 = Utils.DistanceXZ(pos, pin.m_pos);
+                if (num2 < radius && (num2 < num1 || pinData == null))
                 {
-                    float num2 = Utils.DistanceXZ(pos, pin.m_pos);
-                    if (num2 < radius && (num2 < num1 || pinData == null))
-                    {
-                        pinData = pin;
-                        num1 = num2;
-                    }
+                    pinData = pin;
+                    num1 = num2;
+                    //Log.LogInfo(string.Format("[AMP] Nearest Pin Type = {0} at {1}", pinData.m_type, pinData.m_pos));
                 }
-                
-
             }
             return pinData;
         }

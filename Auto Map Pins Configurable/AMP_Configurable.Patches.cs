@@ -46,6 +46,7 @@ namespace AMP_Configurable.Patches
             //while (count < ___m_pins.Count())
             if(!checkedSavedPins)
             {
+                //Debug.Log("[AMP] Checking Saved Pins");
                 //Debug.Log(string.Format("[AMP] m_pins Count {0}", ___m_pins.Count()));
                 foreach (Minimap.PinData pins in ___m_pins)
                 {
@@ -95,8 +96,8 @@ namespace AMP_Configurable.Patches
         }
 
         [HarmonyPatch(typeof(Minimap), "OnMapRightClick")]
-        [HarmonyPostfix]
-        private static void Minimap_OMRC(
+        [HarmonyPrefix]
+        private static bool Minimap_OMRC(
             Minimap __instance,
             ref List<Minimap.PinData> ___m_pins)
         {
@@ -104,15 +105,38 @@ namespace AMP_Configurable.Patches
             Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
 
             //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
-            Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 10, ___m_pins);
+            Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 5, ___m_pins);
 
             if (closestPin == null)
-                return;
+                return true;
 
             __instance.RemovePin(closestPin);
             Mod.addedPinLocs.Remove(closestPin.m_pos);
             Mod.autoPins.Remove(closestPin);
             Mod.remPinDict.Remove(closestPin.m_pos);
+            return false;
+        }
+
+        [HarmonyPatch(typeof(Minimap), "OnMapLeftClick")]
+        [HarmonyPrefix]
+        private static bool Minimap_OMLC(
+            Minimap __instance,
+            ref List<Minimap.PinData> ___m_pins)
+        {
+            ZLog.Log("[AMP] Left click");
+            Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
+
+            //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
+            Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 5, ___m_pins);
+
+            if (closestPin == null)
+            {
+                //Mod.Log.LogInfo("[AMP] Closest pin is null");
+                return true;
+            }
+
+            closestPin.m_checked = !closestPin.m_checked;
+            return false;
         }
 
     }
@@ -219,7 +243,7 @@ namespace AMP_Configurable.Patches
                     break;
                 case "CloudberryBush":
                 case "CloudberryBush(Clone)":
-                    if (Mod.pinBlueberries.Value)
+                    if (Mod.pinCloudberries.Value)
                     {
                         aName = "Cloudberries";
                     }
@@ -401,6 +425,47 @@ namespace AMP_Configurable.Patches
                 if (!Mod.pinItems.ContainsKey(spawnComp.transform.position))
                 {
                     Mod.pinItems.Add(spawnComp.transform.position, aName);
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Character), "Awake")]
+    internal class CharacterPatchSpawn
+    {
+        private static void Postfix(ref CreatureSpawner __instance)
+        {
+            Character creatureComp = __instance.GetComponent<Character>();
+
+            if (!creatureComp)
+            {
+                return;
+            }
+
+            string creatureText = creatureComp.m_name;
+            string aName = "";
+
+            //Mod.Log.LogInfo(string.Format("[AMP - Characters] Found {0} at {1} {2} {3}", creatureText, creatureComp.transform.position.x, creatureComp.transform.position.y, creatureComp.transform.position.z));
+            switch (creatureText)
+            {
+                case "$enemy_serpent":
+                    if (Mod.pinSerpent.Value)
+                    {
+                        aName = "Serpent";
+                    }
+                    break;
+                default:
+                    aName = "";
+                    break;
+            }
+
+            if (aName != "")
+            {
+                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
+
+                if (!Mod.pinItems.ContainsKey(creatureComp.transform.position))
+                {
+                    Mod.pinItems.Add(creatureComp.transform.position, aName);
                 }
             }
         }
