@@ -107,7 +107,9 @@ namespace AMP_Configurable.Patches
             //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
             Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 5, ___m_pins);
 
-            if (closestPin == null)
+            //Mod.Log.LogInfo(string.Format("Pin Name - {0}, Pin Icon - {1}, Pin Type {2}", closestPin.m_name, closestPin.m_icon.name, closestPin.m_type));
+
+            if (closestPin == null || closestPin.m_icon.name == "mapicon_start")
                 return true;
 
             __instance.RemovePin(closestPin);
@@ -581,6 +583,8 @@ namespace AMP_Configurable.Patches
             {
                 if (!Player.m_localPlayer)
                     return;
+
+                Mod.currEnv = EnvMan.instance.GetCurrentEnvironment().m_name;
 
                 if (Time.frameCount % interval == 0)
                 {

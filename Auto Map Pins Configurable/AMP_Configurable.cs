@@ -13,7 +13,7 @@ using AMP_Configurable.Patches;
 
 namespace AMP_Configurable
 {
-    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.0.9")]
+    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.1.0")]
     [BepInProcess("valheim.exe")]
     public class Mod : BaseUnityPlugin
     {
@@ -159,6 +159,7 @@ namespace AMP_Configurable
         public static Dictionary<Vector3, Minimap.PinData> remPinDict = new Dictionary<Vector3, Minimap.PinData>();
         public static bool hasMoved = false;
         public static bool checkingPins = false;
+        public static string currEnv = "";
 
 
 
@@ -458,6 +459,9 @@ namespace AMP_Configurable
 
         public static void pinOb(string tempName, Vector3 aPos)
         {
+            if (Mod.currEnv == "Crypt" || Mod.currEnv == "SunkenCrypt")
+                return;
+
             if (tempName != null && tempName != "")
             {
                 loadData(tempName);
