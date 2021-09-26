@@ -140,6 +140,19 @@ namespace AMP_Configurable.Patches
             closestPin.m_checked = !closestPin.m_checked;
             return false;
         }
+        [HarmonyPatch(typeof(Minimap), "Start")]
+        private class Start_Patch
+        {
+            static void Postfix(Minimap __instance, ref bool[] ___m_visibleIconTypes)
+            {
+                Mod.Log.LogWarning(" Minimap Start ");
+                ___m_visibleIconTypes = new bool[1000];
+                for (int i = 0; i < ___m_visibleIconTypes.Length; i++)
+                {
+                    ___m_visibleIconTypes[i] = true;
+                }
+            }
+        }
 
     }
 
