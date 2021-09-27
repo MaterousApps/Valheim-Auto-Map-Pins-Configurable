@@ -21,6 +21,24 @@ namespace AMP_Configurable.Patches
         private static void Minimap_Awake()
         {
             checkedSavedPins = false;
+            Mod.addedPinLocs.Clear();
+            Mod.dupPinLocs.Clear();
+            Mod.autoPins.Clear();
+            Mod.pinRemList.Clear();
+            Mod.savedPins.Clear();
+        }
+
+        [HarmonyPatch(typeof(Minimap), "Start")]
+        [HarmonyPostfix]
+        private static void Minimap_Start(
+            Minimap __instance, 
+            ref bool[] ___m_visibleIconTypes)
+        {
+            ___m_visibleIconTypes = new bool[150];
+            for (int index = 0; index < ___m_visibleIconTypes.Length; index++)
+            {
+                ___m_visibleIconTypes[index] = true;
+            }
         }
 
         [HarmonyPatch(typeof(Minimap), "AddPin")]
@@ -34,6 +52,7 @@ namespace AMP_Configurable.Patches
           bool save,
           bool isChecked)
         {
+            Mod.Log.LogInfo("[AMP] Trying to add pin");
             return ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
         }
 
@@ -71,6 +90,8 @@ namespace AMP_Configurable.Patches
                     //count++;
                 }
                 checkedSavedPins = true;
+
+                Mod.checkPins(Player_Patches.currPos);
             }
 
         }
@@ -102,6 +123,7 @@ namespace AMP_Configurable.Patches
             ref List<Minimap.PinData> ___m_pins)
         {
             ZLog.Log("[AMP] Right click");
+
             Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
 
             //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
@@ -109,7 +131,7 @@ namespace AMP_Configurable.Patches
 
             //Mod.Log.LogInfo(string.Format("Pin Name - {0}, Pin Icon - {1}, Pin Type {2}", closestPin.m_name, closestPin.m_icon.name, closestPin.m_type));
 
-            if (closestPin == null || closestPin.m_icon.name == "mapicon_start")
+            if (closestPin == null || closestPin.m_icon.name == "mapicon_start" || closestPin.m_type == Minimap.PinType.Death)
                 return true;
 
             __instance.RemovePin(closestPin);

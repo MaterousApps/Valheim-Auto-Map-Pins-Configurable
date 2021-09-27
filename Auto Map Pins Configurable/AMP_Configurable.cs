@@ -13,7 +13,7 @@ using AMP_Configurable.Patches;
 
 namespace AMP_Configurable
 {
-    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.1.0")]
+    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.2.0")]
     [BepInProcess("valheim.exe")]
     public class Mod : BaseUnityPlugin
     {
@@ -176,7 +176,7 @@ namespace AMP_Configurable
             if (pinRange.Value > 150)
                 pinRange.Value = 150;
             hideAllNames = Config.Bind("General", "HideAllNames", false, "This option will hide all names for all pins.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
-            //nexusID = Config.Bind<int>("General", "NexusID", 774, "Nexus mod ID for updates");
+            nexusID = Config.Bind("General", "NexusID", 744, "Nexus mod ID for updates");
             //***ORES***//
             pinCopper = Config.Bind("Ores - Copper", "PinCopper", true, "Show pins for Copper");
             saveCopper = Config.Bind("Ores - Copper", "SaveCopper", false, "Save pins for Copper");
@@ -341,12 +341,12 @@ namespace AMP_Configurable
                     return true;
                 }
                 else
-                //Mod.Log.LogInfo(string.Format("[AMP] Checking Distance between Pins {0} & {1}: {2}", aName, pin.m_name, (double)Utils.DistanceXZ(pos, pin.m_pos)));
+                //Log.LogInfo(string.Format("[AMP] Checking Distance between Pins {0} & {1}: {2}", aName, pin.m_name, (double)Utils.DistanceXZ(pos, pin.m_pos)));
                 if ((double)Utils.DistanceXZ(pos, pin.m_pos) < pinOverlapDistance.Value
                     && type == pin.m_type 
                     && (aName == pin.m_name || aIcon == pin.m_icon))
                 {
-                    //Mod.Log.LogInfo(string.Format("[AMP] Duplicate pins for {0} found", aName));
+                    //Log.LogInfo(string.Format("[AMP] Duplicate pins for {0} found", aName));
                     match = pin;
                     return true;
                 }
@@ -479,7 +479,7 @@ namespace AMP_Configurable
                     }
                 }
 
-                //Mod.Log.LogInfo(string.Format("[AMP] Checking Distance between Player position {0} & {1} position {2}: {3}", GameCamera.instance.transform.position, aName, transform.position, Vector3.Distance(GameCamera.instance.transform.position, transform.position)));
+                //Mod.Log.LogInfo(string.Format("[AMP] Checking Distance between Player position {0} & {1} position {2}: {3}", GameCamera.instance.transform.position, aName, aPos, Vector3.Distance(GameCamera.instance.transform.position, aPos)));
                 if (Mod.hideAllNames.Value)
                     showName = false;
 
@@ -500,7 +500,7 @@ namespace AMP_Configurable
                 pin.m_save = aSave;
 
                 
-                //Mod.Log.LogInfo(string.Format("[AMP] Tracking: {0} at {1} {2} {3}", aName, transform.position.x, transform.position.y, transform.position.z));
+                //Mod.Log.LogInfo(string.Format("[AMP] Tracking: {0} at {1} {2} {3}", aName, aPos.x, aPos.y, aPos.z));
                 if(!Mod.autoPins.Contains(pin))
                     Mod.autoPins.Add(pin);
                 if(!Mod.addedPinLocs.Contains(aPos))
@@ -522,7 +522,7 @@ namespace AMP_Configurable
                 return;
 
             loadData(pin.m_type.ToString());
-            Mod.Log.LogInfo(string.Format("OnDestroy Called for Type {0} at {1}", pin.m_type, pin.m_pos));
+            //Mod.Log.LogInfo(string.Format("OnDestroy Called for Type {0} at {1}", pin.m_type, pin.m_pos));
             //Mod.Log.LogInfo(string.Format("[AMP] Save Pin {0}? = {1}.", pin.m_name, aSave));
 
             if (aSave || pin.m_save)
