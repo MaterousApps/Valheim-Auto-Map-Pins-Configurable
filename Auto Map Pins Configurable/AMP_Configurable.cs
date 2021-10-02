@@ -13,7 +13,7 @@ using AMP_Configurable.Patches;
 
 namespace AMP_Configurable
 {
-    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.2.0")]
+    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.2.2")]
     [BepInProcess("valheim.exe")]
     public class Mod : BaseUnityPlugin
     {
@@ -311,7 +311,7 @@ namespace AMP_Configurable
                 Harmony.CreateAndPatchAll(typeof(SpawnAreaPatchSpawn), "materousapps.mods.automappins_configurable");
                 Harmony.CreateAndPatchAll(typeof(MineRockPatchSpawn), "materousapps.mods.automappins_configurable");
                 Harmony.CreateAndPatchAll(typeof(Player_Patches), "materousapps.mods.automappins_configurable");
-                Harmony.CreateAndPatchAll(typeof(AMPCommandPatcher), "materousapps.mods.automappins_configurable");
+                //Harmony.CreateAndPatchAll(typeof(AMPCommandPatcher), "materousapps.mods.automappins_configurable");
 
                 addedPinLocs = new List<Vector3>();
                 dupPinLocs = new List<Vector3>();
@@ -321,7 +321,7 @@ namespace AMP_Configurable
                 filteredPins = new List<string>();
 
                 Assets.Init(pinIcons.Value);
-                Commands.AMPLoader.Init();                
+                //Commands.AMPLoader.Init();                
             }
         }
 
