@@ -459,7 +459,7 @@ namespace AMP_Configurable
 
         public static void pinOb(string tempName, Vector3 aPos)
         {
-            if (Mod.currEnv == "Crypt" || Mod.currEnv == "SunkenCrypt")
+            if (Mod.currEnv == "Crypt" || Mod.currEnv == "SunkenCrypt" || Mod.currEnv == "FrostCaves" || Mod.currEnv == "InfectedMine")
                 return;
 
             if (tempName != null && tempName != "")
