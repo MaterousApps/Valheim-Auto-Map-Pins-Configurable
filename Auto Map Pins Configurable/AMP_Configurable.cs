@@ -13,139 +13,52 @@ using AMP_Configurable.Patches;
 
 namespace AMP_Configurable
 {
-    [BepInPlugin("AMP_Configurable", "Auto Map Pins", "1.2.2")]
+    [BepInPlugin("amped.mod.auto_map_pins", "AMPED - Auto Map Pins Enhanced", "1.3.0")]
     [BepInProcess("valheim.exe")]
-    public class Mod : BaseUnityPlugin
-    {
+    public class Mod : BaseUnityPlugin {
         //***CONFIG ENTRIES***//
         //***GENERAL***//
         public static ManualLogSource Log;
         public static ConfigEntry<int> nexusID;
         public static ConfigEntry<bool> modEnabled;
         public static ConfigEntry<float> pinOverlapDistance;
-        public static ConfigEntry<int> pinIcons;
         public static ConfigEntry<int> pinRange;
-        public static ConfigEntry<bool> hideAllNames;
+        public static ConfigEntry<bool> hideAllLabels;
+        public static ConfigEntry<string> hidePinLabels;
+        public static ConfigEntry<string> savePinTypes;
+        public static ConfigEntry<int> defaultPinSize;
+        public static ConfigEntry<string> customPinSizes;
+        public static ConfigEntry<bool> loggingEnabled;
+        
         //***ORES***//
-        public static ConfigEntry<bool> pinCopper;
-        public static ConfigEntry<bool> saveCopper;
-        public static ConfigEntry<bool> showCopperName;
-        public static ConfigEntry<string> copperName;
-        public static ConfigEntry<float> pinCopperSize;
-        public static ConfigEntry<bool> pinTin;
-        public static ConfigEntry<bool> saveTin;
-        public static ConfigEntry<bool> showTinName;
-        public static ConfigEntry<string> tinName;
-        public static ConfigEntry<float> pinTinSize;
-        public static ConfigEntry<bool> pinObsidian;
-        public static ConfigEntry<bool> saveObsidian;
-        public static ConfigEntry<bool> showObsidianName;
-        public static ConfigEntry<string> obsidianName;
-        public static ConfigEntry<float> pinObsidianSize;
-        public static ConfigEntry<bool> pinSilver;
-        public static ConfigEntry<bool> saveSilver;
-        public static ConfigEntry<bool> showSilverName;
-        public static ConfigEntry<string> silverName;
-        public static ConfigEntry<float> pinSilverSize;
-        public static ConfigEntry<bool> pinIron;
-        public static ConfigEntry<bool> saveIron;
-        public static ConfigEntry<bool> showIronName;
-        public static ConfigEntry<string> ironName;
-        public static ConfigEntry<float> pinIronSize;
-        public static ConfigEntry<bool> pinFlametal;
-        public static ConfigEntry<bool> saveFlametal;
-        public static ConfigEntry<bool> showFlametalName;
-        public static ConfigEntry<string> flametalName;
-        public static ConfigEntry<float> pinFlametalSize;
+        public static ConfigEntry<bool> oresEnabled;
+        public static ConfigEntry<bool> oresLoggingEnabled;
+        public static ConfigEntry<string> oresPinTypes;
+        public static ConfigEntry<string> oresPinItems;
+
         //***PICKABLES***//
-        public static ConfigEntry<bool> pinBerries;
-        public static ConfigEntry<bool> saveBerries;
-        public static ConfigEntry<bool> showBerriesName;
-        public static ConfigEntry<string> berriesName;
-        public static ConfigEntry<float> pinBerriesSize;
-        public static ConfigEntry<bool> pinBlueberries;
-        public static ConfigEntry<bool> saveBlueberries;
-        public static ConfigEntry<bool> showBlueberriesName;
-        public static ConfigEntry<string> blueberriesName;
-        public static ConfigEntry<float> pinBlueberriesSize;
-        public static ConfigEntry<bool> pinCloudberries;
-        public static ConfigEntry<bool> saveCloudberries;
-        public static ConfigEntry<bool> showCloudberriesName;
-        public static ConfigEntry<string> cloudberriesName;
-        public static ConfigEntry<float> pinCloudberriesSize;
-        public static ConfigEntry<bool> pinThistle;
-        public static ConfigEntry<bool> saveThistle;
-        public static ConfigEntry<bool> showThistleName;
-        public static ConfigEntry<string> thistleName;
-        public static ConfigEntry<float> pinThistleSize;
-        public static ConfigEntry<bool> pinMushroom;
-        public static ConfigEntry<bool> saveMushroom;
-        public static ConfigEntry<bool> showMushroomName;
-        public static ConfigEntry<string> mushroomName;
-        public static ConfigEntry<float> pinMushroomSize;
-        public static ConfigEntry<bool> pinCarrot;
-        public static ConfigEntry<bool> saveCarrot;
-        public static ConfigEntry<bool> showCarrotName;
-        public static ConfigEntry<string> carrotName;
-        public static ConfigEntry<float> pinCarrotSize;
-        public static ConfigEntry<bool> pinTurnip;
-        public static ConfigEntry<bool> saveTurnip;
-        public static ConfigEntry<bool> showTurnipName;
-        public static ConfigEntry<string> turnipName;
-        public static ConfigEntry<float> pinTurnipSize;
-        public static ConfigEntry<bool> pinDragonEgg;
-        public static ConfigEntry<bool> saveDragonEgg;
-        public static ConfigEntry<bool> showDragonEggName;
-        public static ConfigEntry<string> dragonEggName;
-        public static ConfigEntry<float> pinDragonEggSize;
+        public static ConfigEntry<bool> pickablesEnabled;
+        public static ConfigEntry<bool> pickablesLoggingEnabled;
+        public static ConfigEntry<string> pickablesPinTypes;
+        public static ConfigEntry<string> pickablesPinItems;
+
         //***LOCATIONS***//
-        public static ConfigEntry<bool> pinCrypt;
-        public static ConfigEntry<bool> saveCrypt;
-        public static ConfigEntry<bool> showCryptName;
-        public static ConfigEntry<string> cryptName;
-        public static ConfigEntry<float> pinCryptSize;
-        public static ConfigEntry<bool> pinSunkenCrypt;
-        public static ConfigEntry<bool> saveSunkenCrypt;
-        public static ConfigEntry<bool> showSunkenCryptName;
-        public static ConfigEntry<string> sunkenCryptName;
-        public static ConfigEntry<float> pinSunkenCryptSize;
-        public static ConfigEntry<bool> pinTrollCave;
-        public static ConfigEntry<bool> saveTrollCave;
-        public static ConfigEntry<bool> showTrollCaveName;
-        public static ConfigEntry<string> trollCaveName;
-        public static ConfigEntry<float> pinTrollCaveSize;
+        public static ConfigEntry<bool> locsEnabled;
+        public static ConfigEntry<bool> locsLoggingEnabled;
+        public static ConfigEntry<string> locsPinTypes;
+        public static ConfigEntry<string> locsPinItems;
+
         //***SPAWNERS***//
-        public static ConfigEntry<bool> pinSkeleton;
-        public static ConfigEntry<bool> saveSkeleton;
-        public static ConfigEntry<bool> showSkeletonName;
-        public static ConfigEntry<string> skeletonName;
-        public static ConfigEntry<float> pinSkeletonSize;
-        public static ConfigEntry<bool> pinDraugr;
-        public static ConfigEntry<bool> saveDraugr;
-        public static ConfigEntry<bool> showDraugrName;
-        public static ConfigEntry<string> draugrName;
-        public static ConfigEntry<float> pinDraugrSize;
-        public static ConfigEntry<bool> pinSurtling;
-        public static ConfigEntry<bool> saveSurtling;
-        public static ConfigEntry<bool> showSurtlingName;
-        public static ConfigEntry<string> surtlingName;
-        public static ConfigEntry<float> pinSurtlingSize;
-        public static ConfigEntry<bool> pinGreydwarf;
-        public static ConfigEntry<bool> saveGreydwarf;
-        public static ConfigEntry<bool> showGreydwarfName;
-        public static ConfigEntry<string> greydwarfName;
-        public static ConfigEntry<float> pinGreydwarfSize;
-        public static ConfigEntry<bool> pinSerpent;
-        public static ConfigEntry<bool> saveSerpent;
-        public static ConfigEntry<bool> showSerpentName;
-        public static ConfigEntry<string> serpentName;
-        public static ConfigEntry<float> pinSerpentSize;
-        //***LEVIATHANS***//
-        public static ConfigEntry<bool> pinLeviathan;
-        public static ConfigEntry<bool> saveLeviathan;
-        public static ConfigEntry<bool> showLeviathanName;
-        public static ConfigEntry<string> leviathanName;
-        public static ConfigEntry<float> pinLeviathanSize;
+        public static ConfigEntry<bool> spwnsEnabled;
+        public static ConfigEntry<bool> spwnsLoggingEnabled;
+        public static ConfigEntry<string> spwnsPinTypes;
+        public static ConfigEntry<string> spwnsPinItems;
+
+        //***CREATURES***//
+        public static ConfigEntry<bool> creaturesEnabled;
+        public static ConfigEntry<bool> creaturesLoggingEnabled;
+        public static ConfigEntry<string> creaturesPinTypes;
+        public static ConfigEntry<string> creaturesPinItems;
 
         //***PUBLIC VARIABLES***//
         public static List<Minimap.PinData> autoPins;
@@ -161,142 +74,65 @@ namespace AMP_Configurable
         public static bool checkingPins = false;
         public static string currEnv = "";
 
-
-
-        private void Awake()
-        {
+        private void Awake() {
             Log = Logger;
-
-            modEnabled = Config.Bind("General", "Enabled", true, "Enable this mod");
-            pinOverlapDistance = Config.Bind<float>("General", "PinOverlapDistance", 10, "Distance around pins to prevent overlapping of similar pins");
-            pinIcons = Config.Bind("General", "PinIcons", 1, "Use [1] Game sprites(copper for copper, silver for silver, etc.) or [2] Colored pins (must be 1 or 2)");
-            pinRange = Config.Bind("General", "PinRange", 150, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 5\nMax 150\nRecommended 50-75");
-            if (pinRange.Value < 5)
-                pinRange.Value = 5;
-            if (pinRange.Value > 150)
-                pinRange.Value = 150;
-            hideAllNames = Config.Bind("General", "HideAllNames", false, "This option will hide all names for all pins.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
+            
+            /** General Config **/
             nexusID = Config.Bind("General", "NexusID", 744, "Nexus mod ID for updates");
+            modEnabled = Config.Bind("General", "Enabled", true, "Enable this mod");
+            loggingEnabled = Config.Bind("General", "Enable Logging", true, "Enable Logging");
+            pinOverlapDistance = Config.Bind<float>("General", "PinOverlapDistance", 10, "Distance around pins to prevent overlapping of similar pins");
+            pinRange = Config.Bind("General", "Pin Range", 150, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 5\nMax 150\nRecommended 50-75");
+            if (pinRange.Value < 5) pinRange.Value = 5;
+            if (pinRange.Value > 150) pinRange.Value = 150;
+            hideAllLabels = Config.Bind("General", "Hide All Labels", false, "Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
+            hidePinLabels = Config.Bind("General", "Hide Pin Label", "", "Hide individual pin type labels.\nValue should be a comma seperated list of pin types.");
+            
+            string defaultSavePinTypes = "Crypt,TrollCave,SunkenCrypt,FrostCave,InfestedMine";
+            string defaultPinSizes = "Carrot:25,Turnip:25,Crypt:25,Sunken Crypt:25,Troll Cave:25,Skeleton:25,Draugr:25,Surtling:25,Greydwarf:25,Serpent:25:Leviathan:25";
+            savePinTypes = Config.Bind("General", "Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
+            defaultPinSize = Config.Bind("General", "Default Pin Size", 20, "Default pin size for all pins.");
+            customPinSizes = Config.Bind("General", "Custom Pin Sizes", defaultPinSizes, "Customize the size of individual pins.\nValue should be a comma seperated list of pin types each with a colon ':' and a size.\nExample: Berries:20,Troll Cave:25");
+            
             //***ORES***//
-            pinCopper = Config.Bind("Ores - Copper", "PinCopper", true, "Show pins for Copper");
-            saveCopper = Config.Bind("Ores - Copper", "SaveCopper", false, "Save pins for Copper");
-            showCopperName = Config.Bind("Ores - Copper", "ShowCopperName", true, "Show name for Copper");
-            copperName = Config.Bind("Ores - Copper", "CopperNameDisplay", "Copper", "Display name for Copper");
-            pinCopperSize = Config.Bind<float>("Ores - Copper", "PinCopperSize", 20, "Size of Copper pin on minimap/main Map (20 is recommended)");
-            pinTin = Config.Bind("Ores - Tin", "PinTin", true, "Show pins for Tin");
-            saveTin = Config.Bind("Ores - Tin", "SaveTin", false, "Save pins for Tin");
-            showTinName = Config.Bind("Ores - Tin", "ShowTinName", true, "Show name for Tin");
-            tinName = Config.Bind<string>("Ores - Tin", "TinNameDisplay", "Tin", "Display name for Tin");
-            pinTinSize = Config.Bind<float>("Ores - Tin", "PinTinSize", 20, "Size of pin Tin on minimap/main Map (20 is recommended)");
-            pinObsidian = Config.Bind("Ores - Obsidian", "PinObsidian", true, "Show pins for Obsidian");
-            saveObsidian = Config.Bind("Ores - Obsidian", "SaveObsidian", false, "Save pins for Obsidian");
-            showObsidianName = Config.Bind("Ores - Obsidian", "ShowObsidianName", true, "Show name for Obsidian");
-            obsidianName = Config.Bind<string>("Ores - Obsidian", "ObsidianNameDisplay", "Obsidian", "Display name for Obsidian");
-            pinObsidianSize = Config.Bind<float>("Ores - Obsidian", "PinObsidianSize", 20, "Size of Obsidian pin on minimap/main Map (20 is recommended)");
-            pinSilver = Config.Bind("Ores - Silver", "PinSilver", true, "Show pins for Silver");
-            saveSilver = Config.Bind("Ores - Silver", "SaveSilver", false, "Save pins for Silver");
-            showSilverName = Config.Bind("Ores - Silver", "ShowSilverName", true, "Show name for Silver");
-            silverName = Config.Bind<string>("Ores - Silver", "SilverNameDisplay", "Silver", "Display name for Silver");
-            pinSilverSize = Config.Bind<float>("Ores - Silver", "PinSilverSize", 20, "Size of Silver pin on minimap/main Map (20 is recommended)");
-            pinIron = Config.Bind("Ores - Iron", "PinIron", true, "Show pins for Iron");
-            saveIron = Config.Bind("Ores - Iron", "SaveIron", false, "Save pins for Iron");
-            showIronName = Config.Bind("Ores - Iron", "ShowIronName", true, "Show name for Iron");
-            ironName = Config.Bind<string>("Ores - Iron", "IronNameDisplay", "Iron", "Display name for Iron");
-            pinIronSize = Config.Bind<float>("Ores - Iron", "PinIronSize", 20, "Size of Iron pin on minimap/main Map (20 is recommended)");
-            pinFlametal = Config.Bind("Ores - Flametal", "PinFlametal", true, "Show pins for Flametal");
-            saveFlametal = Config.Bind("Ores - Flametal", "SaveFlametal", false, "Save pins for Flametal");
-            showFlametalName = Config.Bind("Ores - Flametal", "ShowFlametalName", true, "Show name for Flametal");
-            flametalName = Config.Bind<string>("Ores - Flametal", "FlametalNameDisplay", "Flametal", "Display name for Flametal");
-            pinFlametalSize = Config.Bind<float>("Ores - Flametal", "PinFlametalSize", 20, "Size of Flametal pin on minimap/main Map (20 is recommended)");
+            string defaultOresPinTypes = "Tin:tinSprite,Copper:copperSprite,Obsidian:obsidianSprite,Silver:silverSprite,Iron:ironSprite,Flametal:flametalSprite";
+            string defaultOresPinItems = "Tin:$piece_deposit_tin,Copper:$piece_deposit_copper,Obsidian:$piece_deposit_obsidian,Silver:$piece_deposit_silver|$piece_deposit_silvervein,Iron:$piece_mudpile,Flametal:MineRock_Meteorite";
+            oresEnabled = Config.Bind("Resources", "Enabled", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
+            oresLoggingEnabled = Config.Bind("Resources", "Enable Logging", true, "Log object id and position of each destructable resource node in range of the player.\nUsed to get object Ids to assign to pin types");
+            oresPinTypes = Config.Bind("Resources", "Pin Types", defaultOresPinTypes, "Comma seperated list of pin types.\nFormat should be <PinType>:<PinIcon>. Example: Berries:raspberrySprite,Mushroom:mushroomSprite\nVisit nexus for a list of available icon sprite names.\nIf you do not include an icon pin will use a generic white circle.");
+            oresPinItems = Config.Bind("Resources", "Pin Items", defaultOresPinItems, "Associate game object ids to pins using a command seperated list.\nFormat should be <PinType>:<ObjectId>.\nYou can include multiple object ids for one pin type by seperating them with a pipe '|'.\nExample: Crypt:Crypt1|Crypt2|Crypt3|Crypt4,Mushroom:Pickable_Mushroom\n**NOTE Pins will automatically attempt to match (Clone) objects so you can just use the base objectId.");
+
             //***PICKABLES***//
-            pinBerries = Config.Bind("Pickables - Berries", "PinBerries", true, "Show pins for Berries");
-            saveBerries = Config.Bind("Pickables - Berries", "SaveBerries", false, "Save pins for Berries");
-            showBerriesName = Config.Bind("Pickables - Berries", "ShowBerriesName", true, "Show name for Berries");
-            berriesName = Config.Bind<string>("Pickables - Berries", "BerriesNameDisplay", "Berries", "Display name for Berries");
-            pinBerriesSize = Config.Bind<float>("Pickables - Berries", "PinBerriesSize", 20, "Size of Berries pin on minimap/main Map (20 is recommended)");
-            pinBlueberries = Config.Bind("Pickables - Blueberries", "PinBlueberries", true, "Show pins for Blueberries");
-            saveBlueberries = Config.Bind("Pickables - Blueberries", "SaveBlueberries", false, "Save pins for Blueberries");
-            showBlueberriesName = Config.Bind("Pickables - Blueberries", "ShowBlueberriesName", true, "Show name for Blueberries");
-            blueberriesName = Config.Bind<string>("Pickables - Blueberries", "BlueberriesNameDisplay", "Blueberries", "Display name for Blueberries");
-            pinBlueberriesSize = Config.Bind<float>("Pickables - Blueberries", "PinBlueberriesSize", 20, "Size of Blueberries pin on minimap/main Map (20 is recommended)");
-            pinCloudberries = Config.Bind("Pickables - Cloudberries", "PinCloudberries", true, "Show pins for Cloudberries");
-            saveCloudberries = Config.Bind("Pickables - Cloudberries", "SaveCloudberries", false, "Save pins for Cloudberries");
-            showCloudberriesName = Config.Bind("Pickables - Cloudberries", "ShowCloudberriesName", true, "Show name for Cloudberries");
-            cloudberriesName = Config.Bind<string>("Pickables - Cloudberries", "CloudberriesNameDisplay", "Cloudberries", "Display name for Cloudberries");
-            pinCloudberriesSize = Config.Bind<float>("Pickables - Cloudberries", "PinCloudberriesSize", 20, "Size of Cloudberries pin on minimap/main Map (20 is recommended)");
-            pinThistle = Config.Bind("Pickables - Thistle", "PinThistle", true, "Show pins for Thistle");
-            saveThistle = Config.Bind("Pickables - Thistle", "SaveThistle", false, "Save pins for Thistle");
-            showThistleName = Config.Bind("Pickables - Thistle", "ShowThistleName", true, "Show name for Thistle");
-            thistleName = Config.Bind<string>("Pickables - Thistle", "ThistleNameDisplay", "Thistle", "Display name for Thistle");
-            pinThistleSize = Config.Bind<float>("Pickables - Thistle", "PinThistleSize", 20, "Size of Thistle pin on minimap/main Map (20 is recommended)");
-            pinMushroom = Config.Bind("Pickables - Mushroom", "PinMushroom", true, "Show pins for Mushroom");
-            saveMushroom = Config.Bind("Pickables - Mushroom", "SaveMushroom", false, "Save pins for Mushroom");
-            showMushroomName = Config.Bind("Pickables - Mushroom", "ShowMushroomName", true, "Show name for Mushroom");
-            mushroomName = Config.Bind<string>("Pickables - Mushroom", "MushroomNameDisplay", "Mushroom", "Display name for Mushroom");
-            pinMushroomSize = Config.Bind<float>("Pickables - Mushroom", "PinMushroomSize", 20, "Size of Mushroom pin on minimap/main Map (20 is recommended)");
-            pinCarrot = Config.Bind("Pickables - Carrot", "PinCarrot", true, "Show pins for Carrot");
-            saveCarrot = Config.Bind("Pickables - Carrot", "SaveCarrot", false, "Save pins for Carrot");
-            showCarrotName = Config.Bind("Pickables - Carrot", "ShowCarrotName", true, "Show name for Carrot");
-            carrotName = Config.Bind<string>("Pickables - Carrot", "CarrotNameDisplay", "Carrot", "Display name for Carrot");
-            pinCarrotSize = Config.Bind<float>("Pickables - Carrot", "PinCarrotSize", 25, "Size of Carrot pin on minimap/main Map (25 is recommended)");
-            pinTurnip = Config.Bind("Pickables - Turnip", "PinTurnip", true, "Show pins for Turnip");
-            saveTurnip = Config.Bind("Pickables - Turnip", "SaveTurnip", false, "Save pins for Turnip");
-            showTurnipName = Config.Bind("Pickables - Turnip", "ShowTurnipName", true, "Show name for Turnip");
-            turnipName = Config.Bind<string>("Pickables - Turnip", "TurnipNameDisplay", "Turnip", "Display name for Turnip");
-            pinTurnipSize = Config.Bind<float>("Pickables - Turnip", "PinTurnipSize", 25, "Size of Turnip pin on minimap/main Map (25 is recommended)");
-            pinDragonEgg = Config.Bind("Misc - Dragon Eggs", "PinDragonEgg", true, "Show pins for Dragon Eggs");
-            saveDragonEgg = Config.Bind("Misc - Dragon Eggs", "SaveDragonEgg", false, "Save pins for Dragon Eggs");
-            showDragonEggName = Config.Bind("Misc - Dragon Eggs", "ShowDragonEggName", true, "Show name for Dragon Eggs");
-            dragonEggName = Config.Bind<string>("Misc - Dragon Eggs", "DragonEggNameDisplay", "DragonEgg", "Display name for Dragon Eggs");
-            pinDragonEggSize = Config.Bind<float>("Misc - Dragon Eggs", "PinDragonEggSize", 20, "Size of Dragon Eggs pin on minimap/main Map (20 is recommended)");
+            string defaultPickablePinTypes = "Berries:raspberrySprite,Blueberries:blueberrySprite,Cloudberries:cloudberrySprite,Thistle:thistleSprite,Mushroom:mushroomSprite,Carrot:carrotSprite,Turnip:turnipSprite,Dragon Egg:eggSprite";
+            string defaultPickablePinItems = "Berries:RaspberryBush,Blueberries:BlueberryBush,Cloudberries:CloudberryBush,Thistle:Pickable_Thistle,Mushroom:Pickable_Mushroom,Carrot:Pickable_SeedCarrot,Turnip:Pickable_SeedTurnip,Dragon Egg:Pickable_DragonEgg";
+            pickablesEnabled = Config.Bind("Pickables", "Enabled", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
+            pickablesLoggingEnabled = Config.Bind("Pickables", "Enable Logging", true, "Log object id and position of each destructable resource node in range of the player.\nUsed to get object Ids to assign to pin types");
+            pickablesPinTypes = Config.Bind("Pickables", "Pin Types", defaultPickablePinTypes, "Comma seperated list of pin types.\nFormat should be <PinType>:<PinIcon>. Example: Berries:raspberrySprite,Mushroom:mushroomSprite\nVisit nexus for a list of available icon sprite names.\nIf you do not include an icon pin will use a generic white circle.");
+            pickablesPinItems = Config.Bind("Pickables", "Pin Items", defaultPickablePinItems, "Associate game object ids to pins using a command seperated list.\nFormat should be <PinType>:<ObjectId>.\nYou can include multiple object ids for one pin type by seperating them with a pipe '|'.\nExample: Crypt:Crypt1|Crypt2|Crypt3|Crypt4,Mushroom:Pickable_Mushroom\n**NOTE Pins will automatically attempt to match (Clone) objects so you can just use the base objectId.");
+
             //***LOCATIONS***//
-            pinCrypt = Config.Bind("Locations - Crypt", "PinCrypt", true, "Show pins for Crypts");
-            saveCrypt = Config.Bind("Locations - Crypt", "SaveCrypt", false, "Save pins for Crypts");
-            showCryptName = Config.Bind("Locations - Crypt", "ShowCryptName", true, "Show name for Crypts");
-            cryptName = Config.Bind<string>("Locations - Crypt", "CryptNameDisplay", "Crypt", "Display name for Crypts");
-            pinCryptSize = Config.Bind<float>("Locations - Crypt", "PinCryptSize", 25, "Size of Crypts pin on minimap/main Map (25 is recommended)");
-            pinSunkenCrypt = Config.Bind("Locations - SunkenCrypt", "PinSunkenCrypt", true, "Show pins for SunkenCrypts");
-            saveSunkenCrypt = Config.Bind("Locations - SunkenCrypt", "SaveSunkenCrypt", false, "Save pins for SunkenCrypts");
-            showSunkenCryptName = Config.Bind("Locations - SunkenCrypt", "ShowSunkenCryptName", true, "Show name for SunkenCrypts");
-            sunkenCryptName = Config.Bind<string>("Locations - SunkenCrypt", "SunkenCryptNameDisplay", "SunkenCrypt", "Display name for SunkenCrypts");
-            pinSunkenCryptSize = Config.Bind<float>("Locations - SunkenCrypt", "PinSunkenCryptSize", 25, "Size of SunkenCrypts pin on minimap/main Map (25 is recommended)");
-            pinTrollCave = Config.Bind("Locations - TrollCave", "PinTrollCave", true, "Show pins for TrollCaves");
-            saveTrollCave = Config.Bind("Locations - TrollCave", "SaveTrollCave", false, "Save pins for TrollCaves");
-            showTrollCaveName = Config.Bind("Locations - TrollCave", "ShowTrollCaveName", true, "Show name for TrollCaves");
-            trollCaveName = Config.Bind<string>("Locations - TrollCave", "TrollCaveNameDisplay", "TrollCave", "Display name for TrollCaves");
-            pinTrollCaveSize = Config.Bind<float>("Locations - TrollCave", "PinTrollCaveSize", 25, "Size of TrollCaves pin on minimap/main Map (25 is recommended)");
+            string defaultLocationPinTypes = "Crypt:cryptSprite,Sunken Crypt:sunkenCryptSprite,Troll Cave:trollCaveSprite,Surtling:surtlingSprite";
+            string defaultLocationPinItems = "Crypt:Crypt1|Crypt2|Crypt3|Crypt4,Sunken Crypt:SunkenCrypt1|SunkenCrypt2|SunkenCrypt3|SunkenCrypt4,Troll Cave:TrollCave01|TrollCave02,Surtling:FireHole";
+            locsEnabled = Config.Bind("Locations", "Enabled", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
+            locsLoggingEnabled = Config.Bind("Locations", "Enable Logging", true, "Log object id and position of each destructable resource node in range of the player.\nUsed to get object Ids to assign to pin types");
+            locsPinTypes = Config.Bind("Locations", "Pin Types", defaultLocationPinTypes, "Comma seperated list of pin types.\nFormat should be <PinType>:<PinIcon>. Example: Berries:raspberrySprite,Mushroom:mushroomSprite\nVisit nexus for a list of available icon sprite names.\nIf you do not include an icon pin will use a generic white circle.");
+            locsPinItems = Config.Bind("Locations", "Pin Items", defaultLocationPinItems, "Associate game object ids to pins using a command seperated list.\nFormat should be <PinType>:<ObjectId>.\nYou can include multiple object ids for one pin type by seperating them with a pipe '|'.\nExample: Crypt:Crypt1|Crypt2|Crypt3|Crypt4,Mushroom:Pickable_Mushroom\n**NOTE Pins will automatically attempt to match (Clone) objects so you can just use the base objectId.");
+
             //***SPAWNERS***//
-            pinSkeleton = Config.Bind("Spawners - Skeleton", "PinSkeleton", true, "Show pins for Skeleton");
-            saveSkeleton = Config.Bind("Spawners - Skeleton", "SaveSkeleton", false, "Save pins for Skeleton");
-            showSkeletonName = Config.Bind("Spawners - Skeleton", "ShowSkeletonName", true, "Show name for Skeleton");
-            skeletonName = Config.Bind<string>("Spawners - Skeleton", "SkeletonNameDisplay", "Skeleton", "Display name for Skeleton");
-            pinSkeletonSize = Config.Bind<float>("Spawners - Skeleton", "PinSkeletonSize", 25, "Size of Skeleton pin on minimap/main Map (25 is recommended)");
-            pinDraugr = Config.Bind("Spawners - Draugr", "PinDraugr", true, "Show pins for Draugr");
-            saveDraugr = Config.Bind("Spawners - Draugr", "SaveDraugr", false, "Save pins for Draugr");
-            showDraugrName = Config.Bind("Spawners - Draugr", "ShowDraugrName", true, "Show name for Draugr");
-            draugrName = Config.Bind<string>("Spawners - Draugr", "DraugrNameDisplay", "Draugr", "Display name for Draugr");
-            pinDraugrSize = Config.Bind<float>("Spawners - Draugr", "PinDraugrSize", 25, "Size of Draugr pin on minimap/main Map (25 is recommended)");
-            pinSurtling = Config.Bind("Spawners - Surtling", "PinSurtling", true, "Show pins for Surtling");
-            saveSurtling = Config.Bind("Spawners - Surtling", "SaveSurtling", false, "Save pins for Surtling");
-            showSurtlingName = Config.Bind("Spawners - Surtling", "ShowSurtlingName", true, "Show name for Surtling");
-            surtlingName = Config.Bind<string>("Spawners - Surtling", "SurtlingNameDisplay", "Surtling", "Display name for Surtling");
-            pinSurtlingSize = Config.Bind<float>("Spawners - Surtling", "PinSurtlingSize", 25, "Size of Surtling pin on minimap/main Map (25 is recommended)");
-            pinGreydwarf = Config.Bind("Spawners - Greydwarf", "PinGreydwarf", true, "Show pins for Greydwarf");
-            saveGreydwarf = Config.Bind("Spawners - Greydwarf", "SaveGreydwarf", false, "Save pins for Greydwarf");
-            showGreydwarfName = Config.Bind("Spawners - Greydwarf", "ShowGreydwarfName", true, "Show name for Greydwarf");
-            greydwarfName = Config.Bind<string>("Spawners - Greydwarf", "GreydwarfNameDisplay", "Greydwarf", "Display name for Greydwarf");
-            pinGreydwarfSize = Config.Bind<float>("Spawners - Greydwarf", "PinGreydwarfSize", 25, "Size of Greydwarf pin on minimap/main Map (25 is recommended)");
-            pinSerpent = Config.Bind("Spawners - Serpent", "PinSerpent", true, "Show pins for Serpent");
-            saveSerpent = Config.Bind("Spawners - Serpent", "SaveSerpent", false, "Save pins for Serpent");
-            showSerpentName = Config.Bind("Spawners - Serpent", "ShowSerpentName", true, "Show name for Serpent");
-            serpentName = Config.Bind<string>("Spawners - Serpent", "SerpentNameDisplay", "Serpent", "Display name for Serpent");
-            pinSerpentSize = Config.Bind<float>("Spawners - Serpent", "PinSerpentSize", 25, "Size of Serpent pin on minimap/main Map (25 is recommended)");
-            //***LEVIATHANS***//
-            pinLeviathan = Config.Bind("Spawners - Leviathan", "PinLeviathan", true, "Show pins for Leviathan");
-            saveLeviathan = Config.Bind("Spawners - Leviathan", "SaveLeviathan", false, "Save pins for Leviathan");
-            showLeviathanName = Config.Bind("Spawners - Leviathan", "ShowLeviathanName", true, "Show name for Leviathan");
-            leviathanName = Config.Bind<string>("Spawners - Leviathan", "LeviathanNameDisplay", "Leviathan", "Display name for Leviathan");
-            pinLeviathanSize = Config.Bind<float>("Spawners - Leviathan", "PinLeviathanSize", 25, "Size of Leviathan pin on minimap/main Map (25 is recommended)");
+            string defaultSpawnerPinTypes = "Skeleton:skeletonSprite,Draugr:draugrSprite,Greydwarf:greydwarfSprite";
+            string defaultSpawnerPinItems = "Skeleton:Evil bone pile,Draugr:Body Pile,Greydwarf:Greydwarf nest"; /** @TODO Update the spawner object ids to be correct **/
+            spwnsEnabled = Config.Bind("Spawners", "Enabled", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
+            spwnsLoggingEnabled = Config.Bind("Spawners", "Enable Logging", true, "Log object id and position of each destructable resource node in range of the player.\nUsed to get object Ids to assign to pin types");
+            spwnsPinTypes = Config.Bind("Spawners", "Pin Types", defaultSpawnerPinTypes, "Comma seperated list of pin types.\nFormat should be <PinType>:<PinIcon>. Example: Berries:raspberrySprite,Mushroom:mushroomSprite\nVisit nexus for a list of available icon sprite names.\nIf you do not include an icon pin will use a generic white circle.");
+            spwnsPinItems = Config.Bind("Spawners", "Pin Items", defaultSpawnerPinItems, "Associate game object ids to pins using a command seperated list.\nFormat should be <PinType>:<ObjectId>.\nYou can include multiple object ids for one pin type by seperating them with a pipe '|'.\nExample: Crypt:Crypt1|Crypt2|Crypt3|Crypt4,Mushroom:Pickable_Mushroom\n**NOTE Pins will automatically attempt to match (Clone) objects so you can just use the base objectId.");
+
+            //***CREATURES***//
+            string defaultCreaturePinTypes = "Serpent:serpentSprite,Leviathan:leviathanSprite";
+            string defaultCreaturePinItems = "Serpent:$enemy_serpent,Leviathan:Leviathan";
+            creaturesEnabled = Config.Bind("Creatures", "Enabled", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
+            creaturesLoggingEnabled = Config.Bind("Creatures", "Enable Logging", true, "Log object id and position of each destructable resource node in range of the player.\nUsed to get object Ids to assign to pin types");
+            creaturesPinTypes = Config.Bind("Creatures", "Pin Types", defaultCreaturePinTypes, "Comma seperated list of pin types.\nFormat should be <PinType>:<PinIcon>. Example: Berries:raspberrySprite,Mushroom:mushroomSprite\nVisit nexus for a list of available icon sprite names.\nIf you do not include an icon pin will use a generic white circle.");
+            creaturesPinItems = Config.Bind("Creatures", "Pin Items", defaultCreaturePinItems, "Associate game object ids to pins using a command seperated list.\nFormat should be <PinType>:<ObjectId>.\nYou can include multiple object ids for one pin type by seperating them with a pipe '|'.\nExample: Crypt:Crypt1|Crypt2|Crypt3|Crypt4,Mushroom:Pickable_Mushroom\n**NOTE Pins will automatically attempt to match (Clone) objects so you can just use the base objectId.");
 
             if (!modEnabled.Value)
                 enabled = false;
@@ -311,17 +147,19 @@ namespace AMP_Configurable
                 Harmony.CreateAndPatchAll(typeof(SpawnAreaPatchSpawn), "materousapps.mods.automappins_configurable");
                 Harmony.CreateAndPatchAll(typeof(MineRockPatchSpawn), "materousapps.mods.automappins_configurable");
                 Harmony.CreateAndPatchAll(typeof(Player_Patches), "materousapps.mods.automappins_configurable");
-                //Harmony.CreateAndPatchAll(typeof(AMPCommandPatcher), "materousapps.mods.automappins_configurable");
 
                 addedPinLocs = new List<Vector3>();
                 dupPinLocs = new List<Vector3>();
                 autoPins = new List<Minimap.PinData>();
                 pinRemList = new List<Minimap.PinData>();
+
+                /** 
+                 * @TODO Preserve these lists in physical conf files 
+                 **/
                 savedPins = new List<Minimap.PinData>();
                 filteredPins = new List<string>();
 
-                Assets.Init(pinIcons.Value);
-                //Commands.AMPLoader.Init();                
+                Assets.Init();          
             }
         }
 
@@ -786,49 +624,52 @@ namespace AMP_Configurable
         public static Sprite serpentSprite;
         public static Sprite leviathanSprite;
 
-        public static void Init(int pinIcons)
-        {
-            //Mod.Log.LogInfo(string.Format("pinIcons = {0}", pinIcons));
-            switch (pinIcons)
-            {
-                case 1:
-                    tinSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.TinOre.png")));
-                    copperSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.copperore.png")));
-                    silverSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.silverore.png")));
-                    obsidianSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.obsidian.png")));
-                    ironSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.ironscrap.png")));
-                    flametalSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.flametalore.png")));
-                    raspberrySprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.raspberry.png")));
-                    blueberrySprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.blueberries.png")));
-                    cloudberrySprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.cloudberry.png")));
-                    thistleSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.thistle.png")));
-                    mushroomSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mushroom.png")));
-                    carrotSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.carrot.png")));
-                    turnipSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.turnip.png")));
-                    eggSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.dragonegg.png")));
-                    cryptSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.surtling_core.png")));
-                    sunkenCryptSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.witheredbone.png")));
-                    trollCaveSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.TrophyFrostTroll.png")));
-                    skeletonSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.TrophySkeleton.png")));
-                    surtlingSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.TrophySurtling.png")));
-                    draugrSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.TrophyDraugr.png")));
-                    greydwarfSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.TrophyGreydwarf.png")));
-                    serpentSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.TrophySerpent.png")));
-                    leviathanSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.chitin.png")));
-                    break;
-                default:
-                    tinSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_tin.png")));
-                    copperSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_copper.png")));
-                    silverSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_silver.png")));
-                    obsidianSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_obsidian.png")));
-                    ironSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_iron.png")));
-                    raspberrySprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_raspberry.png")));
-                    blueberrySprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_blueberry.png")));
-                    cloudberrySprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_cloudberry.png")));
-                    thistleSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_pin_thistle.png")));
-                    eggSprite = LoadSprite(LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), "AMP_Configurable.Resources.mapicon_egg.png")));
-                    break;
-            }
+        public static Sprite genericTinSprite;
+        public static Sprite genericCopperSprite;
+        public static Sprite genericSilverSprite;
+        public static Sprite genericObsidianSprite;
+        public static Sprite genericIronSprite;
+        public static Sprite genericRaspberrySprite;
+        public static Sprite genericBlueberrySprite;
+        public static Sprite genericCloudberrySprite;
+        public static Sprite genericThistleSprite;
+        public static Sprite genericEggSprite;
+
+        public static void Init() {
+            tinSprite = LoadSprite("AMP_Configurable.Resources.TinOre.png");
+            copperSprite = LoadSprite("AMP_Configurable.Resources.copperore.png");
+            silverSprite = LoadSprite("AMP_Configurable.Resources.silverore.png");
+            obsidianSprite = LoadSprite("AMP_Configurable.Resources.obsidian.png");
+            ironSprite = LoadSprite("AMP_Configurable.Resources.ironscrap.png");
+            flametalSprite = LoadSprite("AMP_Configurable.Resources.flametalore.png");
+            raspberrySprite = LoadSprite("AMP_Configurable.Resources.raspberry.png");
+            blueberrySprite = LoadSprite("AMP_Configurable.Resources.blueberries.png");
+            cloudberrySprite = LoadSprite("AMP_Configurable.Resources.cloudberry.png");
+            thistleSprite = LoadSprite("AMP_Configurable.Resources.thistle.png");
+            mushroomSprite = LoadSprite("AMP_Configurable.Resources.mushroom.png");
+            carrotSprite = LoadSprite("AMP_Configurable.Resources.carrot.png");
+            turnipSprite = LoadSprite("AMP_Configurable.Resources.turnip.png");
+            eggSprite = LoadSprite("AMP_Configurable.Resources.dragonegg.png");
+            cryptSprite = LoadSprite("AMP_Configurable.Resources.surtling_core.png");
+            sunkenCryptSprite = LoadSprite("AMP_Configurable.Resources.witheredbone.png");
+            trollCaveSprite = LoadSprite("AMP_Configurable.Resources.TrophyFrostTroll.png");
+            skeletonSprite = LoadSprite("AMP_Configurable.Resources.TrophySkeleton.png");
+            surtlingSprite = LoadSprite("AMP_Configurable.Resources.TrophySurtling.png");
+            draugrSprite = LoadSprite("AMP_Configurable.Resources.TrophyDraugr.png");
+            greydwarfSprite = LoadSprite("AMP_Configurable.Resources.TrophyGreydwarf.png");
+            serpentSprite = LoadSprite("AMP_Configurable.Resources.TrophySerpent.png");
+            leviathanSprite = LoadSprite("AMP_Configurable.Resources.chitin.png");
+
+            genericTinSprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_tin.png");
+            genericCopperSprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_copper.png");
+            genericSilverSprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_silver.png");
+            genericObsidianSprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_obsidian.png");
+            genericIronSprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_iron.png");
+            genericRaspberrySprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_raspberry.png");
+            genericBlueberrySprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_blueberry.png");
+            genericCloudberrySprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_cloudberry.png");
+            genericThistleSprite = LoadSprite("AMP_Configurable.Resources.mapicon_pin_thistle.png");
+            genericEggSprite = LoadSprite("AMP_Configurable.Resources.mapicon_egg.png");
         }
 
         internal static Texture2D LoadTexture(byte[] file)
@@ -838,16 +679,14 @@ namespace AMP_Configurable
                 Texture2D texture2D = new Texture2D(2, 2);
                 if (ImageConversion.LoadImage(texture2D, file))
                 {
-                    //Mod.Log.LogInfo(string.Format("Texture Found"));
                     return texture2D;
                 }
             }
-            //Mod.Log.LogInfo(string.Format("Texture not found"));
             return (Texture2D)null;
         }
 
-        public static Sprite LoadSprite(Texture2D SpriteTexture, float PixelsPerUnit = 50f)
-        { 
+        public static Sprite LoadSprite(string iconPath, float PixelsPerUnit = 50f) {
+            Texture2D SpriteTexture = LoadTexture(ResourceUtils.GetResource(Assembly.GetExecutingAssembly(), iconPath));
             return SpriteTexture? Sprite.Create(SpriteTexture, new Rect(0.0f, 0.0f, SpriteTexture.width, SpriteTexture.height), new Vector2(0.0f, 0.0f), PixelsPerUnit) : (Sprite)null;
         }
     }
