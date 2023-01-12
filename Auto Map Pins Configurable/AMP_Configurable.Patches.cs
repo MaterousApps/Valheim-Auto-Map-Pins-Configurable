@@ -181,7 +181,7 @@ namespace AMP_Configurable.Patches
             string hoverText = hoverTextComp.m_text;
             string aName = "";
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Dest] Found {0} at {1} {2} {3}", hoverText, hoverTextComp.transform.position.x, hoverTextComp.transform.position.y, hoverTextComp.transform.position.z));
+            Mod.Log.LogInfo(string.Format("[AMP - Dest] Found {0} at {1} {2} {3}", hoverText, hoverTextComp.transform.position.x, hoverTextComp.transform.position.y, hoverTextComp.transform.position.z));
             switch (hoverText)
             {
                 case "$piece_deposit_tin":
@@ -247,7 +247,7 @@ namespace AMP_Configurable.Patches
             string pickableText = pickableComp.name;
             string aName = "";
 
-            //Mod.Log.LogInfo(string.Format("Found {0} at {1} {2} {3}", pickableText, pickableComp.transform.position.x, pickableComp.transform.position.y, pickableComp.transform.position.z));
+            Mod.Log.LogInfo(string.Format("[AMP - Pickable] Found {0} at {1} {2} {3}", pickableText, pickableComp.transform.position.x, pickableComp.transform.position.y, pickableComp.transform.position.z));
 
             switch (pickableText)
             {
@@ -338,7 +338,7 @@ namespace AMP_Configurable.Patches
             string locText = locComp.name;
             string aName = "";
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Loc] Found {0} at {1} {2} {3}", locText, locComp.transform.position.x, locComp.transform.position.y, locComp.transform.position.z));
+            Mod.Log.LogInfo(string.Format("[AMP - Loc] Found {0} at {1} {2} {3}", locText, locComp.transform.position.x, locComp.transform.position.y, locComp.transform.position.z));
             switch (locText)
             {
                 case "Crypt1":
@@ -415,7 +415,7 @@ namespace AMP_Configurable.Patches
             string spawnText = spawnComp.m_text;
             string aName = "";
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Spawn] Found {0} at {1} {2} {3}", spawnText, spawnComp.transform.position.x, spawnComp.transform.position.y, spawnComp.transform.position.z));
+            Mod.Log.LogInfo(string.Format("[AMP - Spawn] Found {0} at {1} {2} {3}", spawnText, spawnComp.transform.position.x, spawnComp.transform.position.y, spawnComp.transform.position.z));
             switch (spawnText)
             {
                 case "Evil bone pile":
@@ -469,7 +469,7 @@ namespace AMP_Configurable.Patches
             string creatureText = creatureComp.m_name;
             string aName = "";
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Characters] Found {0} at {1} {2} {3}", creatureText, creatureComp.transform.position.x, creatureComp.transform.position.y, creatureComp.transform.position.z));
+            Mod.Log.LogInfo(string.Format("[AMP - Characters] Found {0} at {1} {2} {3}", creatureText, creatureComp.transform.position.x, creatureComp.transform.position.y, creatureComp.transform.position.z));
             switch (creatureText)
             {
                 case "$enemy_serpent":
@@ -510,7 +510,7 @@ namespace AMP_Configurable.Patches
             string mineText = mineComp.name;
             string aName = "";
 
-            //Mod.Log.LogInfo(string.Format("[AMP - MineRock] Found {0} at {1} {2} {3}", mineText, mineComp.transform.position.x, mineComp.transform.position.y, mineComp.transform.position.z));
+            Mod.Log.LogInfo(string.Format("[AMP - MineRock] Found {0} at {1} {2} {3}", mineText, mineComp.transform.position.x, mineComp.transform.position.y, mineComp.transform.position.z));
             switch (mineText)
             {
                 case "MineRock_Meteorite":
