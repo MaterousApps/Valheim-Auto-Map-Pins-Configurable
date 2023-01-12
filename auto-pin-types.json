@@ -1,0 +1,178 @@
+{
+  "resources": [
+    {
+      "type": "tin",
+      "label": "Tin",
+      "sprite": "tinOre.png",
+      "size": 20,
+      "object_ids": ["$piece_deposit_tin"]
+    },
+    {
+      "type": "copper",
+      "label": "Copper",
+      "sprite": "copperore.png",
+      "size": 20,
+      "object_ids": ["$piece_deposit_copper"]
+    },
+    {
+      "type": "obsidian",
+      "label": "Obsidian",
+      "sprite": "obsidian.png",
+      "size": 20,
+      "object_ids": ["$piece_deposit_obsidian"]
+    },
+    {
+      "type": "silver",
+      "label": "Silver",
+      "sprite": "silverore.png",
+      "size": 20,
+      "object_ids": ["$piece_deposit_silver", "$piece_deposit_silvervein"]
+    },
+    {
+      "type": "iron",
+      "label": "Iron",
+      "sprite": "ironscrap.png",
+      "size": 20,
+      "object_ids": ["$piece_mudpile"]
+    },
+    {
+      "type": "flametal",
+      "label": "Flametal",
+      "sprite": "flametalore.png",
+      "size": 20,
+      "object_ids": ["MineRock_Meteorite"]
+    }
+  ],
+  "pickables": [
+    {
+      "type": "berries",
+      "label": "Berries",
+      "sprite": "raspberry.png",
+      "size": 20,
+      "object_ids": ["RaspberryBush"]
+    },
+    {
+      "type": "blueberries",
+      "label": "Blueberries",
+      "sprite": "blueberries.png",
+      "size": 20,
+      "object_ids": ["BlueberryBush"]
+    },
+    {
+      "type": "Cloudberries",
+      "label": "Cloudberries",
+      "sprite": "cloudberry.png",
+      "size": 20,
+      "object_ids": ["CloudberryBush"]
+    },
+    {
+      "type": "Thistle",
+      "label": "Thistle",
+      "sprite": "thistle.png",
+      "size": 20,
+      "object_ids": ["Pickable_Thistle"]
+    },
+    {
+      "type": "Mushroom",
+      "label": "Mushroom",
+      "sprite": "mushroom.png",
+      "size": 20,
+      "object_ids": ["Pickable_Mushroom"]
+    },
+    {
+      "type": "Carrot",
+      "label": "Carrot",
+      "sprite": "carrot.png",
+      "size": 20,
+      "object_ids": ["Pickable_SeedCarrot"]
+    },
+    {
+      "type": "Turnip",
+      "label": "Turnip",
+      "sprite": "turnip.png",
+      "size": 20,
+      "object_ids": ["Pickable_SeedTurnip"]
+    },
+    {
+      "type": "dragon_egg",
+      "label": "Dragon Egg",
+      "sprite": "dragonegg.png",
+      "size": 20,
+      "object_ids": ["Pickable_DragonEgg"]
+    }
+  ],
+  "locations": [
+    {
+      "type": "crypt",
+      "label": "Crypt",
+      "sprite": "surtling_core.png",
+      "size": 20,
+      "object_ids": ["Crypt1", "Crypt2", "Crypt3", "Crypt4"]
+    },
+    {
+      "type": "sunken_crypt",
+      "label": "Sunken Crypt",
+      "sprite": "witheredbone.png",
+      "size": 20,
+      "object_ids": [
+        "SunkenCrypt1",
+        "SunkenCrypt2",
+        "SunkenCrypt3",
+        "SunkenCrypt4"
+      ]
+    },
+    {
+      "type": "troll_cave",
+      "label": "Troll Cave",
+      "sprite": "TrophyFrostTroll.png",
+      "size": 20,
+      "object_ids": ["TrollCave01", "TrollCave02"]
+    },
+    {
+      "type": "surtling",
+      "label": "Surtling",
+      "sprite": "TrophySurtling.png",
+      "size": 20,
+      "object_ids": ["FireHole"]
+    }
+  ],
+  "spawners": [
+    {
+      "type": "skeleton_spawner",
+      "label": "Skeleton",
+      "sprite": "TorphySkeleton.png",
+      "size": 20,
+      "object_ids": ["Evil bone pile"]
+    },
+    {
+      "type": "draugr_spawner",
+      "label": "Draugr",
+      "sprite": "TrophyDraugr.png",
+      "size": 20,
+      "object_ids": ["Body Pile"]
+    },
+    {
+      "type": "greydwarf_spawner",
+      "label": "Greydwarf",
+      "sprite": "TrophyGreydwarf.png",
+      "size": 20,
+      "object_ids": ["Greydwarf nest"]
+    }
+  ],
+  "creatures": [
+    {
+      "type": "serpent",
+      "label": "Serpent",
+      "sprite": "TrophySerpent.png",
+      "size": 20,
+      "object_ids": ["$enemy_serpent"]
+    },
+    {
+      "type": "leviathan",
+      "label": "Leviathan",
+      "sprite": "chitin.png",
+      "size": 20,
+      "object_ids": ["Leviathan"]
+    }
+  ]
+}

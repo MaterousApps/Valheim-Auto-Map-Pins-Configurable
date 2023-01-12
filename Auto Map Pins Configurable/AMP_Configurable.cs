@@ -88,11 +88,10 @@ namespace AMP_Configurable
             hideAllLabels = Config.Bind("General", "Hide All Labels", false, "Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
             hidePinLabels = Config.Bind("General", "Hide Pin Label", "", "Hide individual pin type labels.\nValue should be a comma seperated list of pin types.");
             
-            string defaultSavePinTypes = "Crypt,TrollCave,SunkenCrypt,FrostCave,InfestedMine";
-            string defaultPinSizes = "Carrot:25,Turnip:25,Crypt:25,Sunken Crypt:25,Troll Cave:25,Skeleton:25,Draugr:25,Surtling:25,Greydwarf:25,Serpent:25:Leviathan:25";
+            string defaultSavePinTypes = "crypt,troll_cave,sunken_crypt,frost_cave,infested_mine";
             savePinTypes = Config.Bind("General", "Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
             defaultPinSize = Config.Bind("General", "Default Pin Size", 20, "Default pin size for all pins.");
-            customPinSizes = Config.Bind("General", "Custom Pin Sizes", defaultPinSizes, "Customize the size of individual pins.\nValue should be a comma seperated list of pin types each with a colon ':' and a size.\nExample: Berries:20,Troll Cave:25");
+            customPinSizes = Config.Bind("General", "Custom Pin Sizes", "", "Customize the size of individual pins.\nValue should be a comma seperated list of pin types each with a colon ':' and a size.\nExample: Berries:20,Troll Cave:25");
             
             //***ORES***//
             string defaultOresPinTypes = "Tin:tinSprite,Copper:copperSprite,Obsidian:obsidianSprite,Silver:silverSprite,Iron:ironSprite,Flametal:flametalSprite";
