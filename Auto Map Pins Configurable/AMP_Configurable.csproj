@@ -63,6 +63,9 @@
     <Reference Include="MonoMod.Utils, Version=20.1.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MonoMod.Utils.20.1.1.4\lib\net40\MonoMod.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -91,49 +94,12 @@
     <Compile Include="AMP_Configurable.Patches.cs" />
     <Compile Include="AMP_Configurable.Modules.cs" />
     <Compile Include="AMP_Configurable.Commands.cs" />
+    <Compile Include="AMP_Configurable.PinConfig.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\mapicon_pin_raspberry.png" />
-    <EmbeddedResource Include="Resources\mapicon_egg.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_blueberry.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_cloudberry.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_copper.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_iron.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_obsidian.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_silver.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_thistle.png" />
-    <EmbeddedResource Include="Resources\mapicon_pin_tin.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\blueberries.png" />
-    <EmbeddedResource Include="Resources\cloudberry.png" />
-    <EmbeddedResource Include="Resources\copperore.png" />
-    <EmbeddedResource Include="Resources\dragonegg.png" />
-    <EmbeddedResource Include="Resources\ironscrap.png" />
-    <EmbeddedResource Include="Resources\obsidian.png" />
-    <EmbeddedResource Include="Resources\raspberry.png" />
-    <EmbeddedResource Include="Resources\silverore.png" />
-    <EmbeddedResource Include="Resources\thistle.png" />
-    <EmbeddedResource Include="Resources\TinOre.png" />
-    <EmbeddedResource Include="Resources\mushroom.png" />
-    <EmbeddedResource Include="Resources\seedcarrot.png" />
-    <EmbeddedResource Include="Resources\seedturnip.png" />
-    <EmbeddedResource Include="Resources\TrophyDraugr.png" />
-    <EmbeddedResource Include="Resources\TrophyGreydwarf.png" />
-    <EmbeddedResource Include="Resources\TrophySkeleton.png" />
-    <EmbeddedResource Include="Resources\TrophySurtling.png" />
-    <EmbeddedResource Include="Resources\surtling_core.png" />
-    <EmbeddedResource Include="Resources\TrophyFrostTroll.png" />
-    <EmbeddedResource Include="Resources\TrophySerpent.png" />
-    <EmbeddedResource Include="Resources\witheredbone.png" />
-    <EmbeddedResource Include="Resources\carrot.png" />
-    <EmbeddedResource Include="Resources\turnip.png" />
-    <EmbeddedResource Include="Resources\chitin.png" />
-    <EmbeddedResource Include="Resources\flametalore.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

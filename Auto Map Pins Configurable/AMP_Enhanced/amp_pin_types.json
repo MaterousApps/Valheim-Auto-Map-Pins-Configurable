@@ -1,119 +1,119 @@
 {
   "resources": [
     {
-      "type": "tin",
+      "type": 101,
       "label": "Tin",
-      "sprite": "tinOre.png",
+      "icon": "tinOre.png",
       "size": 20,
       "object_ids": ["$piece_deposit_tin"]
     },
     {
-      "type": "copper",
+      "type": 102,
       "label": "Copper",
-      "sprite": "copperore.png",
+      "icon": "copperore.png",
       "size": 20,
       "object_ids": ["$piece_deposit_copper"]
     },
     {
-      "type": "obsidian",
+      "type": 103,
       "label": "Obsidian",
-      "sprite": "obsidian.png",
+      "icon": "obsidian.png",
       "size": 20,
       "object_ids": ["$piece_deposit_obsidian"]
     },
     {
-      "type": "silver",
+      "type": 104,
       "label": "Silver",
-      "sprite": "silverore.png",
+      "icon": "silverore.png",
       "size": 20,
       "object_ids": ["$piece_deposit_silver", "$piece_deposit_silvervein"]
     },
     {
-      "type": "iron",
+      "type": 105,
       "label": "Iron",
-      "sprite": "ironscrap.png",
+      "icon": "ironscrap.png",
       "size": 20,
       "object_ids": ["$piece_mudpile"]
     },
     {
-      "type": "flametal",
+      "type": 106,
       "label": "Flametal",
-      "sprite": "flametalore.png",
+      "icon": "flametalore.png",
       "size": 20,
       "object_ids": ["MineRock_Meteorite"]
     }
   ],
   "pickables": [
     {
-      "type": "berries",
+      "type": 107,
       "label": "Berries",
-      "sprite": "raspberry.png",
+      "icon": "raspberry.png",
       "size": 20,
       "object_ids": ["RaspberryBush"]
     },
     {
-      "type": "blueberries",
+      "type": 108,
       "label": "Blueberries",
-      "sprite": "blueberries.png",
+      "icon": "blueberries.png",
       "size": 20,
       "object_ids": ["BlueberryBush"]
     },
     {
-      "type": "Cloudberries",
+      "type": 109,
       "label": "Cloudberries",
-      "sprite": "cloudberry.png",
+      "icon": "cloudberry.png",
       "size": 20,
       "object_ids": ["CloudberryBush"]
     },
     {
-      "type": "Thistle",
+      "type": 110,
       "label": "Thistle",
-      "sprite": "thistle.png",
+      "icon": "thistle.png",
       "size": 20,
       "object_ids": ["Pickable_Thistle"]
     },
     {
-      "type": "Mushroom",
+      "type": 111,
       "label": "Mushroom",
-      "sprite": "mushroom.png",
+      "icon": "mushroom.png",
       "size": 20,
       "object_ids": ["Pickable_Mushroom"]
     },
     {
-      "type": "Carrot",
+      "type": 112,
       "label": "Carrot",
-      "sprite": "carrot.png",
-      "size": 20,
+      "icon": "carrot.png",
+      "size": 25,
       "object_ids": ["Pickable_SeedCarrot"]
     },
     {
-      "type": "Turnip",
+      "type": 113,
       "label": "Turnip",
-      "sprite": "turnip.png",
-      "size": 20,
+      "icon": "turnip.png",
+      "size": 25,
       "object_ids": ["Pickable_SeedTurnip"]
     },
     {
-      "type": "dragon_egg",
+      "type": 114,
       "label": "Dragon Egg",
-      "sprite": "dragonegg.png",
+      "icon": "dragonegg.png",
       "size": 20,
       "object_ids": ["Pickable_DragonEgg"]
     }
   ],
   "locations": [
     {
-      "type": "crypt",
+      "type": 115,
       "label": "Crypt",
-      "sprite": "surtling_core.png",
-      "size": 20,
+      "icon": "surtling_core.png",
+      "size": 25,
       "object_ids": ["Crypt1", "Crypt2", "Crypt3", "Crypt4"]
     },
     {
-      "type": "sunken_crypt",
+      "type": 116,
       "label": "Sunken Crypt",
-      "sprite": "witheredbone.png",
-      "size": 20,
+      "icon": "witheredbone.png",
+      "size": 25,
       "object_ids": [
         "SunkenCrypt1",
         "SunkenCrypt2",
@@ -122,56 +122,56 @@
       ]
     },
     {
-      "type": "troll_cave",
+      "type": 117,
       "label": "Troll Cave",
-      "sprite": "TrophyFrostTroll.png",
-      "size": 20,
+      "icon": "TrophyFrostTroll.png",
+      "size": 25,
       "object_ids": ["TrollCave01", "TrollCave02"]
     },
     {
-      "type": "surtling",
+      "type": 118,
       "label": "Surtling",
-      "sprite": "TrophySurtling.png",
-      "size": 20,
+      "icon": "TrophySurtling.png",
+      "size": 25,
       "object_ids": ["FireHole"]
     }
   ],
   "spawners": [
     {
-      "type": "skeleton_spawner",
+      "type": 119,
       "label": "Skeleton",
-      "sprite": "TorphySkeleton.png",
-      "size": 20,
+      "icon": "TorphySkeleton.png",
+      "size": 25,
       "object_ids": ["Evil bone pile"]
     },
     {
-      "type": "draugr_spawner",
+      "type": 120,
       "label": "Draugr",
-      "sprite": "TrophyDraugr.png",
-      "size": 20,
+      "icon": "TrophyDraugr.png",
+      "size": 25,
       "object_ids": ["Body Pile"]
     },
     {
-      "type": "greydwarf_spawner",
+      "type": 121,
       "label": "Greydwarf",
-      "sprite": "TrophyGreydwarf.png",
-      "size": 20,
+      "icon": "TrophyGreydwarf.png",
+      "size": 25,
       "object_ids": ["Greydwarf nest"]
     }
   ],
   "creatures": [
     {
-      "type": "serpent",
+      "type": 122,
       "label": "Serpent",
-      "sprite": "TrophySerpent.png",
-      "size": 20,
+      "icon": "TrophySerpent.png",
+      "size": 25,
       "object_ids": ["$enemy_serpent"]
     },
     {
-      "type": "leviathan",
+      "type": 123,
       "label": "Leviathan",
-      "sprite": "chitin.png",
-      "size": 20,
+      "icon": "chitin.png",
+      "size": 25,
       "object_ids": ["Leviathan"]
     }
   ]

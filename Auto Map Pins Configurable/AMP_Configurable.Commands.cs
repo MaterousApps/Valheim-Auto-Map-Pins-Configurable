@@ -180,7 +180,7 @@ namespace AMP_Configurable.Commands
 
                         if (filterList.Contains(str2))
                         {
-                            PinnedObject.loadData(str2);
+                            PinnedObject.loadData(null, str2);
 
                             foreach (Minimap.PinData pins in Mod.savedPins)
                             {
@@ -250,7 +250,7 @@ namespace AMP_Configurable.Commands
 
                         if (filterList.Contains(str2))
                         {
-                            PinnedObject.loadData(str2);
+                            PinnedObject.loadData(null, str2);
 
                             if (Mod.filteredPins.Contains(PinnedObject.pType.ToString()))
                             {
@@ -278,7 +278,7 @@ namespace AMP_Configurable.Commands
 
                 for (int x = 0; x < Mod.filteredPins.Count(); x++)
                 {
-                    PinnedObject.loadData(Mod.filteredPins[x]);
+                    PinnedObject.loadData(null, Mod.filteredPins[x]);
 
                     
                     if (output == null || output == "")
