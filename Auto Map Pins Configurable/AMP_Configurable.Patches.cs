@@ -196,44 +196,6 @@ namespace AMP_Configurable.Patches
                     break;
                 }
             }
-            
-            // switch (hoverText)
-            // {
-            //     case "$piece_deposit_tin":
-            //         if (Mod.pinTin.Value)
-            //         {
-            //             aName = "Tin";
-            //         }
-            //         break;
-            //     case "$piece_deposit_copper":
-            //         if (Mod.pinCopper.Value)
-            //         {
-            //             aName = "Copper";
-            //         }
-            //         break;
-            //     case "$piece_deposit_obsidian":
-            //         if (Mod.pinObsidian.Value)
-            //         {
-            //             aName = "Obsidian";
-            //         }
-            //         break;
-            //     case "$piece_deposit_silver":
-            //     case "$piece_deposit_silvervein":
-            //         if (Mod.pinSilver.Value)
-            //         {
-            //             aName = "Silver";
-            //         }
-            //         break;
-            //     case "$piece_mudpile":
-            //         if (Mod.pinIron.Value)
-            //         {
-            //             aName = "Iron";
-            //         }
-            //         break;
-            //     default:
-            //         aName = "";
-            //         break;
-            // }
 
             if (type != null)
             {
@@ -276,69 +238,6 @@ namespace AMP_Configurable.Patches
                 }
             }
 
-            // switch (pickableText)
-            // {
-            //     case "RaspberryBush":
-            //     case "RaspberryBush(Clone)":
-            //         if (Mod.pinBerries.Value)
-            //         {
-            //             aName = "Berries";
-            //         }
-            //         break;
-            //     case "BlueberryBush":
-            //     case "BlueberryBush(Clone)":
-            //         if (Mod.pinBlueberries.Value)
-            //         {
-            //             aName = "Blueberries";
-            //         }
-            //         break;
-            //     case "CloudberryBush":
-            //     case "CloudberryBush(Clone)":
-            //         if (Mod.pinCloudberries.Value)
-            //         {
-            //             aName = "Cloudberries";
-            //         }
-            //         break;
-            //     case "Pickable_Thistle":
-            //     case "Pickable_Thistle(Clone)":
-            //         if (Mod.pinThistle.Value)
-            //         {
-            //             aName = "Thistle";
-            //         }
-            //         break;
-            //     case "Pickable_DragonEgg":
-            //     case "Pickable_DragonEgg(Clone)":
-            //         if (Mod.pinDragonEgg.Value)
-            //         {
-            //             aName = "DragonEgg";
-            //         }
-            //         break;
-            //     case "Pickable_Mushroom":
-            //     case "Pickable_Mushroom(Clone)":
-            //         if (Mod.pinMushroom.Value)
-            //         {
-            //             aName = "Mushroom";
-            //         }
-            //         break;
-            //     case "Pickable_SeedCarrot":
-            //     case "Pickable_SeedCarrot(Clone)":
-            //         if (Mod.pinCarrot.Value)
-            //         {
-            //             aName = "Carrot";
-            //         }
-            //         break;
-            //     case "Pickable_SeedTurnip":
-            //     case "Pickable_SeedTurnip(Clone)":
-            //         if (Mod.pinTurnip.Value)
-            //         {
-            //             aName = "Turnip";
-            //         }
-            //         break;
-            //     default:
-            //         aName = "";
-            //         break;
-            // }
-
             if (type != null)
             {
                 if (!Mod.pinItems.ContainsKey(pickableComp.transform.position))
@@ -379,55 +278,6 @@ namespace AMP_Configurable.Patches
                     break;
                 }
             }
-
-            // switch (locText)
-            // {
-            //     case "Crypt1":
-            //     case "Crypt2":
-            //     case "Crypt3":
-            //     case "Crypt4":
-            //     case "Crypt1(Clone)":
-            //     case "Crypt2(Clone)":
-            //     case "Crypt3(Clone)":
-            //     case "Crypt4(Clone)":
-            //         if (Mod.pinCrypt.Value)
-            //         {
-            //             aName = "Crypt";
-            //         }
-            //         break;
-            //     case "SunkenCrypt1":
-            //     case "SunkenCrypt2":
-            //     case "SunkenCrypt3":
-            //     case "SunkenCrypt4":
-            //     case "SunkenCrypt1(Clone)":
-            //     case "SunkenCrypt2(Clone)":
-            //     case "SunkenCrypt3(Clone)":
-            //     case "SunkenCrypt4(Clone)":
-            //         if (Mod.pinSunkenCrypt.Value)
-            //         {
-            //             aName = "SunkenCrypt";
-            //         }
-            //         break;
-            //     case "TrollCave01":
-            //     case "TrollCave02":
-            //     case "TrollCave01(Clone)":
-            //     case "TrollCave02(Clone)":
-            //         if (Mod.pinTrollCave.Value)
-            //         {
-            //             aName = "TrollCave";
-            //         }
-            //         break;
-            //     case "FireHole":
-            //     case "FireHole(Clone)":
-            //         if (Mod.pinSurtling.Value)
-            //         {
-            //             aName = "Surtling";
-            //         }
-            //         break;
-            //     default:
-            //         aName = "";
-            //         break;
-            // }
 
             if (type != null)
             {
@@ -470,32 +320,6 @@ namespace AMP_Configurable.Patches
                 }
             }
 
-            // switch (spawnText)
-            // {
-            //     case "Evil bone pile":
-            //         if (Mod.pinSkeleton.Value)
-            //         {
-            //             aName = "Skeleton";
-            //         }
-            //         break;
-            //     case "Body Pile":
-            //     case "Body pile":
-            //         if (Mod.pinDraugr.Value)
-            //         {
-            //             aName = "Draugr";
-            //         }
-            //         break;
-            //     case "Greydwarf nest":
-            //         if (Mod.pinGreydwarf.Value)
-            //         {
-            //             aName = "Greydwarf";
-            //         }
-            //         break;
-            //     default:
-            //         aName = "";
-            //         break;
-            // }
-
             if (type != null)
             {
                 if (!Mod.pinItems.ContainsKey(spawnComp.transform.position))
@@ -536,19 +360,6 @@ namespace AMP_Configurable.Patches
                     break;
                 }
             }
-                        
-            // switch (creatureText)
-            // {
-            //     case "$enemy_serpent":
-            //         if (Mod.pinSerpent.Value)
-            //         {
-            //             aName = "Serpent";
-            //         }
-            //         break;
-            //     default:
-            //         aName = "";
-            //         break;
-            // }
 
             if (type != null)
             {
@@ -590,20 +401,6 @@ namespace AMP_Configurable.Patches
                     break;
                 }
             }
-            
-            // switch (mineText)
-            // {
-            //     case "MineRock_Meteorite":
-            //     case "MineRock_Meteorite(Clone)":
-            //         if (Mod.pinFlametal.Value)
-            //         {
-            //             aName = "Flametal";
-            //         }
-            //         break;
-            //     default:
-            //         aName = "";
-            //         break;
-            // }
 
             if (type != null)
             {
@@ -645,20 +442,6 @@ namespace AMP_Configurable.Patches
                     break;
                 }
             }
-            
-            // switch (levText)
-            // {
-            //     case "Leviathan":
-            //     case "Leviathan(Clone)":
-            //         if (Mod.pinLeviathan.Value)
-            //         {
-            //             aName = "Leviathan";
-            //         }
-            //         break;
-            //     default:
-            //         aName = "";
-            //         break;
-            // }
 
             if (type != null)
             {
