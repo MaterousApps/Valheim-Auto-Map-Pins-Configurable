@@ -333,23 +333,17 @@ namespace AMP_Configurable.Patches
             if (!levComp) return;
 
             string levText = levComp.name;
+            levText = levText.Replace("(Clone)", "");
             PinType type = null;
 
             if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
             {
                 var pos = levComp.transform.position;
-                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {levText} at {pos.x} {pos.y} {pos.z}");
+                Mod.Log.LogInfo($"[AMP - Creature] Found {levText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.pins)
-            {
-                levText = levText.Replace("(Clone)", "");
-                if (pinType.object_ids.Contains(levText))
-                {
-                    type = pinType;
-                    break;
-                }
-            }
+            if (Mod.objectPins.ContainsKey(levText))
+                type = Mod.objectPins[levText];
 
             if (type != null && !Mod.pinItems.ContainsKey(levComp.transform.position))
                 Mod.pinItems.Add(levComp.transform.position, type);
