@@ -1,8 +1,8 @@
-﻿using Utilities;
+﻿using AMP_Configurable.Commands;
+using AMP_Configurable.Patches;
 using System.Collections.Generic;
 using UnityEngine;
-using AMP_Configurable.Commands;
-using AMP_Configurable.Patches;
+using Utilities;
 
 namespace AMP_Configurable.Modules
 {
@@ -70,7 +70,7 @@ namespace AMP_Configurable.Modules
             AMPCommandPatcher.Harmony.UnpatchSelf();
         }
 
-        
+
 
         private class History
         {
