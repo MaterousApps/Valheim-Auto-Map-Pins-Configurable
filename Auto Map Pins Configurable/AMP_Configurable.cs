@@ -78,27 +78,27 @@ namespace AMP_Configurable
             nexusID = Config.Bind("_General_", "NexusID", 744, "Nexus mod ID for updates");
             modEnabled = Config.Bind("_General_", "Enabled", true, "Enable this mod");
 
-            pinOverlapDistance = Config.Bind<float>("Pins", "PinOverlapDistance", 10, "Distance around pins to prevent overlapping of similar pins");
-            pinRange = Config.Bind("Pins", "Pin Range", 100, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 5\nMax 150\nRecommended 50-75");
+            pinOverlapDistance = Config.Bind<float>("1. Pins", "1. PinOverlapDistance", 10, "Distance around pins to prevent overlapping of similar pins");
+            pinRange = Config.Bind("1. Pins", "2. Pin Range", 100, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 5\nMax 150\nRecommended 50-75");
             if (pinRange.Value < 5) pinRange.Value = 5;
             if (pinRange.Value > 150) pinRange.Value = 150;
-            hideAllLabels = Config.Bind("Pins", "Hide All Labels", false, "Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
-            hidePinLabels = Config.Bind("Pins", "Hide Pin Label", "", "Hide individual pin type labels.\nValue should be a comma seperated list of pin types.");
+            hideAllLabels = Config.Bind("1. Pins", "3. Hide All Labels", false, "Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
+            hidePinLabels = Config.Bind("1. Pins", "4. Hide Pin Label", "", "Hide individual pin type labels.\nValue should be a comma seperated list of pin types.");
             string defaultSavePinTypes = "Crypt,Troll Cave,Sunken Crypt,Frost Cave,Infested Mine";
-            savePinTypes = Config.Bind("Pins", "Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
+            savePinTypes = Config.Bind("1. Pins", "5. Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
 
-            oresEnabled = Config.Bind("Pins", "Resources", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
-            pickablesEnabled = Config.Bind("Pins", "Pickables", true, "Enable/Disable pins for\nBerries, Mushrooms, and other pickable items");
-            locsEnabled = Config.Bind("Pins", "Locations", true, "Enable/Disable pins for\nCrypts, Troll Caves, and other discoverable locations");
-            spwnsEnabled = Config.Bind("Pins", "Spawners", true, "Enable/Disable pins for\nGreydwarf nests, Skeleton Bone Piles, and other creature spawners");
-            creaturesEnabled = Config.Bind("Pins", "Creatures", true, "Enable/Disable pins for\nSerpents, and other creatures when they spawn with in range of the player");
+            oresEnabled = Config.Bind("2. Pins Enable/Disable", "1. Resources", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
+            pickablesEnabled = Config.Bind("2. Pins Enable/Disable", "2. Pickables", true, "Enable/Disable pins for\nBerries, Mushrooms, and other pickable items");
+            locsEnabled = Config.Bind("2. Pins Enable/Disable", "3. Locations", true, "Enable/Disable pins for\nCrypts, Troll Caves, and other discoverable locations");
+            spwnsEnabled = Config.Bind("2. Pins Enable/Disable", "4. Spawners", true, "Enable/Disable pins for\nGreydwarf nests, Skeleton Bone Piles, and other creature spawners");
+            creaturesEnabled = Config.Bind("2. Pins Enable/Disable", "5. Creatures", true, "Enable/Disable pins for\nSerpents, and other creatures when they spawn with in range of the player");
 
-            loggingEnabled = Config.Bind("Logging", "Enable Logging", true, "Enable Logging");
-            oresLoggingEnabled = Config.Bind("Logging", "Resources", false, "Log object id and position of each destructable resource node in range of the player.\nUsed to get object Ids to assign to pin types");
-            pickablesLoggingEnabled = Config.Bind("Logging", "Pickables", false, "Log object id and position of each pickable item in range of the player.\nUsed to get object Ids to assign to pin types");
-            locsLoggingEnabled = Config.Bind("Logging", "Locations", false, "Log object id and position of each location object in range of the player.\nUsed to get object Ids to assign to pin types");
-            spwnsLoggingEnabled = Config.Bind("Logging", "Spawners", false, "Log object id and position of each creature spawner node in range of the player.\nUsed to get object Ids to assign to pin types");
-            creaturesLoggingEnabled = Config.Bind("Logging", "Creatures", false, "Log object id and position of creatures that spawn in range of the player.\nUsed to get object Ids to assign to pin types");
+            loggingEnabled = Config.Bind("3. Logging", "1. Enable Logging", true, "Enable Logging");
+            oresLoggingEnabled = Config.Bind("3. Logging", "2. Resource Logging", false, "Log object id and position of each destructable resource node in range of the player.\nUsed to get object Ids to assign to pin types");
+            pickablesLoggingEnabled = Config.Bind("3. Logging", "3. Pickables Logging", false, "Log object id and position of each pickable item in range of the player.\nUsed to get object Ids to assign to pin types");
+            locsLoggingEnabled = Config.Bind("3. Logging", "4. Locations Logging", false, "Log object id and position of each location object in range of the player.\nUsed to get object Ids to assign to pin types");
+            spwnsLoggingEnabled = Config.Bind("3. Logging", "5. Spawners Logging", false, "Log object id and position of each creature spawner node in range of the player.\nUsed to get object Ids to assign to pin types");
+            creaturesLoggingEnabled = Config.Bind("3. Logging", "6. Creatures Logging", false, "Log object id and position of creatures that spawn in range of the player.\nUsed to get object Ids to assign to pin types");
 
             if (!modEnabled.Value)
             {
