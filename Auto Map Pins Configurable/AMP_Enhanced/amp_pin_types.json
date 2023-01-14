@@ -207,7 +207,7 @@
       "object_ids": ["$enemy_serpent"]
     },
     {
-      "type": 12,
+      "type": 129,
       "label": "Leviathan",
       "icon": "chitin.png",
       "size": 25,
