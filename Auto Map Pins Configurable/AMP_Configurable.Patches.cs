@@ -171,10 +171,8 @@ namespace AMP_Configurable.Patches
 
             if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
             {
-                var x = hoverTextComp.transform.position.x;
-                var y = hoverTextComp.transform.position.y;
-                var z = hoverTextComp.transform.position.z;
-                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {hoverText} at {x} {y} {z}");
+                var pos = hoverTextComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {hoverText} at {pos.x} {pos.y} {pos.z}");
             }
 
             if (Mod.objectPins.ContainsKey(hoverText))
@@ -201,10 +199,8 @@ namespace AMP_Configurable.Patches
 
             if (Mod.loggingEnabled.Value && Mod.pickablesLoggingEnabled.Value)
             {
-                var x = pickableComp.transform.position.x;
-                var y = pickableComp.transform.position.y;
-                var z = pickableComp.transform.position.z;
-                Mod.Log.LogInfo($"[AMP - Pickable] Found {pickableText} at {x} {y} {z}");
+                var pos = pickableComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Pickable] Found {pickableText} at {pos.x} {pos.y} {pos.z}");
             }
 
             if (Mod.objectPins.ContainsKey(pickableText))
@@ -231,10 +227,8 @@ namespace AMP_Configurable.Patches
 
             if (Mod.loggingEnabled.Value && Mod.locsLoggingEnabled.Value)
             {
-                var x = locComp.transform.position.x;
-                var y = locComp.transform.position.y;
-                var z = locComp.transform.position.z;
-                Mod.Log.LogInfo($"[AMP - Location] Found {locText} at {x} {y} {z}");
+                var pos = locComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Location] Found {locText} at {pos.x} {pos.y} {pos.z}");
             }
 
             if (Mod.objectPins.ContainsKey(locText))
@@ -261,10 +255,8 @@ namespace AMP_Configurable.Patches
 
             if (Mod.loggingEnabled.Value && Mod.spwnsLoggingEnabled.Value)
             {
-                var x = spawnComp.transform.position.x;
-                var y = spawnComp.transform.position.y;
-                var z = spawnComp.transform.position.z;
-                Mod.Log.LogInfo($"[AMP - Spawner] Found {spawnText} at {x} {y} {z}");
+                var pos = spawnComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Spawner] Found {spawnText} at {pos.x} {pos.y} {pos.z}");
             }
 
             if (Mod.objectPins.ContainsKey(spawnText))
@@ -291,10 +283,8 @@ namespace AMP_Configurable.Patches
 
             if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
             {
-                var x = creatureComp.transform.position.x;
-                var y = creatureComp.transform.position.y;
-                var z = creatureComp.transform.position.z;
-                Mod.Log.LogInfo($"[AMP - Creature] Found {creatureText} at {x} {y} {z}");
+                var pos = creatureComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Creature] Found {creatureText} at {pos.x} {pos.y} {pos.z}");
             }
 
             if (Mod.objectPins.ContainsKey(creatureText))
@@ -320,10 +310,8 @@ namespace AMP_Configurable.Patches
 
             if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
             {
-                var x = mineComp.transform.position.x;
-                var y = mineComp.transform.position.y;
-                var z = mineComp.transform.position.z;
-                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {mineText} at {x} {y} {z}");
+                var pos = mineComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {mineText} at {pos.x} {pos.y} {pos.z}");
             }
 
             if (Mod.objectPins.ContainsKey(mineText))
@@ -349,10 +337,8 @@ namespace AMP_Configurable.Patches
 
             if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
             {
-                var x = levComp.transform.position.x;
-                var y = levComp.transform.position.y;
-                var z = levComp.transform.position.z;
-                Mod.Log.LogInfo($"[AMP - Creature] Found {levText} at {x} {y} {z}");
+                var pos = levComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {levText} at {pos.x} {pos.y} {pos.z}");
             }
 
             foreach (PinType pinType in Mod.pinTypes.pins)
