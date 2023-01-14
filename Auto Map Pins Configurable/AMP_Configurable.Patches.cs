@@ -53,8 +53,9 @@ namespace AMP_Configurable.Patches
           bool save,
           bool isChecked)
         {
-            if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Trying to add pin {type}");
-            return ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
+            bool shouldAddPin = ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
+            if (Mod.loggingEnabled.Value && shouldAddPin) Mod.Log.LogInfo($"[AMP] Trying to add pin {type}");
+            return shouldAddPin;
         }
 
         [HarmonyPatch(typeof(Minimap), "UpdateProfilePins")]
@@ -107,8 +108,6 @@ namespace AMP_Configurable.Patches
                     Mod.FilterPins();
                 }
             }
-
-
         }
 
         [HarmonyPatch(typeof(Minimap), "OnMapRightClick")]
@@ -178,22 +177,11 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {hoverText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.resources)
-            {
-                if (pinType.object_ids.Contains(hoverText))
-                {
-                    type = pinType;
-                    break;
-                }
-            }
+            if (Mod.objectPins.ContainsKey(hoverText))
+                type = Mod.objectPins[hoverText];
 
-            if (type != null)
-            {
-                if (!Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
-                {
-                    Mod.pinItems.Add(hoverTextComp.transform.position, type);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
+                Mod.pinItems.Add(hoverTextComp.transform.position, type);
         }
     }
 
@@ -219,22 +207,11 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Pickable] Found {pickableText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.pickables)
-            {
-                if (pinType.object_ids.Contains(pickableText))
-                {
-                    type = pinType;
-                    break;
-                }
-            }
+            if (Mod.objectPins.ContainsKey(pickableText))
+                type = Mod.objectPins[pickableText];
 
-            if (type != null)
-            {
-                if (!Mod.pinItems.ContainsKey(pickableComp.transform.position))
-                {
-                    Mod.pinItems.Add(pickableComp.transform.position, type);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(pickableComp.transform.position))
+                Mod.pinItems.Add(pickableComp.transform.position, type);
         }
     }
 
@@ -260,22 +237,11 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Location] Found {locText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.locations)
-            {
-                if (pinType.object_ids.Contains(locText))
-                {
-                    type = pinType;
-                    break;
-                }
-            }
+            if (Mod.objectPins.ContainsKey(locText))
+                type = Mod.objectPins[locText];
 
-            if (type != null)
-            {
-                if (!Mod.pinItems.ContainsKey(locComp.transform.position))
-                {
-                    Mod.pinItems.Add(locComp.transform.position, type);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(locComp.transform.position))
+                Mod.pinItems.Add(locComp.transform.position, type);
         }
     }
 
@@ -301,22 +267,11 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Spawner] Found {spawnText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.spawners)
-            {
-                if (pinType.object_ids.Contains(spawnText))
-                {
-                    type = pinType;
-                    break;
-                }
-            }
+            if (Mod.objectPins.ContainsKey(spawnText))
+                type = Mod.objectPins[spawnText];
 
-            if (type != null)
-            {
-                if (!Mod.pinItems.ContainsKey(spawnComp.transform.position))
-                {
-                    Mod.pinItems.Add(spawnComp.transform.position, type);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(spawnComp.transform.position))
+                Mod.pinItems.Add(spawnComp.transform.position, type);
         }
     }
 
@@ -342,22 +297,11 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Creature] Found {creatureText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.creatures)
-            {
-                if (pinType.object_ids.Contains(creatureText))
-                {
-                    type = pinType;
-                    break;
-                }
-            }
+            if (Mod.objectPins.ContainsKey(creatureText))
+                type = Mod.objectPins[creatureText];
 
-            if (type != null)
-            {
-                if (!Mod.pinItems.ContainsKey(creatureComp.transform.position))
-                {
-                    Mod.pinItems.Add(creatureComp.transform.position, type);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(creatureComp.transform.position))
+                Mod.pinItems.Add(creatureComp.transform.position, type);
         }
     }
 
@@ -382,23 +326,11 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {mineText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.resources)
-            {
-                mineText = mineText.Replace("(Clone)", "");
-                if (pinType.object_ids.Contains(mineText))
-                {
-                    type = pinType;
-                    break;
-                }
-            }
+            if (Mod.objectPins.ContainsKey(mineText))
+                type = Mod.objectPins[mineText];
 
-            if (type != null)
-            {
-                if (!Mod.pinItems.ContainsKey(mineComp.transform.position))
-                {
-                    Mod.pinItems.Add(mineComp.transform.position, type);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(mineComp.transform.position))
+                Mod.pinItems.Add(mineComp.transform.position, type);
         }
     }
 
@@ -423,7 +355,7 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Creature] Found {levText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.creatures)
+            foreach (PinType pinType in Mod.pinTypes.pins)
             {
                 levText = levText.Replace("(Clone)", "");
                 if (pinType.object_ids.Contains(levText))
@@ -433,13 +365,8 @@ namespace AMP_Configurable.Patches
                 }
             }
 
-            if (type != null)
-            {
-                if (!Mod.pinItems.ContainsKey(levComp.transform.position))
-                {
-                    Mod.pinItems.Add(levComp.transform.position, type);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(levComp.transform.position))
+                Mod.pinItems.Add(levComp.transform.position, type);
         }
     }
     internal class Player_Patches

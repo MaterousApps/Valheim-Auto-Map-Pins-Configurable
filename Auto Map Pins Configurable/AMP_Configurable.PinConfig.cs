@@ -17,10 +17,6 @@ namespace AMP_Configurable.PinConfig
     [Serializable]
     public class PinConfig
     {
-        public PinType[] resources;
-        public PinType[] pickables;
-        public PinType[] locations;
-        public PinType[] spawners;
-        public PinType[] creatures;
+        public PinType[] pins;
     }
 }

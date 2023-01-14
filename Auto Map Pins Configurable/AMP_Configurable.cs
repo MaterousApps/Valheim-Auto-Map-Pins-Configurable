@@ -50,6 +50,7 @@ namespace AMP_Configurable
 
         //***PUBLIC VARIABLES***//
         public static PinConfig.PinConfig pinTypes;
+        public static IDictionary<string, PinConfig.PinType> objectPins = new Dictionary<string, PinConfig.PinType>();
         public static List<Minimap.PinData> autoPins;
         public static List<Minimap.PinData> savedPins;
         public static List<Minimap.PinData> pinRemList;
@@ -69,6 +70,9 @@ namespace AMP_Configurable
 
             /** Load Pin Type Config from JSON file **/
             pinTypes = ResourceUtils.LoadPinConfig("amp_pin_types.json");
+            foreach (PinConfig.PinType pinType in pinTypes.pins)
+                foreach (string objectId in pinType.object_ids)
+                    objectPins[objectId] = pinType;
 
             /** General Config **/
             nexusID = Config.Bind("_General_", "NexusID", 744, "Nexus mod ID for updates");
@@ -332,63 +336,7 @@ namespace AMP_Configurable
             {
                 pType = Int32.Parse(m_type);
                 if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Loading pin of type {pType}");
-                foreach (PinConfig.PinType pinType in Mod.pinTypes.resources)
-                {
-                    if (pinType.type == pType)
-                    {
-                        aName = pinType.label;
-                        pType = pinType.type;
-                        aSave = Mod.savePinTypes.Value.Split(',').Contains(pinType.label);
-                        aIcon = pinType.sprite;
-                        showName = !Mod.hidePinLabels.Value.Split(',').Contains(pinType.label);
-                        pinSize = pinType.size;
-                        break;
-                    }
-                }
-
-                foreach (PinConfig.PinType pinType in Mod.pinTypes.pickables)
-                {
-                    if (pinType.type == pType)
-                    {
-                        aName = pinType.label;
-                        pType = pinType.type;
-                        aSave = Mod.savePinTypes.Value.Split(',').Contains(pinType.label);
-                        aIcon = pinType.sprite;
-                        showName = !Mod.hidePinLabels.Value.Split(',').Contains(pinType.label);
-                        pinSize = pinType.size;
-                        break;
-                    }
-                }
-
-                foreach (PinConfig.PinType pinType in Mod.pinTypes.locations)
-                {
-                    if (pinType.type == pType)
-                    {
-                        aName = pinType.label;
-                        pType = pinType.type;
-                        aSave = Mod.savePinTypes.Value.Split(',').Contains(pinType.label);
-                        aIcon = pinType.sprite;
-                        showName = !Mod.hidePinLabels.Value.Split(',').Contains(pinType.label);
-                        pinSize = pinType.size;
-                        break;
-                    }
-                }
-
-                foreach (PinConfig.PinType pinType in Mod.pinTypes.spawners)
-                {
-                    if (pinType.type == pType)
-                    {
-                        aName = pinType.label;
-                        pType = pinType.type;
-                        aSave = Mod.savePinTypes.Value.Split(',').Contains(pinType.label);
-                        aIcon = pinType.sprite;
-                        showName = !Mod.hidePinLabels.Value.Split(',').Contains(pinType.label);
-                        pinSize = pinType.size;
-                        break;
-                    }
-                }
-
-                foreach (PinConfig.PinType pinType in Mod.pinTypes.creatures)
+                foreach (PinConfig.PinType pinType in Mod.pinTypes.pins)
                 {
                     if (pinType.type == pType)
                     {
@@ -423,19 +371,7 @@ namespace AMP_Configurable
     {
         public static void Init()
         {
-            foreach (PinConfig.PinType pinType in Mod.pinTypes.resources)
-                pinType.sprite = LoadSprite(pinType.icon);
-
-            foreach (PinConfig.PinType pinType in Mod.pinTypes.pickables)
-                pinType.sprite = LoadSprite(pinType.icon);
-
-            foreach (PinConfig.PinType pinType in Mod.pinTypes.locations)
-                pinType.sprite = LoadSprite(pinType.icon);
-
-            foreach (PinConfig.PinType pinType in Mod.pinTypes.spawners)
-                pinType.sprite = LoadSprite(pinType.icon);
-
-            foreach (PinConfig.PinType pinType in Mod.pinTypes.creatures)
+            foreach (PinConfig.PinType pinType in Mod.pinTypes.pins)
                 pinType.sprite = LoadSprite(pinType.icon);
         }
 

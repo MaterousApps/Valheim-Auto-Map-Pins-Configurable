@@ -1,5 +1,5 @@
 {
-  "resources": [
+  "pins": [
     {
       "type": 101,
       "label": "Tin",
@@ -41,9 +41,7 @@
       "icon": "flametalore.png",
       "size": 20,
       "object_ids": ["MineRock_Meteorite"]
-    }
-  ],
-  "pickables": [
+    },
     {
       "type": 107,
       "label": "Berries",
@@ -99,18 +97,37 @@
       "icon": "dragonegg.png",
       "size": 20,
       "object_ids": ["Pickable_DragonEgg"]
-    }
-  ],
-  "locations": [
+    },
     {
       "type": 115,
+      "label": "Jotun Puff",
+      "icon": "mushroomjotunpuffs.png",
+      "size": 20,
+      "object_ids": ["Pickable_Mushroom_JotunPuffs"]
+    },
+    {
+      "type": 116,
+      "label": "Mage Cap",
+      "icon": "mushroommagecap.png",
+      "size": 20,
+      "object_ids": ["Pickable_Mushroom_Magecap"]
+    },
+    {
+      "type": 117,
+      "label": "Black Core",
+      "icon": "BlackCore.png",
+      "size": 20,
+      "object_ids": ["Pickable_BlackCoreStand"]
+    },
+    {
+      "type": 118,
       "label": "Crypt",
       "icon": "surtling_core.png",
       "size": 25,
       "object_ids": ["Crypt1", "Crypt2", "Crypt3", "Crypt4"]
     },
     {
-      "type": 116,
+      "type": 119,
       "label": "Sunken Crypt",
       "icon": "witheredbone.png",
       "size": 25,
@@ -122,53 +139,75 @@
       ]
     },
     {
-      "type": 117,
+      "type": 120,
       "label": "Troll Cave",
       "icon": "TrophyFrostTroll.png",
       "size": 25,
       "object_ids": ["TrollCave01", "TrollCave02"]
     },
     {
-      "type": 118,
+      "type": 121,
       "label": "Surtling",
       "icon": "TrophySurtling.png",
       "size": 25,
       "object_ids": ["FireHole"]
-    }
-  ],
-  "spawners": [
+    },
     {
-      "type": 119,
+      "type": 122,
+      "label": "Frost Cave",
+      "icon": "TrophyGolem.png",
+      "size": 25,
+      "object_ids": [
+        "MountainCave01",
+        "MountainCave02",
+        "MountainCave03",
+        "MountainCave04"
+      ]
+    },
+    {
+      "type": 123,
+      "label": "Tar Pit",
+      "icon": "TrophyGrowth.png",
+      "size": 25,
+      "object_ids": ["TarPit1", "TarPit2", "TarPit3", "TarPit4"]
+    },
+    {
+      "type": 124,
+      "label": "Fuling Camp",
+      "icon": "TrophyGoblin.png",
+      "size": 25,
+      "object_ids": ["GoblinCamp1", "GoblinCamp2", "GoblinCamp3", "GoblinCamp4"]
+    },
+    {
+      "type": 125,
       "label": "Skeleton",
       "icon": "TrophySkeleton.png",
       "size": 25,
       "object_ids": ["Evil bone pile"]
     },
     {
-      "type": 120,
+      "type": 126,
       "label": "Draugr",
       "icon": "TrophyDraugr.png",
       "size": 25,
       "object_ids": ["Body Pile"]
     },
     {
-      "type": 121,
+      "type": 127,
       "label": "Greydwarf",
       "icon": "TrophyGreydwarf.png",
       "size": 25,
       "object_ids": ["Greydwarf nest"]
-    }
-  ],
-  "creatures": [
+    },
     {
-      "type": 122,
+      "type": 128,
       "label": "Serpent",
       "icon": "TrophySerpent.png",
       "size": 25,
       "object_ids": ["$enemy_serpent"]
     },
     {
-      "type": 123,
+      "type": 12,
       "label": "Leviathan",
       "icon": "chitin.png",
       "size": 25,
