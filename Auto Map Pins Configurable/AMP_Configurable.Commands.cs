@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AMP_Configurable.Modules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
-using AMP_Configurable.Modules;
 using Utilities;
 
 
@@ -255,13 +255,13 @@ namespace AMP_Configurable.Commands
                             if (Mod.filteredPins.Contains(PinnedObject.pType.ToString()))
                             {
                                 PrintOut("Showing Filtered Pin: " + str2);
-                                Mod.filteredPins.Remove(PinnedObject.pType.ToString());                                
-                            } 
+                                Mod.filteredPins.Remove(PinnedObject.pType.ToString());
+                            }
                             else
                             {
                                 Mod.filteredPins.Add(PinnedObject.pType.ToString());
                                 PrintOut("Filtering Pins: " + str2);
-                            }                          
+                            }
                         }
                         else
                             PrintOut("Failed to filter pins '" + str2 + "'. Check parameters! Ex. /AMP-Filter, /AMP-Filter -1, /AMP-Filter Berries");
@@ -280,7 +280,7 @@ namespace AMP_Configurable.Commands
                 {
                     PinnedObject.loadData(null, Mod.filteredPins[x]);
 
-                    
+
                     if (output == null || output == "")
                         output = PinnedObject.aName;
                     else
@@ -375,7 +375,7 @@ namespace AMP_Configurable.Commands
                 if (gameObject != _AMPGameObject)
                 {
                     Destroy(gameObject);
-                    
+
                 }
             }
         }
@@ -408,7 +408,7 @@ namespace AMP_Configurable.Commands
             //    "NOTIFY"
             //}, new string[2] { "LOADING...", "MODULE LOADING..." });
             BeginMainMenu();
-            
+
             Init();
         }
 
@@ -457,15 +457,15 @@ namespace AMP_Configurable.Commands
                     }
                     else if (AMPMainStatus == ResourceUtils.Status.Error || MenuOptions.Count <= 0)
                         AMP_Commands.PrintOut("Failed to load commands");
-                        //ResourceUtils.Logz(new string[2]
-                        //{
-                        //  "AMP",
-                        //  "NOTIFY"
-                        //}, new string[2]
-                        //{
-                        //  MenuOptions.Count.ToString() + " MODULES LOADED",
-                        //  "AMP FAILED TO LOAD MODULES."
-                        //}, LogType.Error);
+                    //ResourceUtils.Logz(new string[2]
+                    //{
+                    //  "AMP",
+                    //  "NOTIFY"
+                    //}, new string[2]
+                    //{
+                    //  MenuOptions.Count.ToString() + " MODULES LOADED",
+                    //  "AMP FAILED TO LOAD MODULES."
+                    //}, LogType.Error);
                 }
                 else if (AMPMainStatus == ResourceUtils.Status.Loading && NeedRetry)
                 {

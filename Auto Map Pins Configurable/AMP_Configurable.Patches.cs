@@ -1,10 +1,10 @@
-﻿using HarmonyLib;
+﻿using AMP_Configurable.Commands;
+using AMP_Configurable.PinConfig;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using AMP_Configurable.Commands;
-using AMP_Configurable.PinConfig;
 
 namespace AMP_Configurable.Patches
 {
@@ -32,7 +32,7 @@ namespace AMP_Configurable.Patches
         [HarmonyPatch(typeof(Minimap), "Start")]
         [HarmonyPostfix]
         private static void Minimap_Start(
-            Minimap __instance, 
+            Minimap __instance,
             ref bool[] ___m_visibleIconTypes)
         {
             ___m_visibleIconTypes = new bool[150];
@@ -53,7 +53,7 @@ namespace AMP_Configurable.Patches
           bool save,
           bool isChecked)
         {
-            Mod.Log.LogInfo("[AMP] Trying to add pin");
+            if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Trying to add pin {type}");
             return ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
         }
 
@@ -62,20 +62,15 @@ namespace AMP_Configurable.Patches
         private static void Minimap_UpdateProfilePins(
           ref List<Minimap.PinData> ___m_pins)
         {
-            
-            //while (count < ___m_pins.Count())
-            if(!checkedSavedPins)
+            if (!checkedSavedPins)
             {
-                //Debug.Log("[AMP] Checking Saved Pins");
-                //Debug.Log(string.Format("[AMP] m_pins Count {0}", ___m_pins.Count()));
                 foreach (Minimap.PinData pins in ___m_pins)
                 {
                     if ((int)pins.m_type >= 100)
                     {
-                        if(!Mod.savedPins.Contains(pins))
+                        if (!Mod.savedPins.Contains(pins))
                             Mod.savedPins.Add(pins);
 
-                        //Debug.Log(string.Format("[AMP] Pin {0} has type of {1}", pins.m_name, pins.m_type));
                         PinnedObject.loadData(null, pins.m_type.ToString());
 
                         if (pins.m_type == (Minimap.PinType)PinnedObject.pType && !Mod.filteredPins.Contains(PinnedObject.aName))
@@ -88,7 +83,6 @@ namespace AMP_Configurable.Patches
                             }
                         }
                     }
-                    //count++;
                 }
                 checkedSavedPins = true;
 
@@ -106,14 +100,14 @@ namespace AMP_Configurable.Patches
             if (Mod.filteredPins.Count() == 0)
                 return;
 
-            foreach(Minimap.PinData p in ___m_pins)
+            foreach (Minimap.PinData p in ___m_pins)
             {
-                if(Mod.filteredPins.Contains(p.m_type.ToString()))
+                if (Mod.filteredPins.Contains(p.m_type.ToString()))
                 {
                     Mod.FilterPins();
                 }
             }
-            
+
 
         }
 
@@ -151,14 +145,9 @@ namespace AMP_Configurable.Patches
             ZLog.Log("[AMP] Left click");
             Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
 
-            //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
             Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 5, ___m_pins);
 
-            if (closestPin == null)
-            {
-                //Mod.Log.LogInfo("[AMP] Closest pin is null");
-                return true;
-            }
+            if (closestPin == null) return true;
 
             closestPin.m_checked = !closestPin.m_checked;
             return false;
@@ -171,15 +160,17 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Destructible __instance)
         {
-            if(!Mod.oresEnabled.Value) return;
+            if (!Mod.oresEnabled.Value) return;
             HoverText hoverTextComp = __instance.GetComponent<HoverText>();
 
             if (!hoverTextComp) return;
-            
+
             string hoverText = hoverTextComp.m_text;
+            hoverText = hoverText.Replace("(Clone)", "");
+
             PinType type = null;
 
-            if(Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
             {
                 var x = hoverTextComp.transform.position.x;
                 var y = hoverTextComp.transform.position.y;
@@ -187,10 +178,9 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {hoverText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.resources) 
+            foreach (PinType pinType in Mod.pinTypes.resources)
             {
-                hoverText = hoverText.Replace("(Clone)", "");
-                if(pinType.object_ids.Contains(hoverText)) 
+                if (pinType.object_ids.Contains(hoverText))
                 {
                     type = pinType;
                     break;
@@ -212,15 +202,16 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Pickable __instance)
         {
-            if(!Mod.pickablesEnabled.Value) return;
+            if (!Mod.pickablesEnabled.Value) return;
             Pickable pickableComp = __instance.GetComponent<Pickable>();
 
             if (!pickableComp) return;
-            
+
             string pickableText = pickableComp.name;
+            pickableText = pickableText.Replace("(Clone)", "");
             PinType type = null;
 
-            if(Mod.loggingEnabled.Value && Mod.pickablesLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.pickablesLoggingEnabled.Value)
             {
                 var x = pickableComp.transform.position.x;
                 var y = pickableComp.transform.position.y;
@@ -228,10 +219,9 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Pickable] Found {pickableText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.pickables) 
+            foreach (PinType pinType in Mod.pinTypes.pickables)
             {
-                pickableText = pickableText.Replace("(Clone)", "");
-                if(pinType.object_ids.Contains(pickableText)) 
+                if (pinType.object_ids.Contains(pickableText))
                 {
                     type = pinType;
                     break;
@@ -253,15 +243,16 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Location __instance)
         {
-            if(!Mod.locsEnabled.Value) return;
+            if (!Mod.locsEnabled.Value) return;
             Location locComp = __instance.GetComponent<Location>();
 
             if (!locComp) return;
-            
+
             string locText = locComp.name;
+            locText = locText.Replace("(Clone)", "");
             PinType type = null;
 
-            if(Mod.loggingEnabled.Value && Mod.locsLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.locsLoggingEnabled.Value)
             {
                 var x = locComp.transform.position.x;
                 var y = locComp.transform.position.y;
@@ -269,10 +260,9 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Location] Found {locText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.locations) 
+            foreach (PinType pinType in Mod.pinTypes.locations)
             {
-                locText = locText.Replace("(Clone)", "");
-                if(pinType.object_ids.Contains(locText)) 
+                if (pinType.object_ids.Contains(locText))
                 {
                     type = pinType;
                     break;
@@ -294,15 +284,16 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref SpawnArea __instance)
         {
-            if(!Mod.spwnsEnabled.Value) return;
+            if (!Mod.spwnsEnabled.Value) return;
             HoverText spawnComp = __instance.GetComponent<HoverText>();
 
             if (!spawnComp) return;
-            
+
             string spawnText = spawnComp.m_text;
+            spawnText = spawnText.Replace("(Clone)", "");
             PinType type = null;
 
-            if(Mod.loggingEnabled.Value && Mod.spwnsLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.spwnsLoggingEnabled.Value)
             {
                 var x = spawnComp.transform.position.x;
                 var y = spawnComp.transform.position.y;
@@ -310,10 +301,9 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Spawner] Found {spawnText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.spawners) 
+            foreach (PinType pinType in Mod.pinTypes.spawners)
             {
-                spawnText = spawnText.Replace("(Clone)", "");
-                if(pinType.object_ids.Contains(spawnText)) 
+                if (pinType.object_ids.Contains(spawnText))
                 {
                     type = pinType;
                     break;
@@ -335,15 +325,16 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref CreatureSpawner __instance)
         {
-            if(!Mod.creaturesEnabled.Value) return;
+            if (!Mod.creaturesEnabled.Value) return;
             Character creatureComp = __instance.GetComponent<Character>();
 
             if (!creatureComp) return;
-            
+
             string creatureText = creatureComp.m_name;
+            creatureText = creatureText.Replace("(Clone)", "");
             PinType type = null;
 
-            if(Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
             {
                 var x = creatureComp.transform.position.x;
                 var y = creatureComp.transform.position.y;
@@ -351,10 +342,9 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Creature] Found {creatureText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.creatures) 
+            foreach (PinType pinType in Mod.pinTypes.creatures)
             {
-                creatureText = creatureText.Replace("(Clone)", "");
-                if(pinType.object_ids.Contains(creatureText)) 
+                if (pinType.object_ids.Contains(creatureText))
                 {
                     type = pinType;
                     break;
@@ -376,15 +366,15 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref MineRock __instance)
         {
-            if(!Mod.oresEnabled.Value) return;
+            if (!Mod.oresEnabled.Value) return;
             MineRock mineComp = __instance.GetComponent<MineRock>();
 
             if (!mineComp) return;
-            
+
             string mineText = mineComp.name;
             PinType type = null;
 
-            if(Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
             {
                 var x = mineComp.transform.position.x;
                 var y = mineComp.transform.position.y;
@@ -392,10 +382,10 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {mineText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.resources) 
+            foreach (PinType pinType in Mod.pinTypes.resources)
             {
                 mineText = mineText.Replace("(Clone)", "");
-                if(pinType.object_ids.Contains(mineText)) 
+                if (pinType.object_ids.Contains(mineText))
                 {
                     type = pinType;
                     break;
@@ -417,15 +407,15 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Leviathan __instance)
         {
-            if(!Mod.creaturesEnabled.Value) return;
+            if (!Mod.creaturesEnabled.Value) return;
             Leviathan levComp = __instance.GetComponent<Leviathan>();
 
             if (!levComp) return;
-            
+
             string levText = levComp.name;
             PinType type = null;
 
-            if(Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
             {
                 var x = levComp.transform.position.x;
                 var y = levComp.transform.position.y;
@@ -433,10 +423,10 @@ namespace AMP_Configurable.Patches
                 Mod.Log.LogInfo($"[AMP - Creature] Found {levText} at {x} {y} {z}");
             }
 
-            foreach (PinType pinType in Mod.pinTypes.creatures) 
+            foreach (PinType pinType in Mod.pinTypes.creatures)
             {
                 levText = levText.Replace("(Clone)", "");
-                if(pinType.object_ids.Contains(levText)) 
+                if (pinType.object_ids.Contains(levText))
                 {
                     type = pinType;
                     break;

@@ -1,14 +1,15 @@
-﻿using System.IO;
-using System.Reflection;
-using UnityEngine;
+﻿using AMP_Configurable;
+using AMP_Configurable.PinConfig;
 using BepInEx;
 using Newtonsoft.Json;
-using AMP_Configurable;
-using AMP_Configurable.PinConfig;
+using System.IO;
+using System.Reflection;
+using UnityEngine;
 
 namespace Utilities
 {
-    internal static class ResourceUtils {
+    internal static class ResourceUtils
+    {
         public static bool ConvertInternalWarningsErrors = false;
 
         public static byte[] GetResource(string spritePath)
@@ -17,7 +18,7 @@ namespace Utilities
             if (File.Exists(spritePath))
             {
                 return File.ReadAllBytes(spritePath);
-            } 
+            }
 
             Mod.Log.LogWarning($"[AMP] Could not find pin icon asset ({spritePath}), attempting to load generic circle icon");
             spritePath = GetAssetPath(Path.Combine("pin-icons", "mapicon_pin_iron.png"));
@@ -25,7 +26,7 @@ namespace Utilities
             {
                 byte[] fileData = File.ReadAllBytes(spritePath);
                 return fileData;
-            } 
+            }
 
             Mod.Log.LogError($"[AMP] Could not find pin icon assets. AMP Enhanced is likely installed incorrectly.");
             return null;
@@ -34,7 +35,7 @@ namespace Utilities
         public static PinConfig LoadPinConfig(string filename)
         {
             var pinTypesJson = LoadJsonText(filename);
-            if(pinTypesJson == null)
+            if (pinTypesJson == null)
             {
                 Mod.Log.LogError($"[AMP] Could not find pin types config json. AMP Enhanced is likely installed incorrectly.");
                 return null;

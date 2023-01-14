@@ -140,7 +140,7 @@
     {
       "type": 119,
       "label": "Skeleton",
-      "icon": "TorphySkeleton.png",
+      "icon": "TrophySkeleton.png",
       "size": 25,
       "object_ids": ["Evil bone pile"]
     },

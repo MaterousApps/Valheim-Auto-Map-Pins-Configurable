@@ -22,5 +22,5 @@ namespace AMP_Configurable.PinConfig
         public PinType[] locations;
         public PinType[] spawners;
         public PinType[] creatures;
-    }    
+    }
 }
