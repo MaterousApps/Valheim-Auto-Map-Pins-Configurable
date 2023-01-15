@@ -29,105 +29,84 @@
       "object_ids": ["$piece_deposit_silver", "$piece_deposit_silvervein"]
     },
     {
-      "type": 105,
+      "type": 121,
       "label": "Iron",
       "icon": "ironscrap.png",
       "size": 20,
       "object_ids": ["$piece_mudpile"]
     },
     {
-      "type": 106,
+      "type": 122,
       "label": "Flametal",
       "icon": "flametalore.png",
       "size": 20,
       "object_ids": ["MineRock_Meteorite"]
     },
     {
-      "type": 107,
+      "type": 105,
       "label": "Berries",
       "icon": "raspberry.png",
       "size": 20,
       "object_ids": ["RaspberryBush"]
     },
     {
-      "type": 108,
+      "type": 106,
       "label": "Blueberries",
       "icon": "blueberries.png",
       "size": 20,
       "object_ids": ["BlueberryBush"]
     },
     {
-      "type": 109,
+      "type": 107,
       "label": "Cloudberries",
       "icon": "cloudberry.png",
       "size": 20,
       "object_ids": ["CloudberryBush"]
     },
     {
-      "type": 110,
+      "type": 108,
       "label": "Thistle",
       "icon": "thistle.png",
       "size": 20,
       "object_ids": ["Pickable_Thistle"]
     },
     {
-      "type": 111,
+      "type": 110,
       "label": "Mushroom",
       "icon": "mushroom.png",
       "size": 20,
       "object_ids": ["Pickable_Mushroom"]
     },
     {
-      "type": 112,
+      "type": 111,
       "label": "Carrot",
       "icon": "carrot.png",
       "size": 25,
       "object_ids": ["Pickable_SeedCarrot"]
     },
     {
-      "type": 113,
+      "type": 112,
       "label": "Turnip",
       "icon": "turnip.png",
       "size": 25,
       "object_ids": ["Pickable_SeedTurnip"]
     },
     {
-      "type": 114,
+      "type": 109,
       "label": "Dragon Egg",
       "icon": "dragonegg.png",
       "size": 20,
       "object_ids": ["Pickable_DragonEgg"]
     },
     {
-      "type": 115,
-      "label": "Jotun Puff",
-      "icon": "mushroomjotunpuffs.png",
-      "size": 20,
-      "object_ids": ["Pickable_Mushroom_JotunPuffs"]
-    },
-    {
-      "type": 116,
-      "label": "Mage Cap",
-      "icon": "mushroommagecap.png",
-      "size": 20,
-      "object_ids": ["Pickable_Mushroom_Magecap"]
-    },
-    {
-      "type": 117,
-      "label": "Black Core",
-      "icon": "BlackCore.png",
-      "size": 20,
-      "object_ids": ["Pickable_BlackCoreStand"]
-    },
-    {
-      "type": 118,
+      "type": 113,
       "label": "Crypt",
       "icon": "surtling_core.png",
       "size": 25,
       "object_ids": ["Crypt1", "Crypt2", "Crypt3", "Crypt4"]
     },
     {
-      "type": 119,
+      "type": 114,
       "label": "Sunken Crypt",
       "icon": "witheredbone.png",
       "size": 25,
@@ -139,21 +118,70 @@
       ]
     },
     {
-      "type": 120,
+      "type": 115,
       "label": "Troll Cave",
       "icon": "TrophyFrostTroll.png",
       "size": 25,
       "object_ids": ["TrollCave01", "TrollCave02"]
     },
     {
-      "type": 121,
+      "type": 117,
       "label": "Surtling",
       "icon": "TrophySurtling.png",
       "size": 25,
       "object_ids": ["FireHole"]
     },
     {
-      "type": 122,
+      "type": 116,
+      "label": "Skeleton",
+      "icon": "TrophySkeleton.png",
+      "size": 25,
+      "object_ids": ["Evil bone pile"]
+    },
+    {
+      "type": 118,
+      "label": "Draugr",
+      "icon": "TrophyDraugr.png",
+      "size": 25,
+      "object_ids": ["Body Pile"]
+    },
+    {
+      "type": 119,
+      "label": "Greydwarf",
+      "icon": "TrophyGreydwarf.png",
+      "size": 25,
+      "object_ids": ["Greydwarf nest"]
+    },
+    {
+      "type": 120,
+      "label": "Serpent",
+      "icon": "TrophySerpent.png",
+      "size": 25,
+      "object_ids": ["$enemy_serpent"]
+    },
+    {
+      "type": 123,
+      "label": "Leviathan",
+      "icon": "chitin.png",
+      "size": 25,
+      "object_ids": ["Leviathan"]
+    },
+    {
+      "type": 124,
+      "label": "Tar Pit",
+      "icon": "TrophyGrowth.png",
+      "size": 25,
+      "object_ids": ["TarPit1", "TarPit2", "TarPit3", "TarPit4"]
+    },
+    {
+      "type": 125,
+      "label": "Fuling Camp",
+      "icon": "TrophyGoblin.png",
+      "size": 25,
+      "object_ids": ["GoblinCamp1", "GoblinCamp2", "GoblinCamp3", "GoblinCamp4"]
+    },
+    {
+      "type": 126,
       "label": "Frost Cave",
       "icon": "TrophyGolem.png",
       "size": 25,
@@ -165,53 +193,25 @@
       ]
     },
     {
-      "type": 123,
-      "label": "Tar Pit",
-      "icon": "TrophyGrowth.png",
-      "size": 25,
-      "object_ids": ["TarPit1", "TarPit2", "TarPit3", "TarPit4"]
-    },
-    {
-      "type": 124,
-      "label": "Fuling Camp",
-      "icon": "TrophyGoblin.png",
-      "size": 25,
-      "object_ids": ["GoblinCamp1", "GoblinCamp2", "GoblinCamp3", "GoblinCamp4"]
-    },
-    {
-      "type": 125,
-      "label": "Skeleton",
-      "icon": "TrophySkeleton.png",
-      "size": 25,
-      "object_ids": ["Evil bone pile"]
-    },
-    {
-      "type": 126,
-      "label": "Draugr",
-      "icon": "TrophyDraugr.png",
-      "size": 25,
-      "object_ids": ["Body Pile"]
-    },
-    {
       "type": 127,
-      "label": "Greydwarf",
-      "icon": "TrophyGreydwarf.png",
-      "size": 25,
-      "object_ids": ["Greydwarf nest"]
+      "label": "Jotun Puff",
+      "icon": "mushroomjotunpuffs.png",
+      "size": 20,
+      "object_ids": ["Pickable_Mushroom_JotunPuffs"]
     },
     {
       "type": 128,
-      "label": "Serpent",
-      "icon": "TrophySerpent.png",
-      "size": 25,
-      "object_ids": ["$enemy_serpent"]
+      "label": "Mage Cap",
+      "icon": "mushroommagecap.png",
+      "size": 20,
+      "object_ids": ["Pickable_Mushroom_Magecap"]
     },
     {
       "type": 129,
-      "label": "Leviathan",
-      "icon": "chitin.png",
-      "size": 25,
-      "object_ids": ["Leviathan"]
+      "label": "Black Core",
+      "icon": "BlackCore.png",
+      "size": 20,
+      "object_ids": ["Pickable_BlackCoreStand"]
     }
   ]
 }
