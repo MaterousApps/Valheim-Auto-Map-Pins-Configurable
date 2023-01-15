@@ -12,9 +12,17 @@ namespace Utilities
     {
         public static bool ConvertInternalWarningsErrors = false;
 
-        public static byte[] GetResource(string spritePath)
+        public static byte[] GetResource(string spriteName)
         {
-            spritePath = GetAssetPath(Path.Combine("pin-icons", spritePath));
+            if(spriteName == "") return null;
+            if(Mod.loggingEnabled.Value) Mod.Log.LogInfo($"Attempting to load sprite {spriteName}");
+
+            string spritePath = GetAssetPath(Path.Combine("pin-icons", spriteName));
+            if (!File.Exists(spritePath))
+            {
+                if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"{spriteName} not found in pin-icons folder, looking in assembly path");
+                spritePath = GetAssetPath(Path.Combine(spriteName));
+            }
             if (File.Exists(spritePath))
             {
                 return File.ReadAllBytes(spritePath);
@@ -22,6 +30,10 @@ namespace Utilities
 
             Mod.Log.LogWarning($"[AMP] Could not find pin icon asset ({spritePath}), attempting to load generic circle icon");
             spritePath = GetAssetPath(Path.Combine("pin-icons", "mapicon_pin_iron.png"));
+            if (!File.Exists(spritePath))
+            {
+                spritePath = GetAssetPath(Path.Combine("mapicon_pin_iron.png"));
+            }
             if (File.Exists(spritePath))
             {
                 byte[] fileData = File.ReadAllBytes(spritePath);
@@ -60,8 +72,17 @@ namespace Utilities
                 assetFileName = GenerateAssetPathAtAssembly(assetName);
                 if (!File.Exists(assetFileName))
                 {
-                    Mod.Log.LogInfo($"[AMP] Could not find asset ({assetName})");
-                    return null;
+                    // Check if it's in the main folder because r2modmanager doesn't keep folder structures
+                    assetFileName = Path.Combine(Paths.PluginPath, "raziell74-AMPED_Auto_Map_Pins_Enhanced", assetName);
+                    if (!File.Exists(assetFileName))
+                    {
+                        assetFileName = GenerateAssetPathAtAssembly(assetName);
+                        if (!File.Exists(assetFileName))
+                        {
+                            Mod.Log.LogInfo($"[AMP] Could not find asset ({assetName})");
+                            return null;
+                        }
+                    }
                 }
             }
 
