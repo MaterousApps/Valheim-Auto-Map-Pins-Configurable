@@ -14,8 +14,8 @@ namespace Utilities
 
         public static byte[] GetResource(string spriteName)
         {
-            if(spriteName == "") return null;
-            if(Mod.loggingEnabled.Value) Mod.Log.LogInfo($"Attempting to load sprite {spriteName}");
+            if (spriteName == "") return null;
+            if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"Attempting to load sprite {spriteName}");
 
             string spritePath = GetAssetPath(Path.Combine("pin-icons", spriteName));
             if (!File.Exists(spritePath))
