@@ -40,7 +40,7 @@
       "label": "Flametal",
       "icon": "flametalore.png",
       "size": 20,
-      "object_ids": ["MineRock_Meteorite"]
+      "object_ids": ["MineRock_Meteorite", "Meteorite"]
     },
     {
       "type": 105,
@@ -96,7 +96,7 @@
       "label": "Dragon Egg",
       "icon": "dragonegg.png",
       "size": 20,
-      "object_ids": ["Pickable_DragonEgg"]
+      "object_ids": ["Pickable_DragonEgg", "DrakeNest01"]
     },
     {
       "type": 113,
@@ -122,7 +122,7 @@
       "label": "Troll Cave",
       "icon": "TrophyFrostTroll.png",
       "size": 25,
-      "object_ids": ["TrollCave01", "TrollCave02"]
+      "object_ids": ["TrollCave01", "TrollCave02", "TrollCave"]
     },
     {
       "type": 117,
@@ -150,7 +150,7 @@
       "label": "Greydwarf",
       "icon": "TrophyGreydwarf.png",
       "size": 25,
-      "object_ids": ["Greydwarf nest"]
+      "object_ids": ["Greydwarf nest", "Greydwarf_camp1"]
     },
     {
       "type": 120,
@@ -212,6 +212,252 @@
       "icon": "BlackCore.png",
       "size": 20,
       "object_ids": ["Pickable_BlackCoreStand"]
+    },
+    {
+      "type": 301,
+      "label": "Road Post",
+      "icon": "Mistlands_RoadPost1.png",
+      "size": 20,
+      "object_ids": ["Mistlands_RoadPost1"]
+    },
+    {
+      "type": 302,
+      "label": "Infested Tree",
+      "icon": "InfestedTree01.png",
+      "size": 20,
+      "object_ids": ["InfestedTree01"]
+    },
+    {
+      "type": 303,
+      "label": "Dvergr Tower",
+      "icon": "Mistlands_GuardTower1_new.png",
+      "size": 20,
+      "object_ids": [
+        "Mistlands_GuardTower1_ruined_new2",
+        "Mistlands_GuardTower3_new",
+        "Mistlands_GuardTower3_ruined_new",
+        "Mistlands_GuardTower1_new",
+        "Mistlands_GuardTower2_new",
+        "Mistlands_GuardTower1_ruined_new",
+        "Mistlands_Lighthouse1_new"
+      ]
+    },
+    {
+      "type": 304,
+      "label": "Statues",
+      "icon": "Mistlands_Statue2.png",
+      "size": 20,
+      "object_ids": [
+        "Mistlands_Statue1",
+        "Mistlands_Statue2",
+        "Mistlands_StatueGroup1",
+        "Mistlands_RockSpire1"
+      ]
+    },
+    {
+      "type": 305,
+      "label": "Ruins",
+      "icon": "StoneHouse3.png",
+      "size": 20,
+      "object_ids": ["StoneHouse3", "StoneHouse4", "Ruin1"]
+    },
+    {
+      "type": 306,
+      "label": "Stone Tower",
+      "icon": "Ruin2.png",
+      "size": 20,
+      "object_ids": ["Ruin2"]
+    },
+    {
+      "type": 307,
+      "label": "Runestone",
+      "icon": "runestone.png",
+      "size": 20,
+      "object_ids": [
+        "Runestone_Greydwarfs",
+        "Runestone_Draugr",
+        "DrakeLorestone",
+        "Runestone_Boars",
+        "Runestone_BlackForest",
+        "Runestone_Mistlands",
+        "Runestone_Meadows",
+        "Runestone_Swamps",
+        "Runestone_Mountains",
+        "Runestone_Plains"
+      ]
+    },
+    {
+      "type": 308,
+      "label": "Giant Remains",
+      "icon": "Mistlands_Giant1.png",
+      "size": 20,
+      "object_ids": ["Mistlands_Giant1", "Mistlands_Giant2"]
+    },
+    {
+      "type": 309,
+      "label": "Stone Tower",
+      "icon": "StoneTowerRuins07.png",
+      "size": 20,
+      "object_ids": [
+        "StoneTowerRuins03",
+        "StoneTowerRuins07",
+        "StoneTowerRuins08",
+        "StoneTowerRuins09",
+        "StoneTowerRuins10"
+      ]
+    },
+    {
+      "type": 310,
+      "label": "Log Cabin",
+      "icon": "AbandonedLogCabin03.png",
+      "size": 20,
+      "object_ids": [
+        "AbandonedLogCabin02",
+        "AbandonedLogCabin03",
+        "AbandonedLogCabin04"
+      ]
+    },
+    {
+      "type": 311,
+      "label": "Infested Mine",
+      "icon": "Mistlands_DvergrTownEntrance2.png",
+      "size": 20,
+      "object_ids": [
+        "Mistlands_DvergrTownEntrance1",
+        "Mistlands_DvergrTownEntrance2"
+      ]
+    },
+    {
+      "type": 312,
+      "label": "Dvergr Excavation",
+      "icon": "Mistlands_Excavation1.png",
+      "size": 20,
+      "object_ids": [
+        "Mistlands_Excavation1",
+        "Mistlands_Excavation2",
+        "Mistlands_Excavation3"
+      ]
+    },
+    {
+      "type": 313,
+      "label": "Swamp Hut",
+      "icon": "SwampHut2.png",
+      "size": 20,
+      "object_ids": [
+        "SwampHut1",
+        "SwampHut2",
+        "SwampHut3",
+        "SwampHut4",
+        "SwampHut5"
+      ]
+    },
+    {
+      "type": 314,
+      "label": "Swamp Tower",
+      "icon": "SwampRuin1.png",
+      "size": 20,
+      "object_ids": ["SwampRuin1", "SwampRuin2"]
+    },
+    {
+      "type": 315,
+      "label": "Giant Armor",
+      "icon": "Mistlands_Swords2.png",
+      "size": 20,
+      "object_ids": [
+        "Mistlands_Swords1",
+        "Mistlands_Swords2",
+        "Mistlands_Swords3",
+        "giant_helmet1",
+        "giant_helmet2",
+        "giant_sword1",
+        "giant_sword2",
+        "$piece_giant_helmet",
+        "$piece_giant_sword"
+      ]
+    },
+    {
+      "type": 316,
+      "label": "Wood House",
+      "icon": "WoodHouse5.png",
+      "size": 20,
+      "object_ids": [
+        "WoodHouse1",
+        "WoodHouse2",
+        "WoodHouse3",
+        "WoodHouse4",
+        "WoodHouse5",
+        "WoodHouse6",
+        "WoodHouse7",
+        "WoodHouse8",
+        "WoodHouse9",
+        "WoodHouse10",
+        "WoodHouse11",
+        "WoodHouse12",
+        "WoodHouse13"
+      ]
+    },
+    {
+      "type": 317,
+      "label": "Stone Circle",
+      "icon": "StoneCircle.png",
+      "size": 20,
+      "object_ids": ["StoneCircle"]
+    },
+    {
+      "type": 318,
+      "label": "Well",
+      "icon": "MountainWell1.png",
+      "size": 20,
+      "object_ids": ["MountainWell1"]
+    },
+    {
+      "type": 319,
+      "label": "Dolmen",
+      "icon": "Dolmen01.png",
+      "size": 20,
+      "object_ids": ["Dolmen01", "Dolmen02", "Dolmen03"]
+    },
+    {
+      "type": 320,
+      "label": "Fuling Tower",
+      "icon": "StoneTower1.png",
+      "size": 20,
+      "object_ids": ["Ruin3", "StoneTower1", "StoneTower3"]
+    },
+    {
+      "type": 321,
+      "label": "Harbour",
+      "icon": "Mistlands_Harbour1.png",
+      "size": 20,
+      "object_ids": ["Mistlands_Harbour1"]
+    },
+    {
+      "type": 322,
+      "label": "Viaduct",
+      "icon": "Mistlands_Viaduct1.png",
+      "size": 20,
+      "object_ids": ["Mistlands_Viaduct1", "Mistlands_Viaduct2"]
+    },
+    {
+      "type": 323,
+      "label": "Stone Tower",
+      "icon": "StoneTowerRuins05.png",
+      "size": 20,
+      "object_ids": ["StoneTowerRuins04", "StoneTowerRuins05"]
+    },
+    {
+      "type": 324,
+      "label": "Shipwreck",
+      "icon": "ShipWreck02.png",
+      "size": 20,
+      "object_ids": ["ShipWreck01", "ShipWreck02", "ShipWreck03", "ShipWreck04"]
+    },
+    {
+      "type": 325,
+      "label": "Farm Village",
+      "icon": "WoodHouse5.png",
+      "size": 20,
+      "object_ids": ["WoodFarm1", "WoodVillage1"]
     }
   ]
 }

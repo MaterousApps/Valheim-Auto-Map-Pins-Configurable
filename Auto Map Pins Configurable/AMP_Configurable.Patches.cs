@@ -169,10 +169,10 @@ namespace AMP_Configurable.Patches
 
             PinType type = null;
 
-            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value && !Mod.objectPins.ContainsKey(hoverText))
             {
                 var pos = hoverTextComp.transform.position;
-                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {hoverText} at {pos.x} {pos.y} {pos.z}");
+                Mod.Log.LogInfo($"[AMP - Destructible Resource] Found {hoverText} at {pos.x} {pos.y} {pos.z}");
             }
 
             if (Mod.objectPins.ContainsKey(hoverText))
@@ -197,7 +197,7 @@ namespace AMP_Configurable.Patches
             pickableText = pickableText.Replace("(Clone)", "");
             PinType type = null;
 
-            if (Mod.loggingEnabled.Value && Mod.pickablesLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.pickablesLoggingEnabled.Value && !Mod.objectPins.ContainsKey(pickableText))
             {
                 var pos = pickableComp.transform.position;
                 Mod.Log.LogInfo($"[AMP - Pickable] Found {pickableText} at {pos.x} {pos.y} {pos.z}");
@@ -225,7 +225,7 @@ namespace AMP_Configurable.Patches
             locText = locText.Replace("(Clone)", "");
             PinType type = null;
 
-            if (Mod.loggingEnabled.Value && Mod.locsLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.locsLoggingEnabled.Value && !Mod.objectPins.ContainsKey(locText))
             {
                 var pos = locComp.transform.position;
                 Mod.Log.LogInfo($"[AMP - Location] Found {locText} at {pos.x} {pos.y} {pos.z}");
@@ -253,7 +253,7 @@ namespace AMP_Configurable.Patches
             spawnText = spawnText.Replace("(Clone)", "");
             PinType type = null;
 
-            if (Mod.loggingEnabled.Value && Mod.spwnsLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.spwnsLoggingEnabled.Value && !Mod.objectPins.ContainsKey(spawnText))
             {
                 var pos = spawnComp.transform.position;
                 Mod.Log.LogInfo($"[AMP - Spawner] Found {spawnText} at {pos.x} {pos.y} {pos.z}");
@@ -281,7 +281,7 @@ namespace AMP_Configurable.Patches
             creatureText = creatureText.Replace("(Clone)", "");
             PinType type = null;
 
-            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value && !Mod.objectPins.ContainsKey(creatureText))
             {
                 var pos = creatureComp.transform.position;
                 Mod.Log.LogInfo($"[AMP - Creature] Found {creatureText} at {pos.x} {pos.y} {pos.z}");
@@ -308,7 +308,7 @@ namespace AMP_Configurable.Patches
             string mineText = mineComp.name;
             PinType type = null;
 
-            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value && !Mod.objectPins.ContainsKey(mineText))
             {
                 var pos = mineComp.transform.position;
                 Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {mineText} at {pos.x} {pos.y} {pos.z}");
@@ -336,7 +336,7 @@ namespace AMP_Configurable.Patches
             levText = levText.Replace("(Clone)", "");
             PinType type = null;
 
-            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
+            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value && !Mod.objectPins.ContainsKey(levText))
             {
                 var pos = levComp.transform.position;
                 Mod.Log.LogInfo($"[AMP - Creature] Found {levText} at {pos.x} {pos.y} {pos.z}");
