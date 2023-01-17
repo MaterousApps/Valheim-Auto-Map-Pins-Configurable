@@ -4,6 +4,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,7 +12,7 @@ using Utilities;
 
 namespace AMP_Configurable
 {
-  [BepInPlugin("amped.mod.auto_map_pins", "AMPED - Auto Map Pins Enhanced", "1.3.3")]
+  [BepInPlugin("amped.mod.auto_map_pins", "AMPED - Auto Map Pins Enhanced", "1.3.4")]
   [BepInProcess("valheim.exe")]
   public class Mod : BaseUnityPlugin
   {
@@ -24,9 +25,11 @@ namespace AMP_Configurable
     public static ConfigEntry<int> pinRange;
     public static ConfigEntry<bool> hideAllLabels;
     public static ConfigEntry<string> hidePinLabels;
+    public static ConfigEntry<string> hidePinTypes;
     public static ConfigEntry<string> savePinTypes;
     public static ConfigEntry<string> customPinSizes;
     public static ConfigEntry<bool> loggingEnabled;
+    public static ConfigEntry<string> customConfigFiles;
 
     //***ORES***//
     public static ConfigEntry<bool> destructablesEnabled;
@@ -49,7 +52,7 @@ namespace AMP_Configurable
     public static ConfigEntry<bool> creaturesLoggingEnabled;
 
     //***PUBLIC VARIABLES***//
-    public static PinConfig.PinConfig pinTypes;
+    public static PinConfig.PinConfig pinTypes = null;
     public static IDictionary<string, PinConfig.PinType> objectPins = new Dictionary<string, PinConfig.PinType>();
     public static List<Minimap.PinData> autoPins;
     public static List<Minimap.PinData> savedPins;
@@ -68,15 +71,9 @@ namespace AMP_Configurable
     {
       Log = Logger;
 
-      /** Load Pin Type Config from JSON file **/
-      pinTypes = ResourceUtils.LoadPinConfig("amp_pin_types.json");
-      foreach (PinConfig.PinType pinType in pinTypes.pins)
-        foreach (string objectId in pinType.object_ids)
-          objectPins[objectId] = pinType;
-
       /** General Config **/
-      nexusID = Config.Bind("_General_", "NexusID", 744, "Nexus mod ID for updates");
-      modEnabled = Config.Bind("_General_", "Enabled", true, "Enable this mod");
+      nexusID = Config.Bind("_General_", "1. NexusID", 2199, "Nexus mod ID for updates");
+      modEnabled = Config.Bind("_General_", "2. Enabled", true, "Enable this mod");
 
       pinOverlapDistance = Config.Bind<float>("1. Pins", "1. PinOverlapDistance", 10, "Distance around pins to prevent overlapping of similar pins");
       pinRange = Config.Bind("1. Pins", "2. Pin Range", 100, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 5\nMax 150\nRecommended 50-75");
@@ -84,8 +81,9 @@ namespace AMP_Configurable
       if (pinRange.Value > 150) pinRange.Value = 150;
       hideAllLabels = Config.Bind("1. Pins", "3. Hide All Labels", false, "Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
       hidePinLabels = Config.Bind("1. Pins", "4. Hide Pin Label", "", "Hide individual pin type labels.\nValue should be a comma seperated list of pin types.");
+      hidePinTypes = Config.Bind("1. Pins", "5. Hide Pin Label", "", "Hide individual pin types.\nValue should be a comma seperated list of pin types.");
       string defaultSavePinTypes = "Crypt,Troll Cave,Sunken Crypt,Frost Cave,Infested Mine";
-      savePinTypes = Config.Bind("1. Pins", "5. Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
+      savePinTypes = Config.Bind("1. Pins", "6. Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
 
       destructablesEnabled = Config.Bind("2. Pins Enable/Disable", "1. Resources", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
       pickablesEnabled = Config.Bind("2. Pins Enable/Disable", "2. Pickables", true, "Enable/Disable pins for\nBerries, Mushrooms, and other pickable items");
@@ -99,6 +97,21 @@ namespace AMP_Configurable
       locsLoggingEnabled = Config.Bind("3. Logging", "4. Locations Logging", false, "Log object id and position of each location object in range of the player.\nUsed to get object Ids to assign to pin types");
       spwnsLoggingEnabled = Config.Bind("3. Logging", "5. Spawners Logging", false, "Log object id and position of each creature spawner node in range of the player.\nUsed to get object Ids to assign to pin types");
       creaturesLoggingEnabled = Config.Bind("3. Logging", "6. Creatures Logging", false, "Log object id and position of creatures that spawn in range of the player.\nUsed to get object Ids to assign to pin types");
+
+      /** Load Pin Type Config from JSON files **/
+      string[] hidePins = hidePinTypes.Value.Split(',');
+      string[] configFiles = ResourceUtils.GetPinConfigFiles();
+
+      if (configFiles != null)
+        foreach (string confFile in configFiles)
+        {
+          Mod.Log.LogInfo($"Loading pin config file: {Path.GetFileName(confFile)}");
+          pinTypes = ResourceUtils.LoadPinConfig(confFile);
+          foreach (PinConfig.PinType pinType in pinTypes.pins)
+            foreach (string objectId in pinType.object_ids)
+              if (hidePins.Contains(pinType.label))
+                objectPins[objectId] = pinType;
+        }
 
       if (!modEnabled.Value)
       {

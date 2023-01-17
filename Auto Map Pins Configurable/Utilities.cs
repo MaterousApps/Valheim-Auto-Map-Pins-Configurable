@@ -15,33 +15,36 @@ namespace Utilities
     public static byte[] GetResource(string spriteName)
     {
       if (spriteName == "") return null;
-      if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"Attempting to load sprite {spriteName}");
+      string[] spriteSearch = Directory.GetFiles(Paths.PluginPath, spriteName, SearchOption.AllDirectories);
+      if (spriteSearch.Length == 0)
+      {
+        Mod.Log.LogWarning($"[AMP] Could not find pin icon asset ({spriteName}), using generic circle icon");
+        spriteSearch = Directory.GetFiles(Paths.PluginPath, "mapicon_pin_iron.png", SearchOption.AllDirectories);
 
-      string spritePath = GetAssetPath(Path.Combine("pin-icons", spriteName));
-      if (!File.Exists(spritePath))
-      {
-        if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"{spriteName} not found in pin-icons folder, looking in assembly path");
-        spritePath = GetAssetPath(Path.Combine(spriteName));
-      }
-      if (File.Exists(spritePath))
-      {
-        return File.ReadAllBytes(spritePath);
-      }
-
-      Mod.Log.LogWarning($"[AMP] Could not find pin icon asset ({spritePath}), attempting to load generic circle icon");
-      spritePath = GetAssetPath(Path.Combine("pin-icons", "mapicon_pin_iron.png"));
-      if (!File.Exists(spritePath))
-      {
-        spritePath = GetAssetPath(Path.Combine("mapicon_pin_iron.png"));
-      }
-      if (File.Exists(spritePath))
-      {
-        byte[] fileData = File.ReadAllBytes(spritePath);
-        return fileData;
+        if (spriteSearch.Length == 0)
+        {
+          Mod.Log.LogError("[AMP] Could not find pin icon sprite. AMP Enhanced is likely installed incorrectly.");
+          return null;
+        }
       }
 
-      Mod.Log.LogError($"[AMP] Could not find pin icon assets. AMP Enhanced is likely installed incorrectly.");
-      return null;
+      // If there are multiple of the same name, AMPED will use the first asset it finds in the plugins folder
+      string spritePath = spriteSearch[0];
+
+      if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"Successfully loaded sprite: {spriteName}");
+      return File.ReadAllBytes(spritePath);
+    }
+
+    public static string[] GetPinConfigFiles()
+    {
+      string[] configs = null;
+
+      if (Mod.loggingEnabled.Value) Mod.Log.LogInfo("Looking for pin configuration json files...");
+      configs = Directory.GetFiles(Paths.PluginPath, "amp_*.json", SearchOption.AllDirectories);
+
+      if (configs.Length == 0) Mod.Log.LogWarning("Could not find any AMP config files. No automatic pins will be added...");
+
+      return configs;
     }
 
     public static PinConfig LoadPinConfig(string filename)
@@ -55,9 +58,8 @@ namespace Utilities
       return JsonConvert.DeserializeObject<PinConfig>(pinTypesJson);
     }
 
-    public static string LoadJsonText(string filename)
+    public static string LoadJsonText(string jsonFilePath)
     {
-      var jsonFilePath = GetAssetPath(filename);
       if (string.IsNullOrEmpty(jsonFilePath))
         return null;
 
