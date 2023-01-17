@@ -3,7 +3,7 @@
 ## Change Log
 
 # Version v1.3.4
-  * New config for hiding pin types by label has been added. Uses can now entered a comma seperated list of pin labels they wish to not be used
+  * New config for hiding pin types by label has been added. Users can now entered a comma seperated list of pin labels that they don't want to be autopinned
   * Multiple pin type configuration json files can now be loaded. Opening up the possibility of other authors to release their own pin and icon packs
   * Pin Config file has been made dynamic. AMPED will now load any json file with the prefix 'amp_' and attempt to use it as a pin type config file
   * Overhauled sprite loading to instead search the plugins folder and use the first file that matches the file name
