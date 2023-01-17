@@ -339,6 +339,7 @@ namespace AMP_Configurable.Patches
     {
       private static void Postfix(ref Player __instance)
       {
+        if (Game.IsPaused()) return;
         if (!Player.m_localPlayer)
           return;
 

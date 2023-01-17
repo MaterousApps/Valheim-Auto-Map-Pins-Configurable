@@ -7,6 +7,7 @@
   * Multiple pin type configuration json files can now be loaded. Opening up the possibility of other authors to release their own pin and icon packs
   * Pin Config file has been made dynamic. AMPED will now load any json file with the prefix 'amp_' and attempt to use it as a pin type config file
   * Overhauled sprite loading to instead search the plugins folder and use the first file that matches the file name
+  * Refactored some internal code to be more maintainable
 
 # Version v1.3.3
   * Added new pins
