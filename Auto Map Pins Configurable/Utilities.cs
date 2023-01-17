@@ -1,4 +1,8 @@
-﻿using System.IO;
+﻿using AMP_Configurable;
+using AMP_Configurable.PinConfig;
+using BepInEx;
+using Newtonsoft.Json;
+using System.IO;
 using System.Reflection;
 using UnityEngine;
 
@@ -8,12 +12,66 @@ namespace Utilities
     {
         public static bool ConvertInternalWarningsErrors = false;
 
-        public static byte[] GetResource(Assembly asm, string ResourceName)
+        public static byte[] GetResource(string spritePath)
         {
-            Stream manifestResourceStream = asm.GetManifestResourceStream(ResourceName);
-            byte[] buffer = new byte[manifestResourceStream.Length];
-            manifestResourceStream.Read(buffer, 0, (int)manifestResourceStream.Length);
-            return buffer;
+            spritePath = GetAssetPath(Path.Combine("pin-icons", spritePath));
+            if (File.Exists(spritePath))
+            {
+                return File.ReadAllBytes(spritePath);
+            }
+
+            Mod.Log.LogWarning($"[AMP] Could not find pin icon asset ({spritePath}), attempting to load generic circle icon");
+            spritePath = GetAssetPath(Path.Combine("pin-icons", "mapicon_pin_iron.png"));
+            if (File.Exists(spritePath))
+            {
+                byte[] fileData = File.ReadAllBytes(spritePath);
+                return fileData;
+            }
+
+            Mod.Log.LogError($"[AMP] Could not find pin icon assets. AMP Enhanced is likely installed incorrectly.");
+            return null;
+        }
+
+        public static PinConfig LoadPinConfig(string filename)
+        {
+            var pinTypesJson = LoadJsonText(filename);
+            if (pinTypesJson == null)
+            {
+                Mod.Log.LogError($"[AMP] Could not find pin types config json. AMP Enhanced is likely installed incorrectly.");
+                return null;
+            }
+            return JsonConvert.DeserializeObject<PinConfig>(pinTypesJson);
+        }
+
+        public static string LoadJsonText(string filename)
+        {
+            var jsonFilePath = GetAssetPath(filename);
+            if (string.IsNullOrEmpty(jsonFilePath))
+                return null;
+
+            return File.ReadAllText(jsonFilePath);
+        }
+
+        public static string GetAssetPath(string assetName)
+        {
+            var assetFileName = Path.Combine(Paths.PluginPath, "AMP_Enhanced", assetName);
+            if (!File.Exists(assetFileName))
+            {
+                assetFileName = GenerateAssetPathAtAssembly(assetName);
+                if (!File.Exists(assetFileName))
+                {
+                    Mod.Log.LogInfo($"[AMP] Could not find asset ({assetName})");
+                    return null;
+                }
+            }
+
+            return assetFileName;
+        }
+
+        public static string GenerateAssetPathAtAssembly(string assetName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            return Path.Combine(Path.GetDirectoryName(assembly.Location) ?? string.Empty, assetName);
         }
 
         public static BindingFlags BindFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;

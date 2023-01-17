@@ -1,9 +1,10 @@
-﻿using HarmonyLib;
+﻿using AMP_Configurable.Commands;
+using AMP_Configurable.PinConfig;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using AMP_Configurable.Commands;
 
 namespace AMP_Configurable.Patches
 {
@@ -31,7 +32,7 @@ namespace AMP_Configurable.Patches
         [HarmonyPatch(typeof(Minimap), "Start")]
         [HarmonyPostfix]
         private static void Minimap_Start(
-            Minimap __instance, 
+            Minimap __instance,
             ref bool[] ___m_visibleIconTypes)
         {
             ___m_visibleIconTypes = new bool[150];
@@ -52,8 +53,9 @@ namespace AMP_Configurable.Patches
           bool save,
           bool isChecked)
         {
-            Mod.Log.LogInfo("[AMP] Trying to add pin");
-            return ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
+            bool shouldAddPin = ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
+            if (Mod.loggingEnabled.Value && shouldAddPin) Mod.Log.LogInfo($"[AMP] Trying to add pin {type}");
+            return shouldAddPin;
         }
 
         [HarmonyPatch(typeof(Minimap), "UpdateProfilePins")]
@@ -61,21 +63,16 @@ namespace AMP_Configurable.Patches
         private static void Minimap_UpdateProfilePins(
           ref List<Minimap.PinData> ___m_pins)
         {
-            
-            //while (count < ___m_pins.Count())
-            if(!checkedSavedPins)
+            if (!checkedSavedPins)
             {
-                //Debug.Log("[AMP] Checking Saved Pins");
-                //Debug.Log(string.Format("[AMP] m_pins Count {0}", ___m_pins.Count()));
                 foreach (Minimap.PinData pins in ___m_pins)
                 {
                     if ((int)pins.m_type >= 100)
                     {
-                        if(!Mod.savedPins.Contains(pins))
+                        if (!Mod.savedPins.Contains(pins))
                             Mod.savedPins.Add(pins);
 
-                        //Debug.Log(string.Format("[AMP] Pin {0} has type of {1}", pins.m_name, pins.m_type));
-                        PinnedObject.loadData(pins.m_type.ToString());
+                        PinnedObject.loadData(null, pins.m_type.ToString());
 
                         if (pins.m_type == (Minimap.PinType)PinnedObject.pType && !Mod.filteredPins.Contains(PinnedObject.aName))
                         {
@@ -87,7 +84,6 @@ namespace AMP_Configurable.Patches
                             }
                         }
                     }
-                    //count++;
                 }
                 checkedSavedPins = true;
 
@@ -105,15 +101,13 @@ namespace AMP_Configurable.Patches
             if (Mod.filteredPins.Count() == 0)
                 return;
 
-            foreach(Minimap.PinData p in ___m_pins)
+            foreach (Minimap.PinData p in ___m_pins)
             {
-                if(Mod.filteredPins.Contains(p.m_type.ToString()))
+                if (Mod.filteredPins.Contains(p.m_type.ToString()))
                 {
                     Mod.FilterPins();
                 }
             }
-            
-
         }
 
         [HarmonyPatch(typeof(Minimap), "OnMapRightClick")]
@@ -150,14 +144,9 @@ namespace AMP_Configurable.Patches
             ZLog.Log("[AMP] Left click");
             Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
 
-            //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
             Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 5, ___m_pins);
 
-            if (closestPin == null)
-            {
-                //Mod.Log.LogInfo("[AMP] Closest pin is null");
-                return true;
-            }
+            if (closestPin == null) return true;
 
             closestPin.m_checked = !closestPin.m_checked;
             return false;
@@ -170,65 +159,27 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Destructible __instance)
         {
+            if (!Mod.oresEnabled.Value) return;
             HoverText hoverTextComp = __instance.GetComponent<HoverText>();
 
-            if (!hoverTextComp)
-            {
-                return;
-            }
+            if (!hoverTextComp) return;
 
-            
             string hoverText = hoverTextComp.m_text;
-            string aName = "";
+            hoverText = hoverText.Replace("(Clone)", "");
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Dest] Found {0} at {1} {2} {3}", hoverText, hoverTextComp.transform.position.x, hoverTextComp.transform.position.y, hoverTextComp.transform.position.z));
-            switch (hoverText)
+            PinType type = null;
+
+            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
             {
-                case "$piece_deposit_tin":
-                    if (Mod.pinTin.Value)
-                    {
-                        aName = "Tin";
-                    }
-                    break;
-                case "$piece_deposit_copper":
-                    if (Mod.pinCopper.Value)
-                    {
-                        aName = "Copper";
-                    }
-                    break;
-                case "$piece_deposit_obsidian":
-                    if (Mod.pinObsidian.Value)
-                    {
-                        aName = "Obsidian";
-                    }
-                    break;
-                case "$piece_deposit_silver":
-                case "$piece_deposit_silvervein":
-                    if (Mod.pinSilver.Value)
-                    {
-                        aName = "Silver";
-                    }
-                    break;
-                case "$piece_mudpile":
-                    if (Mod.pinIron.Value)
-                    {
-                        aName = "Iron";
-                    }
-                    break;
-                default:
-                    aName = "";
-                    break;
+                var pos = hoverTextComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {hoverText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            if (aName != "")
-            {
-                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, hoverTextComp.transform.position);
+            if (Mod.objectPins.ContainsKey(hoverText))
+                type = Mod.objectPins[hoverText];
 
-                if (!Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
-                {
-                    Mod.pinItems.Add(hoverTextComp.transform.position, aName);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
+                Mod.pinItems.Add(hoverTextComp.transform.position, type);
         }
     }
 
@@ -237,90 +188,26 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Pickable __instance)
         {
+            if (!Mod.pickablesEnabled.Value) return;
             Pickable pickableComp = __instance.GetComponent<Pickable>();
 
-            if (!pickableComp)
-            {
-                return;
-            }
+            if (!pickableComp) return;
 
             string pickableText = pickableComp.name;
-            string aName = "";
+            pickableText = pickableText.Replace("(Clone)", "");
+            PinType type = null;
 
-            //Mod.Log.LogInfo(string.Format("Found {0} at {1} {2} {3}", pickableText, pickableComp.transform.position.x, pickableComp.transform.position.y, pickableComp.transform.position.z));
-
-            switch (pickableText)
+            if (Mod.loggingEnabled.Value && Mod.pickablesLoggingEnabled.Value)
             {
-                case "RaspberryBush":
-                case "RaspberryBush(Clone)":
-                    if (Mod.pinBerries.Value)
-                    {
-                        aName = "Berries";
-                    }
-                    break;
-                case "BlueberryBush":
-                case "BlueberryBush(Clone)":
-                    if (Mod.pinBlueberries.Value)
-                    {
-                        aName = "Blueberries";
-                    }
-                    break;
-                case "CloudberryBush":
-                case "CloudberryBush(Clone)":
-                    if (Mod.pinCloudberries.Value)
-                    {
-                        aName = "Cloudberries";
-                    }
-                    break;
-                case "Pickable_Thistle":
-                case "Pickable_Thistle(Clone)":
-                    if (Mod.pinThistle.Value)
-                    {
-                        aName = "Thistle";
-                    }
-                    break;
-                case "Pickable_DragonEgg":
-                case "Pickable_DragonEgg(Clone)":
-                    if (Mod.pinDragonEgg.Value)
-                    {
-                        aName = "DragonEgg";
-                    }
-                    break;
-                case "Pickable_Mushroom":
-                case "Pickable_Mushroom(Clone)":
-                    if (Mod.pinMushroom.Value)
-                    {
-                        aName = "Mushroom";
-                    }
-                    break;
-                case "Pickable_SeedCarrot":
-                case "Pickable_SeedCarrot(Clone)":
-                    if (Mod.pinCarrot.Value)
-                    {
-                        aName = "Carrot";
-                    }
-                    break;
-                case "Pickable_SeedTurnip":
-                case "Pickable_SeedTurnip(Clone)":
-                    if (Mod.pinTurnip.Value)
-                    {
-                        aName = "Turnip";
-                    }
-                    break;
-                default:
-                    aName = "";
-                    break;
+                var pos = pickableComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Pickable] Found {pickableText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            if (aName != "")
-            {
-                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, pickableComp.transform.position);
+            if (Mod.objectPins.ContainsKey(pickableText))
+                type = Mod.objectPins[pickableText];
 
-                if (!Mod.pinItems.ContainsKey(pickableComp.transform.position))
-                {
-                    Mod.pinItems.Add(pickableComp.transform.position, aName);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(pickableComp.transform.position))
+                Mod.pinItems.Add(pickableComp.transform.position, type);
         }
     }
 
@@ -329,74 +216,26 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Location __instance)
         {
+            if (!Mod.locsEnabled.Value) return;
             Location locComp = __instance.GetComponent<Location>();
-            if (!locComp)
-            {
-                return;
-            }
+
+            if (!locComp) return;
 
             string locText = locComp.name;
-            string aName = "";
+            locText = locText.Replace("(Clone)", "");
+            PinType type = null;
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Loc] Found {0} at {1} {2} {3}", locText, locComp.transform.position.x, locComp.transform.position.y, locComp.transform.position.z));
-            switch (locText)
+            if (Mod.loggingEnabled.Value && Mod.locsLoggingEnabled.Value)
             {
-                case "Crypt1":
-                case "Crypt2":
-                case "Crypt3":
-                case "Crypt4":
-                case "Crypt1(Clone)":
-                case "Crypt2(Clone)":
-                case "Crypt3(Clone)":
-                case "Crypt4(Clone)":
-                    if (Mod.pinCrypt.Value)
-                    {
-                        aName = "Crypt";
-                    }
-                    break;
-                case "SunkenCrypt1":
-                case "SunkenCrypt2":
-                case "SunkenCrypt3":
-                case "SunkenCrypt4":
-                case "SunkenCrypt1(Clone)":
-                case "SunkenCrypt2(Clone)":
-                case "SunkenCrypt3(Clone)":
-                case "SunkenCrypt4(Clone)":
-                    if (Mod.pinSunkenCrypt.Value)
-                    {
-                        aName = "SunkenCrypt";
-                    }
-                    break;
-                case "TrollCave01":
-                case "TrollCave02":
-                case "TrollCave01(Clone)":
-                case "TrollCave02(Clone)":
-                    if (Mod.pinTrollCave.Value)
-                    {
-                        aName = "TrollCave";
-                    }
-                    break;
-                case "FireHole":
-                case "FireHole(Clone)":
-                    if (Mod.pinSurtling.Value)
-                    {
-                        aName = "Surtling";
-                    }
-                    break;
-                default:
-                    aName = "";
-                    break;
+                var pos = locComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Location] Found {locText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            if (aName != "")
-            {
-                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, locComp.transform.position);
+            if (Mod.objectPins.ContainsKey(locText))
+                type = Mod.objectPins[locText];
 
-                if (!Mod.pinItems.ContainsKey(locComp.transform.position))
-                {
-                    Mod.pinItems.Add(locComp.transform.position, aName);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(locComp.transform.position))
+                Mod.pinItems.Add(locComp.transform.position, type);
         }
     }
 
@@ -405,52 +244,26 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref SpawnArea __instance)
         {
+            if (!Mod.spwnsEnabled.Value) return;
             HoverText spawnComp = __instance.GetComponent<HoverText>();
 
-            if (!spawnComp)
-            {
-                return;
-            }
+            if (!spawnComp) return;
 
             string spawnText = spawnComp.m_text;
-            string aName = "";
+            spawnText = spawnText.Replace("(Clone)", "");
+            PinType type = null;
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Spawn] Found {0} at {1} {2} {3}", spawnText, spawnComp.transform.position.x, spawnComp.transform.position.y, spawnComp.transform.position.z));
-            switch (spawnText)
+            if (Mod.loggingEnabled.Value && Mod.spwnsLoggingEnabled.Value)
             {
-                case "Evil bone pile":
-                    if (Mod.pinSkeleton.Value)
-                    {
-                        aName = "Skeleton";
-                    }
-                    break;
-                case "Body Pile":
-                case "Body pile":
-                    if (Mod.pinDraugr.Value)
-                    {
-                        aName = "Draugr";
-                    }
-                    break;
-                case "Greydwarf nest":
-                    if (Mod.pinGreydwarf.Value)
-                    {
-                        aName = "Greydwarf";
-                    }
-                    break;
-                default:
-                    aName = "";
-                    break;
+                var pos = spawnComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Spawner] Found {spawnText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            if (aName != "")
-            {
-                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
+            if (Mod.objectPins.ContainsKey(spawnText))
+                type = Mod.objectPins[spawnText];
 
-                if (!Mod.pinItems.ContainsKey(spawnComp.transform.position))
-                {
-                    Mod.pinItems.Add(spawnComp.transform.position, aName);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(spawnComp.transform.position))
+                Mod.pinItems.Add(spawnComp.transform.position, type);
         }
     }
 
@@ -459,39 +272,26 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref CreatureSpawner __instance)
         {
+            if (!Mod.creaturesEnabled.Value) return;
             Character creatureComp = __instance.GetComponent<Character>();
 
-            if (!creatureComp)
-            {
-                return;
-            }
+            if (!creatureComp) return;
 
             string creatureText = creatureComp.m_name;
-            string aName = "";
+            creatureText = creatureText.Replace("(Clone)", "");
+            PinType type = null;
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Characters] Found {0} at {1} {2} {3}", creatureText, creatureComp.transform.position.x, creatureComp.transform.position.y, creatureComp.transform.position.z));
-            switch (creatureText)
+            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
             {
-                case "$enemy_serpent":
-                    if (Mod.pinSerpent.Value)
-                    {
-                        aName = "Serpent";
-                    }
-                    break;
-                default:
-                    aName = "";
-                    break;
+                var pos = creatureComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Creature] Found {creatureText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            if (aName != "")
-            {
-                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
+            if (Mod.objectPins.ContainsKey(creatureText))
+                type = Mod.objectPins[creatureText];
 
-                if (!Mod.pinItems.ContainsKey(creatureComp.transform.position))
-                {
-                    Mod.pinItems.Add(creatureComp.transform.position, aName);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(creatureComp.transform.position))
+                Mod.pinItems.Add(creatureComp.transform.position, type);
         }
     }
 
@@ -500,40 +300,25 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref MineRock __instance)
         {
+            if (!Mod.oresEnabled.Value) return;
             MineRock mineComp = __instance.GetComponent<MineRock>();
 
-            if (!mineComp)
-            {
-                return;
-            }
+            if (!mineComp) return;
 
             string mineText = mineComp.name;
-            string aName = "";
+            PinType type = null;
 
-            //Mod.Log.LogInfo(string.Format("[AMP - MineRock] Found {0} at {1} {2} {3}", mineText, mineComp.transform.position.x, mineComp.transform.position.y, mineComp.transform.position.z));
-            switch (mineText)
+            if (Mod.loggingEnabled.Value && Mod.oresLoggingEnabled.Value)
             {
-                case "MineRock_Meteorite":
-                case "MineRock_Meteorite(Clone)":
-                    if (Mod.pinFlametal.Value)
-                    {
-                        aName = "Flametal";
-                    }
-                    break;
-                default:
-                    aName = "";
-                    break;
+                var pos = mineComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Destructable Resource] Found {mineText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            if (aName != "")
-            {
-                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
+            if (Mod.objectPins.ContainsKey(mineText))
+                type = Mod.objectPins[mineText];
 
-                if (!Mod.pinItems.ContainsKey(mineComp.transform.position))
-                {
-                    Mod.pinItems.Add(mineComp.transform.position, aName);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(mineComp.transform.position))
+                Mod.pinItems.Add(mineComp.transform.position, type);
         }
     }
 
@@ -542,40 +327,26 @@ namespace AMP_Configurable.Patches
     {
         private static void Postfix(ref Leviathan __instance)
         {
+            if (!Mod.creaturesEnabled.Value) return;
             Leviathan levComp = __instance.GetComponent<Leviathan>();
 
-            if (!levComp)
-            {
-                return;
-            }
+            if (!levComp) return;
 
             string levText = levComp.name;
-            string aName = "";
+            levText = levText.Replace("(Clone)", "");
+            PinType type = null;
 
-            //Mod.Log.LogInfo(string.Format("[AMP - Leviathan] Found {0} at {1} {2} {3}", levText, levComp.transform.position.x, levComp.transform.position.y, levComp.transform.position.z));
-            switch (levText)
+            if (Mod.loggingEnabled.Value && Mod.creaturesLoggingEnabled.Value)
             {
-                case "Leviathan":
-                case "Leviathan(Clone)":
-                    if (Mod.pinLeviathan.Value)
-                    {
-                        aName = "Leviathan";
-                    }
-                    break;
-                default:
-                    aName = "";
-                    break;
+                var pos = levComp.transform.position;
+                Mod.Log.LogInfo($"[AMP - Creature] Found {levText} at {pos.x} {pos.y} {pos.z}");
             }
 
-            if (aName != "")
-            {
-                //__instance.gameObject.AddComponent<PinnedObject>().Init(aName, spawnComp.transform.position);
+            if (Mod.objectPins.ContainsKey(levText))
+                type = Mod.objectPins[levText];
 
-                if (!Mod.pinItems.ContainsKey(levComp.transform.position))
-                {
-                    Mod.pinItems.Add(levComp.transform.position, aName);
-                }
-            }
+            if (type != null && !Mod.pinItems.ContainsKey(levComp.transform.position))
+                Mod.pinItems.Add(levComp.transform.position, type);
         }
     }
     internal class Player_Patches
@@ -659,7 +430,6 @@ namespace AMP_Configurable.Patches
             catch (Exception ex)
             {
                 AMP_Commands.PrintOut("Something failed, there is a strong possibility another mod blocked this operation.");
-
             }
             finally
             {
