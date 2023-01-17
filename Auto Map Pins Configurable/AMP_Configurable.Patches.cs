@@ -176,7 +176,7 @@ namespace AMP_Configurable.Patches
       }
 
       if (Mod.objectPins.ContainsKey(hoverText))
-        type = Mod.objectPins[hoverText];
+        type = Mod.mtypePins[Mod.objectPins[hoverText]];
 
       if (type != null && !Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
         Mod.pinItems.Add(hoverTextComp.transform.position, type);
@@ -204,7 +204,7 @@ namespace AMP_Configurable.Patches
       }
 
       if (Mod.objectPins.ContainsKey(pickableText))
-        type = Mod.objectPins[pickableText];
+        type = Mod.mtypePins[Mod.objectPins[pickableText]];
 
       if (type != null && !Mod.pinItems.ContainsKey(pickableComp.transform.position))
         Mod.pinItems.Add(pickableComp.transform.position, type);
@@ -232,7 +232,7 @@ namespace AMP_Configurable.Patches
       }
 
       if (Mod.objectPins.ContainsKey(locText))
-        type = Mod.objectPins[locText];
+        type = Mod.mtypePins[Mod.objectPins[locText]];
 
       if (type != null && !Mod.pinItems.ContainsKey(locComp.transform.position))
         Mod.pinItems.Add(locComp.transform.position, type);
@@ -260,7 +260,7 @@ namespace AMP_Configurable.Patches
       }
 
       if (Mod.objectPins.ContainsKey(spawnText))
-        type = Mod.objectPins[spawnText];
+        type = Mod.mtypePins[Mod.objectPins[spawnText]];
 
       if (type != null && !Mod.pinItems.ContainsKey(spawnComp.transform.position))
         Mod.pinItems.Add(spawnComp.transform.position, type);
@@ -288,7 +288,7 @@ namespace AMP_Configurable.Patches
       }
 
       if (Mod.objectPins.ContainsKey(creatureText))
-        type = Mod.objectPins[creatureText];
+        type = Mod.mtypePins[Mod.objectPins[creatureText]];
 
       if (type != null && !Mod.pinItems.ContainsKey(creatureComp.transform.position))
         Mod.pinItems.Add(creatureComp.transform.position, type);
@@ -315,7 +315,7 @@ namespace AMP_Configurable.Patches
       }
 
       if (Mod.objectPins.ContainsKey(mineText))
-        type = Mod.objectPins[mineText];
+        type = Mod.mtypePins[Mod.objectPins[mineText]];
 
       if (type != null && !Mod.pinItems.ContainsKey(mineComp.transform.position))
         Mod.pinItems.Add(mineComp.transform.position, type);
@@ -343,7 +343,7 @@ namespace AMP_Configurable.Patches
       }
 
       if (Mod.objectPins.ContainsKey(levText))
-        type = Mod.objectPins[levText];
+        type = Mod.mtypePins[Mod.objectPins[levText]];
 
       if (type != null && !Mod.pinItems.ContainsKey(levComp.transform.position))
         Mod.pinItems.Add(levComp.transform.position, type);

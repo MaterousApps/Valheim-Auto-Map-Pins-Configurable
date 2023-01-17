@@ -52,8 +52,8 @@ namespace AMP_Configurable
     public static ConfigEntry<bool> creaturesLoggingEnabled;
 
     //***PUBLIC VARIABLES***//
-    public static PinConfig.PinConfig pinTypes = null;
-    public static IDictionary<string, PinConfig.PinType> objectPins = new Dictionary<string, PinConfig.PinType>();
+    public static IDictionary<int, PinConfig.PinType> mtypePins = new Dictionary<int, PinConfig.PinType>();
+    public static IDictionary<string, int> objectPins = new Dictionary<string, int>();
     public static List<Minimap.PinData> autoPins;
     public static List<Minimap.PinData> savedPins;
     public static List<Minimap.PinData> pinRemList;
@@ -101,6 +101,9 @@ namespace AMP_Configurable
       /** Load Pin Type Config from JSON files **/
       string[] hidePins = hidePinTypes.Value.Split(',');
       string[] configFiles = ResourceUtils.GetPinConfigFiles();
+      PinConfig.PinConfig pinTypes = null;
+      objectPins = new Dictionary<string, int>();
+      mtypePins = new Dictionary<int, PinConfig.PinType>();
 
       if (configFiles != null)
         foreach (string confFile in configFiles)
@@ -108,9 +111,16 @@ namespace AMP_Configurable
           Mod.Log.LogInfo($"Loading pin config file: {Path.GetFileName(confFile)}");
           pinTypes = ResourceUtils.LoadPinConfig(confFile);
           foreach (PinConfig.PinType pinType in pinTypes.pins)
+          {
+            // Load mtype reference dictionary
+            if (!hidePins.Contains(pinType.label))
+              mtypePins[pinType.type] = pinType;
+
+            // Load objectId referance dictionary 
             foreach (string objectId in pinType.object_ids)
-              if (hidePins.Contains(pinType.label))
-                objectPins[objectId] = pinType;
+              if (!hidePins.Contains(pinType.label))
+                objectPins[objectId] = pinType.type;
+          }
         }
 
       if (!modEnabled.Value)
@@ -273,7 +283,7 @@ namespace AMP_Configurable
         loadData(tempPin);
 
         //don't show filtered pins.
-        if (Mod.filteredPins.Contains(pType.ToString()))
+        if (Mod.filteredPins.Contains(pType.ToString()) || aName == "")
           return;
 
         if (Mod.autoPins.Count > 0)
@@ -339,22 +349,15 @@ namespace AMP_Configurable
       if (pin == null && m_type != null)
       {
         pType = Int32.Parse(m_type);
-        if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Loading pin of type {pType}");
-        foreach (PinConfig.PinType pinType in Mod.pinTypes.pins)
+        if (!Mod.mtypePins.ContainsKey(pType))
         {
-          if (pinType.type == pType)
-          {
-            aName = pinType.label;
-            pType = pinType.type;
-            aSave = Mod.savePinTypes.Value.Split(',').Contains(pinType.label);
-            aIcon = pinType.sprite;
-            showName = !Mod.hidePinLabels.Value.Split(',').Contains(pinType.label);
-            pinSize = pinType.size;
-            break;
-          }
+          if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Failed to load pin data from minimap pin type {pType}");
+          aName = "";
+          return;
         }
 
-        return;
+        pin = Mod.mtypePins[pType];
+        if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Loading pin {pin.label} from minimap type {pType}");
       }
 
       aName = pin.label;
@@ -375,8 +378,8 @@ namespace AMP_Configurable
   {
     public static void Init()
     {
-      foreach (PinConfig.PinType pinType in Mod.pinTypes.pins)
-        pinType.sprite = LoadSprite(pinType.icon);
+      foreach (KeyValuePair<int, PinConfig.PinType> mtype in Mod.mtypePins)
+        mtype.Value.sprite = LoadSprite(mtype.Value.icon);
     }
 
     internal static Texture2D LoadTexture(byte[] file)
