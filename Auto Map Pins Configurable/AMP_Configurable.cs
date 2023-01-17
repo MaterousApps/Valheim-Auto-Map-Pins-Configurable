@@ -18,9 +18,9 @@ namespace AMP_Configurable
   {
     //***CONFIG ENTRIES***//
     //***GENERAL***//
-    public static ManualLogSource Log;
     public static ConfigEntry<int> nexusID;
     public static ConfigEntry<bool> modEnabled;
+    public static ConfigEntry<bool> diagnosticsEnabled;
     public static ConfigEntry<float> pinOverlapDistance;
     public static ConfigEntry<int> pinRange;
     public static ConfigEntry<bool> hideAllLabels;
@@ -69,7 +69,7 @@ namespace AMP_Configurable
 
     private void Awake()
     {
-      Log = Logger;
+      Log.ModLogger = Logger;
 
       /** General Config **/
       nexusID = Config.Bind("_General_", "1. NexusID", 2199, "Nexus mod ID for updates");
@@ -97,6 +97,7 @@ namespace AMP_Configurable
       locsLoggingEnabled = Config.Bind("3. Logging", "4. Locations Logging", false, "Log object id and position of each location object in range of the player.\nUsed to get object Ids to assign to pin types");
       spwnsLoggingEnabled = Config.Bind("3. Logging", "5. Spawners Logging", false, "Log object id and position of each creature spawner node in range of the player.\nUsed to get object Ids to assign to pin types");
       creaturesLoggingEnabled = Config.Bind("3. Logging", "6. Creatures Logging", false, "Log object id and position of creatures that spawn in range of the player.\nUsed to get object Ids to assign to pin types");
+      diagnosticsEnabled = Config.Bind("3. Logging", "7. Enable Timing Diagnostics", false, "Enables log output with function timing diagnostics. Used for developer optimization purposes");
 
       /** Load Pin Type Config from JSON files **/
       string[] hidePins = hidePinTypes.Value.Split(',');
@@ -147,6 +148,63 @@ namespace AMP_Configurable
         filteredPins = new List<string>();
 
         Assets.Init();
+      }
+    }
+
+    public static class Log
+    {
+      public static ManualLogSource ModLogger;
+
+      public static void LogInfo(string msg)
+      {
+        if (!Mod.loggingEnabled.Value) return;
+        ModLogger.LogInfo(msg);
+      }
+
+      public static void LogDebug(string msg)
+      {
+        if (!Mod.loggingEnabled.Value && !Mod.diagnosticsEnabled.Value) return;
+        ModLogger.LogDebug(msg);
+      }
+
+      public static void LogWarning(string msg)
+      {
+        ModLogger.LogWarning(msg);
+      }
+
+      public static void LogError(string msg)
+      {
+        ModLogger.LogError(msg);
+      }
+
+      public static void LogDestructible(string name, Vector3 pos)
+      {
+        if (!Mod.destructableLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Destructible Resource] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogLocation(string name, Vector3 pos)
+      {
+        if (!Mod.locsLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Location] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogPickable(string name, Vector3 pos)
+      {
+        if (!Mod.pickablesLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Pickable] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogSpawn(string name, Vector3 pos)
+      {
+        if (!Mod.spwnsLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Spawn] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogCreature(string name, Vector3 pos)
+      {
+        if (!Mod.creaturesLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Creature] Found {name} at {pos.x} {pos.y} {pos.z}");
       }
     }
 
