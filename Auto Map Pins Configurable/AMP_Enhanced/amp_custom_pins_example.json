@@ -1,0 +1,18 @@
+{
+  "pins": [
+    {
+      "type": 400,
+      "label": "Custom Pin Example",
+      "icon": "icon-name.png",
+      "size": 20,
+      "object_ids": ["ObjectId"]
+    },
+    {
+      "type": 401,
+      "label": "A Second Custom Pin Example",
+      "icon": "icon-name-2.png",
+      "size": 20,
+      "object_ids": ["ObjectId"]
+    }
+  ]
+}

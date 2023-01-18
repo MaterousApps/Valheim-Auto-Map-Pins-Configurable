@@ -4,6 +4,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,22 +12,24 @@ using Utilities;
 
 namespace AMP_Configurable
 {
-  [BepInPlugin("amped.mod.auto_map_pins", "AMPED - Auto Map Pins Enhanced", "1.3.3")]
+  [BepInPlugin("amped.mod.auto_map_pins", "AMPED - Auto Map Pins Enhanced", "1.3.4")]
   [BepInProcess("valheim.exe")]
   public class Mod : BaseUnityPlugin
   {
     //***CONFIG ENTRIES***//
     //***GENERAL***//
-    public static ManualLogSource Log;
     public static ConfigEntry<int> nexusID;
     public static ConfigEntry<bool> modEnabled;
+    public static ConfigEntry<bool> diagnosticsEnabled;
     public static ConfigEntry<float> pinOverlapDistance;
     public static ConfigEntry<int> pinRange;
     public static ConfigEntry<bool> hideAllLabels;
     public static ConfigEntry<string> hidePinLabels;
+    public static ConfigEntry<string> hidePinTypes;
     public static ConfigEntry<string> savePinTypes;
     public static ConfigEntry<string> customPinSizes;
     public static ConfigEntry<bool> loggingEnabled;
+    public static ConfigEntry<string> customConfigFiles;
 
     //***ORES***//
     public static ConfigEntry<bool> destructablesEnabled;
@@ -49,8 +52,8 @@ namespace AMP_Configurable
     public static ConfigEntry<bool> creaturesLoggingEnabled;
 
     //***PUBLIC VARIABLES***//
-    public static PinConfig.PinConfig pinTypes;
-    public static IDictionary<string, PinConfig.PinType> objectPins = new Dictionary<string, PinConfig.PinType>();
+    public static IDictionary<int, PinConfig.PinType> mtypePins = new Dictionary<int, PinConfig.PinType>();
+    public static IDictionary<string, int> objectPins = new Dictionary<string, int>();
     public static List<Minimap.PinData> autoPins;
     public static List<Minimap.PinData> savedPins;
     public static List<Minimap.PinData> pinRemList;
@@ -66,17 +69,11 @@ namespace AMP_Configurable
 
     private void Awake()
     {
-      Log = Logger;
-
-      /** Load Pin Type Config from JSON file **/
-      pinTypes = ResourceUtils.LoadPinConfig("amp_pin_types.json");
-      foreach (PinConfig.PinType pinType in pinTypes.pins)
-        foreach (string objectId in pinType.object_ids)
-          objectPins[objectId] = pinType;
+      Log.ModLogger = Logger;
 
       /** General Config **/
-      nexusID = Config.Bind("_General_", "NexusID", 744, "Nexus mod ID for updates");
-      modEnabled = Config.Bind("_General_", "Enabled", true, "Enable this mod");
+      nexusID = Config.Bind("_General_", "1. NexusID", 2199, "Nexus mod ID for updates");
+      modEnabled = Config.Bind("_General_", "2. Enabled", true, "Enable this mod");
 
       pinOverlapDistance = Config.Bind<float>("1. Pins", "1. PinOverlapDistance", 10, "Distance around pins to prevent overlapping of similar pins");
       pinRange = Config.Bind("1. Pins", "2. Pin Range", 100, "Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nMin 5\nMax 150\nRecommended 50-75");
@@ -84,8 +81,9 @@ namespace AMP_Configurable
       if (pinRange.Value > 150) pinRange.Value = 150;
       hideAllLabels = Config.Bind("1. Pins", "3. Hide All Labels", false, "Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*");
       hidePinLabels = Config.Bind("1. Pins", "4. Hide Pin Label", "", "Hide individual pin type labels.\nValue should be a comma seperated list of pin types.");
+      hidePinTypes = Config.Bind("1. Pins", "5. Hide Pin Label", "", "Hide individual pin types.\nValue should be a comma seperated list of pin types.");
       string defaultSavePinTypes = "Crypt,Troll Cave,Sunken Crypt,Frost Cave,Infested Mine";
-      savePinTypes = Config.Bind("1. Pins", "5. Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
+      savePinTypes = Config.Bind("1. Pins", "6. Save Pin Types", defaultSavePinTypes, "These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.");
 
       destructablesEnabled = Config.Bind("2. Pins Enable/Disable", "1. Resources", true, "Enable/Disable pins for\nOres, Trees, and other destructable resource nodes");
       pickablesEnabled = Config.Bind("2. Pins Enable/Disable", "2. Pickables", true, "Enable/Disable pins for\nBerries, Mushrooms, and other pickable items");
@@ -99,31 +97,127 @@ namespace AMP_Configurable
       locsLoggingEnabled = Config.Bind("3. Logging", "4. Locations Logging", false, "Log object id and position of each location object in range of the player.\nUsed to get object Ids to assign to pin types");
       spwnsLoggingEnabled = Config.Bind("3. Logging", "5. Spawners Logging", false, "Log object id and position of each creature spawner node in range of the player.\nUsed to get object Ids to assign to pin types");
       creaturesLoggingEnabled = Config.Bind("3. Logging", "6. Creatures Logging", false, "Log object id and position of creatures that spawn in range of the player.\nUsed to get object Ids to assign to pin types");
+      diagnosticsEnabled = Config.Bind("3. Logging", "7. Enable Timing Diagnostics", false, "Enables log output with function timing diagnostics. Used for developer optimization purposes");
+
+      /** Load Pin Type Config from JSON files **/
+      string defaultPinConfPath = ResourceUtils.GetDefaultPinConfig();
+      string[] configFiles = ResourceUtils.GetPinConfigFiles();
+      objectPins = new Dictionary<string, int>();
+      mtypePins = new Dictionary<int, PinConfig.PinType>();
+
+      if (configFiles != null)
+      {
+        // Load defaults first incase of custom config overwrites
+        LoadPinsFromConfig(defaultPinConfPath);
+
+        // Load any custom configs that were found
+        foreach (string confPath in configFiles)
+        {
+          // Skip the default file, it's already loaded
+          if (Path.GetFileName(confPath) == "amp_pin_types.json") continue;
+          LoadPinsFromConfig(confPath);
+        }
+      }
 
       if (!modEnabled.Value)
       {
         enabled = false;
+        return;
       }
-      else
+
+      new Harmony("materousapps.mods.automappins_configurable").PatchAll();
+
+      Harmony.CreateAndPatchAll(typeof(Minimap_Patch), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(DestructiblePatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(PickablePatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(LocationPatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(SpawnAreaPatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(MineRockPatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(Player_Patches), "materousapps.mods.automappins_configurable");
+
+      addedPinLocs = new List<Vector3>();
+      dupPinLocs = new List<Vector3>();
+      autoPins = new List<Minimap.PinData>();
+      pinRemList = new List<Minimap.PinData>();
+      savedPins = new List<Minimap.PinData>();
+      filteredPins = new List<string>();
+
+      Assets.Init();
+    }
+
+    private static void LoadPinsFromConfig(string confFilePath)
+    {
+      Mod.Log.LogInfo($"Loading pin config file: {Path.GetFileName(confFilePath)}");
+
+      PinConfig.PinConfig pinTypes = null;
+      string[] hidePins = Mod.hidePinTypes.Value.Split(',');
+
+      pinTypes = ResourceUtils.LoadPinConfig(confFilePath);
+      foreach (PinConfig.PinType pinType in pinTypes.pins)
       {
-        new Harmony("materousapps.mods.automappins_configurable").PatchAll();
+        if (hidePins.Contains(pinType.label)) continue;
 
-        Harmony.CreateAndPatchAll(typeof(Minimap_Patch), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(DestructiblePatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(PickablePatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(LocationPatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(SpawnAreaPatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(MineRockPatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(Player_Patches), "materousapps.mods.automappins_configurable");
+        // Load mtype and objectId referance dictionary
+        mtypePins[pinType.type] = pinType;
+        foreach (string objectId in pinType.object_ids)
+          objectPins[objectId] = pinType.type;
+      }
+    }
 
-        addedPinLocs = new List<Vector3>();
-        dupPinLocs = new List<Vector3>();
-        autoPins = new List<Minimap.PinData>();
-        pinRemList = new List<Minimap.PinData>();
-        savedPins = new List<Minimap.PinData>();
-        filteredPins = new List<string>();
+    public static class Log
+    {
+      public static ManualLogSource ModLogger;
 
-        Assets.Init();
+      public static void LogInfo(string msg)
+      {
+        if (!Mod.loggingEnabled.Value) return;
+        ModLogger.LogInfo(msg);
+      }
+
+      public static void LogDebug(string msg)
+      {
+        if (!Mod.loggingEnabled.Value && !Mod.diagnosticsEnabled.Value) return;
+        ModLogger.LogDebug(msg);
+      }
+
+      public static void LogWarning(string msg)
+      {
+        ModLogger.LogWarning(msg);
+      }
+
+      public static void LogError(string msg)
+      {
+        ModLogger.LogError(msg);
+      }
+
+      public static void LogDestructible(string name, Vector3 pos)
+      {
+        if (!Mod.destructableLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Destructible Resource] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogLocation(string name, Vector3 pos)
+      {
+        if (!Mod.locsLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Location] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogPickable(string name, Vector3 pos)
+      {
+        if (!Mod.pickablesLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Pickable] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogSpawn(string name, Vector3 pos)
+      {
+        if (!Mod.spwnsLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Spawn] Found {name} at {pos.x} {pos.y} {pos.z}");
+      }
+
+      public static void LogCreature(string name, Vector3 pos)
+      {
+        if (!Mod.creaturesLoggingEnabled.Value && !Mod.objectPins.ContainsKey(name)) return;
+        LogInfo($"[AMP - Creature] Found {name} at {pos.x} {pos.y} {pos.z}");
       }
     }
 
@@ -260,7 +354,7 @@ namespace AMP_Configurable
         loadData(tempPin);
 
         //don't show filtered pins.
-        if (Mod.filteredPins.Contains(pType.ToString()))
+        if (Mod.filteredPins.Contains(pType.ToString()) || aName == "")
           return;
 
         if (Mod.autoPins.Count > 0)
@@ -326,22 +420,15 @@ namespace AMP_Configurable
       if (pin == null && m_type != null)
       {
         pType = Int32.Parse(m_type);
-        if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Loading pin of type {pType}");
-        foreach (PinConfig.PinType pinType in Mod.pinTypes.pins)
+        if (!Mod.mtypePins.ContainsKey(pType))
         {
-          if (pinType.type == pType)
-          {
-            aName = pinType.label;
-            pType = pinType.type;
-            aSave = Mod.savePinTypes.Value.Split(',').Contains(pinType.label);
-            aIcon = pinType.sprite;
-            showName = !Mod.hidePinLabels.Value.Split(',').Contains(pinType.label);
-            pinSize = pinType.size;
-            break;
-          }
+          if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Failed to load pin data from minimap pin type {pType}");
+          aName = "";
+          return;
         }
 
-        return;
+        pin = Mod.mtypePins[pType];
+        if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Loading pin {pin.label} from minimap type {pType}");
       }
 
       aName = pin.label;
@@ -362,8 +449,8 @@ namespace AMP_Configurable
   {
     public static void Init()
     {
-      foreach (PinConfig.PinType pinType in Mod.pinTypes.pins)
-        pinType.sprite = LoadSprite(pinType.icon);
+      foreach (KeyValuePair<int, PinConfig.PinType> mtype in Mod.mtypePins)
+        mtype.Value.sprite = LoadSprite(mtype.Value.icon);
     }
 
     internal static Texture2D LoadTexture(byte[] file)
