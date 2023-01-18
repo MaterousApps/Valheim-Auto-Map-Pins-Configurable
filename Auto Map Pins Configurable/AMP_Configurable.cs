@@ -12,7 +12,7 @@ using Utilities;
 
 namespace AMP_Configurable
 {
-  [BepInPlugin("amped.mod.auto_map_pins", "AMPED - Auto Map Pins Enhanced", "1.3.4")]
+  [BepInPlugin("amped.mod.auto_map_pins", "AMPED - Auto Map Pins Enhanced", "1.3.5")]
   [BepInProcess("valheim.exe")]
   public class Mod : BaseUnityPlugin
   {
