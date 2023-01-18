@@ -100,54 +100,67 @@ namespace AMP_Configurable
       diagnosticsEnabled = Config.Bind("3. Logging", "7. Enable Timing Diagnostics", false, "Enables log output with function timing diagnostics. Used for developer optimization purposes");
 
       /** Load Pin Type Config from JSON files **/
-      string[] hidePins = hidePinTypes.Value.Split(',');
+      string defaultPinConfPath = ResourceUtils.GetDefaultPinConfig();
       string[] configFiles = ResourceUtils.GetPinConfigFiles();
-      PinConfig.PinConfig pinTypes = null;
       objectPins = new Dictionary<string, int>();
       mtypePins = new Dictionary<int, PinConfig.PinType>();
 
       if (configFiles != null)
-        foreach (string confFile in configFiles)
-        {
-          Mod.Log.LogInfo($"Loading pin config file: {Path.GetFileName(confFile)}");
-          pinTypes = ResourceUtils.LoadPinConfig(confFile);
-          foreach (PinConfig.PinType pinType in pinTypes.pins)
-          {
-            // Load mtype reference dictionary
-            if (!hidePins.Contains(pinType.label))
-              mtypePins[pinType.type] = pinType;
+      {
+        // Load defaults first incase of custom config overwrites
+        LoadPinsFromConfig(defaultPinConfPath);
 
-            // Load objectId referance dictionary 
-            foreach (string objectId in pinType.object_ids)
-              if (!hidePins.Contains(pinType.label))
-                objectPins[objectId] = pinType.type;
-          }
+        // Load any custom configs that were found
+        foreach (string confPath in configFiles)
+        {
+          // Skip the default file, it's already loaded
+          if (Path.GetFileName(confPath) == "amp_pin_types.json") continue;
+          LoadPinsFromConfig(confPath);
         }
+      }
 
       if (!modEnabled.Value)
       {
         enabled = false;
+        return;
       }
-      else
+
+      new Harmony("materousapps.mods.automappins_configurable").PatchAll();
+
+      Harmony.CreateAndPatchAll(typeof(Minimap_Patch), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(DestructiblePatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(PickablePatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(LocationPatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(SpawnAreaPatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(MineRockPatchSpawn), "materousapps.mods.automappins_configurable");
+      Harmony.CreateAndPatchAll(typeof(Player_Patches), "materousapps.mods.automappins_configurable");
+
+      addedPinLocs = new List<Vector3>();
+      dupPinLocs = new List<Vector3>();
+      autoPins = new List<Minimap.PinData>();
+      pinRemList = new List<Minimap.PinData>();
+      savedPins = new List<Minimap.PinData>();
+      filteredPins = new List<string>();
+
+      Assets.Init();
+    }
+
+    private static void LoadPinsFromConfig(string confFilePath)
+    {
+      Mod.Log.LogInfo($"Loading pin config file: {Path.GetFileName(confFilePath)}");
+
+      PinConfig.PinConfig pinTypes = null;
+      string[] hidePins = Mod.hidePinTypes.Value.Split(',');
+
+      pinTypes = ResourceUtils.LoadPinConfig(confFilePath);
+      foreach (PinConfig.PinType pinType in pinTypes.pins)
       {
-        new Harmony("materousapps.mods.automappins_configurable").PatchAll();
+        if (hidePins.Contains(pinType.label)) continue;
 
-        Harmony.CreateAndPatchAll(typeof(Minimap_Patch), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(DestructiblePatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(PickablePatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(LocationPatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(SpawnAreaPatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(MineRockPatchSpawn), "materousapps.mods.automappins_configurable");
-        Harmony.CreateAndPatchAll(typeof(Player_Patches), "materousapps.mods.automappins_configurable");
-
-        addedPinLocs = new List<Vector3>();
-        dupPinLocs = new List<Vector3>();
-        autoPins = new List<Minimap.PinData>();
-        pinRemList = new List<Minimap.PinData>();
-        savedPins = new List<Minimap.PinData>();
-        filteredPins = new List<string>();
-
-        Assets.Init();
+        // Load mtype and objectId referance dictionary
+        mtypePins[pinType.type] = pinType;
+        foreach (string objectId in pinType.object_ids)
+          objectPins[objectId] = pinType.type;
       }
     }
 

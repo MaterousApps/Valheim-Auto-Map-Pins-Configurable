@@ -35,6 +35,20 @@ namespace Utilities
       return File.ReadAllBytes(spritePath);
     }
 
+    public static string GetDefaultPinConfig()
+    {
+      string[] defaultConfigs = null;
+      defaultConfigs = Directory.GetFiles(Paths.PluginPath, "amp_pin_types.json", SearchOption.AllDirectories);
+
+      if (defaultConfigs.Length == 0)
+      {
+        Mod.Log.LogWarning("Could not find the default AMP config file.");
+        return "";
+      }
+
+      return defaultConfigs[0];
+    }
+
     public static string[] GetPinConfigFiles()
     {
       string[] configs = null;

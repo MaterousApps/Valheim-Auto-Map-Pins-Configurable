@@ -1,5 +1,3 @@
-# Change Log
-
 ## Change Log
 
 # Version v1.3.4
