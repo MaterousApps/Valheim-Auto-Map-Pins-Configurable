@@ -2,8 +2,12 @@
 
 ### Version v1.3.5
   * Performance Overhaul. Updated and refactored a large portion of the mod to run faster as to not cause as much FPS drops for potato computers
-  * Updated and reorganized configuration. It should be backwards compatible but if you experience issues, delete your `amped.mod.auto_map_pins.cfg` and restart the game to geneate a clean config.
-  * 
+  * Updated and reorganized configuration. It should be backwards compatible but if you experience issues, delete your `amped.mod.auto_map_pins.cfg` and restart the game to geneate a clean config
+  * Added new config value for "Minimap Pin Size Multiplier". The mod will multiply the pin size by this multiplier for the minimap so that players can better control the pin size in the minimap. 
+  * Added minimapSize for Pin Type configuation. JSON configs now support a new optional value "minimapSize" which allows you to custom set the minimap Pin Size. If set the new Minimap Pin Size Multiplier config will use this minimapSize value to multiply the pin size in the minimap. 
+  * Combined all of the object id loggers into a single "objectLogging" config value. This new config will toggle all object id logs.
+  * Added Object Id filter for object logging. This is a comma delimited list of object ids you don't want the mod to report when it encounters them. This helps clean up the logs and only shows you the object ids you want.
+  * Added "Object Report Mode". This config only accepts either "all" or "unique". If set to "all" it uses the same functionality it does not and reports the object id and location as soon as it's loaded into the game. "unique" will only report unique
 
 ### Version v1.3.4
   * New config for hiding pin types by label has been added. Users can now entered a comma seperated list of pin labels that they don't want to be autopinned

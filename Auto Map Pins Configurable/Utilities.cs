@@ -31,7 +31,7 @@ namespace Utilities
       // If there are multiple of the same name, AMPED will use the first asset it finds in the plugins folder
       string spritePath = spriteSearch[0];
 
-      if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"Successfully loaded sprite: {spriteName}");
+      Mod.Log.LogDebug($"Successfully loaded sprite: {spriteName}");
       return File.ReadAllBytes(spritePath);
     }
 
@@ -53,7 +53,7 @@ namespace Utilities
     {
       string[] configs = null;
 
-      if (Mod.loggingEnabled.Value) Mod.Log.LogInfo("Looking for pin configuration json files...");
+      Mod.Log.LogInfo("Looking for pin configuration json files...");
       configs = Directory.GetFiles(Paths.PluginPath, "amp_*.json", SearchOption.AllDirectories);
 
       if (configs.Length == 0) Mod.Log.LogWarning("Could not find any AMP config files. No automatic pins will be added...");

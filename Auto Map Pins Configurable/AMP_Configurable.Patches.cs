@@ -159,19 +159,12 @@ namespace AMP_Configurable.Patches
       mapMode = ___m_mode;
       foreach (Minimap.PinData pin in Mod.autoPins)
       {
-        PinType pinItem = Mod.pinItems[pin.m_pos];
-        switch (___m_mode)
-        {
-          case Minimap.MapMode.Small:
-            float new_size = (pinItem.minimapSize != 0 ? pinItem.minimapSize : pinItem.size) * Mod.minimapSizeMult.Value;
-            pin.m_worldSize = new_size;
-            break;
-          case Minimap.MapMode.Large:
-            pin.m_worldSize = pinItem.size;
-            break;
-          default:
-            break;
-        }
+        if(!Mod.mtypePins.TryGetValue((int)pin.m_type, out PinType typeConf)) continue;
+        float new_size = typeConf.size;
+        if (___m_mode == Minimap.MapMode.Small) 
+          new_size = (typeConf.minimapSize != 0 ? typeConf.minimapSize : typeConf.size) * Mod.minimapSizeMult.Value;
+
+        pin.m_worldSize = new_size;
       }
       watch.Stop();
       Mod.Log.LogDebug($"Minimap.SetMapMode timing {watch.ElapsedMilliseconds}ms");
@@ -215,7 +208,7 @@ namespace AMP_Configurable.Patches
     }
   }
 
-  internal class Destructable_Patch : MonoBehaviour
+  internal class Pin_Registration_Patches : MonoBehaviour
   {
     [HarmonyPatch(typeof(Destructible), "Start")]
     [HarmonyPostfix]
@@ -229,10 +222,7 @@ namespace AMP_Configurable.Patches
       Vector3 position = comp.transform.position;
       Mod.pinObject("Destructable Resource", objectId, position);
     }
-  }
 
-  internal class Pickable_Patch : MonoBehaviour
-  {
     [HarmonyPatch(typeof(Pickable), "Awake")]
     [HarmonyPostfix]
     private static void PickableSpawnPatch(ref Pickable __instance)
@@ -246,38 +236,9 @@ namespace AMP_Configurable.Patches
       Mod.pinObject("Pickable", objectId, position);
     }
 
-    // [HarmonyPatch(typeof(Pickable), "OnDisable")]
-    // [HarmonyPostfix]
-    // private static void PickableDisabledPatch(ref Pickable __instance)
-    // {
-    //   // if (!Mod.pickablesEnabled.Value) return;
-    //   Pickable comp = __instance.GetComponent<Pickable>();
-    //   if (!comp) return;
-
-    //   string objectId = comp.name;
-    //   Vector3 position = comp.transform.position;
-    //   Mod.Log.LogDebug($"Pickable_Patch.PickableDisabledPatch Pickable Disabled {objectId}");
-    // }
-
-    // [HarmonyPatch(typeof(Pickable), "OnDestroy")]
-    // [HarmonyPrefix]
-    // private static bool PickableDestroyedPatch(ref Pickable __instance)
-    // {
-    //   // if (!Mod.pickablesEnabled.Value) return;
-    //   Pickable comp = __instance.GetComponent<Pickable>();
-    //   if (!comp) return true;
-
-    //   string objectId = comp.name;
-    //   Vector3 position = comp.transform.position;
-    //   Mod.Log.LogDebug($"Pickable_Patch.PickableDestroyedPatch Pickable Destroyed {objectId}");
-    //   return true;
-    // }
-  }
-
-  [HarmonyPatch(typeof(Location), "Awake")]
-  internal class LocationPatchSpawn
-  {
-    private static void Postfix(ref Location __instance)
+    [HarmonyPatch(typeof(Location), "Awake")]
+    [HarmonyPostfix]
+    private static void LocationSpawnPatch(ref Location __instance)
     {
       if (!Mod.locsEnabled.Value) return;
       Location comp = __instance.GetComponent<Location>();
@@ -287,13 +248,11 @@ namespace AMP_Configurable.Patches
       Vector3 position = comp.transform.position;
       Mod.pinObject("Location", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(SpawnArea), "Awake")]
-  internal class SpawnAreaPatchSpawn
-  {
-    private static void Postfix(ref SpawnArea __instance)
-    {
+    [HarmonyPatch(typeof(SpawnArea), "Awake")]
+    [HarmonyPostfix]
+    private static void SpawnAreaSpawnPatch(ref Location __instance)
+      {
       if (!Mod.spwnsEnabled.Value) return;
       HoverText comp = __instance.GetComponent<HoverText>();
       if (!comp) return;
@@ -302,12 +261,10 @@ namespace AMP_Configurable.Patches
       Vector3 position = comp.transform.position;
       Mod.pinObject("Spawner", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(Character), "Awake")]
-  internal class CharacterPatchSpawn
-  {
-    private static void Postfix(ref CreatureSpawner __instance)
+    [HarmonyPatch(typeof(Character), "Awake")]
+    [HarmonyPostfix]
+    private static void CharacterSpawnPatch(ref CreatureSpawner __instance)
     {
       if (!Mod.creaturesEnabled.Value) return;
       Character comp = __instance.GetComponent<Character>();
@@ -317,12 +274,10 @@ namespace AMP_Configurable.Patches
       Vector3 position = comp.transform.position;
       Mod.pinObject("Creature", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(MineRock), "Start")]
-  internal class MineRockPatchSpawn
-  {
-    private static void Postfix(ref MineRock __instance)
+    [HarmonyPatch(typeof(MineRock), "Start")]
+    [HarmonyPostfix]
+    private static void MineRockSpawnPatch(ref MineRock __instance)
     {
       if (!Mod.destructablesEnabled.Value) return;
       MineRock comp = __instance.GetComponent<MineRock>();
@@ -332,12 +287,10 @@ namespace AMP_Configurable.Patches
       Vector3 position = comp.transform.position;
       Mod.pinObject("Destructable Resource", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(Leviathan), "Awake")]
-  internal class LeviathanPatchSpawn
-  {
-    private static void Postfix(ref Leviathan __instance)
+    [HarmonyPatch(typeof(Leviathan), "Awake")]
+    [HarmonyPostfix]
+    private static void LeviathanSpawnPatch(ref Leviathan __instance)
     {
       if (!Mod.creaturesEnabled.Value) return;
       Leviathan comp = __instance.GetComponent<Leviathan>();
@@ -347,12 +300,23 @@ namespace AMP_Configurable.Patches
       Vector3 position = comp.transform.position;
       Mod.pinObject("Destructable Resource", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(Vagon), "Awake")]
-  internal class CartPatch
-  {
-    private static void Postfix(ref Vagon __instance)
+    [HarmonyPatch(typeof(TreeBase), "Awake")]
+    [HarmonyPostfix]
+    private static void TreeBaseSpawnPatch(ref TreeBase __instance)
+    {
+      if (!Mod.destructablesEnabled.Value) return;
+      TreeBase comp = __instance.GetComponent<TreeBase>();
+      if (!comp) return;
+
+      string objectId = comp.name;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Destructable Resource", objectId, position);
+    }
+
+    [HarmonyPatch(typeof(Vagon), "Awake")]
+    [HarmonyPostfix]
+    private static void VagonSpawnPatch(ref Vagon __instance)
     {
       Vagon cartComp = __instance.GetComponent<Vagon>();
 
@@ -363,12 +327,10 @@ namespace AMP_Configurable.Patches
 
       Mod.Log.LogInfo($"Found wagon: {cartText} at {cartComp.transform.position.ToString()}");
     }
-  }
 
-  [HarmonyPatch(typeof(Ship), "Awake")]
-  internal class ShipPatch
-  {
-    private static void Postfix(ref Ship __instance)
+    [HarmonyPatch(typeof(Ship), "Awake")]
+    [HarmonyPostfix]
+    private static void ShipSpawnPatch(ref Ship __instance)
     {
       Ship shipComp = __instance.GetComponent<Ship>();
 
@@ -379,12 +341,10 @@ namespace AMP_Configurable.Patches
 
       Mod.Log.LogInfo($"Found Ship: {shipText} at {shipComp.transform.position.ToString()}");
     }
-  }
 
-  [HarmonyPatch(typeof(TeleportWorld), "Awake")]
-  internal class PortalPatch
-  {
-    private static void Postfix(ref TeleportWorld __instance)
+    [HarmonyPatch(typeof(TeleportWorld), "Awake")]
+    [HarmonyPostfix]
+    private static void TeleportWorldSpawnPatch(ref TeleportWorld __instance)
     {
       TeleportWorld portalComp = __instance.GetComponent<TeleportWorld>();
 
