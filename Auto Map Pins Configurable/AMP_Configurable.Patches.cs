@@ -314,50 +314,50 @@ namespace AMP_Configurable.Patches
       Mod.pinObject("Destructable Resource", objectId, position);
     }
 
-    [HarmonyPatch(typeof(Vagon), "Awake")]
-    [HarmonyPostfix]
-    private static void VagonSpawnPatch(ref Vagon __instance)
-    {
-      Vagon cartComp = __instance.GetComponent<Vagon>();
+    // [HarmonyPatch(typeof(Vagon), "Awake")]
+    // [HarmonyPostfix]
+    // private static void VagonSpawnPatch(ref Vagon __instance)
+    // {
+    //   Vagon cartComp = __instance.GetComponent<Vagon>();
 
-      if (!cartComp) return;
+    //   if (!cartComp) return;
 
-      string cartText = cartComp.m_name;
-      cartText = cartText.Replace("(Clone)", "").ToLower();
+    //   string cartText = cartComp.m_name;
+    //   cartText = cartText.Replace("(Clone)", "").ToLower();
 
-      Mod.Log.LogInfo($"Found wagon: {cartText} at {cartComp.transform.position.ToString()}");
-    }
+    //   Mod.Log.LogDebug($"Found wagon: {cartText} at {cartComp.transform.position.ToString()}");
+    // }
 
-    [HarmonyPatch(typeof(Ship), "Awake")]
-    [HarmonyPostfix]
-    private static void ShipSpawnPatch(ref Ship __instance)
-    {
-      Ship shipComp = __instance.GetComponent<Ship>();
+    // [HarmonyPatch(typeof(Ship), "Awake")]
+    // [HarmonyPostfix]
+    // private static void ShipSpawnPatch(ref Ship __instance)
+    // {
+    //   Ship shipComp = __instance.GetComponent<Ship>();
 
-      if (!shipComp) return;
+    //   if (!shipComp) return;
 
-      string shipText = shipComp.name;
-      shipText = shipText.Replace("(Clone)", "").ToLower();
+    //   string shipText = shipComp.name;
+    //   shipText = shipText.Replace("(Clone)", "").ToLower();
 
-      Mod.Log.LogInfo($"Found Ship: {shipText} at {shipComp.transform.position.ToString()}");
-    }
+    //   Mod.Log.LogDebug($"Found Ship: {shipText} at {shipComp.transform.position.ToString()}");
+    // }
 
-    [HarmonyPatch(typeof(TeleportWorld), "Awake")]
-    [HarmonyPostfix]
-    private static void TeleportWorldSpawnPatch(ref TeleportWorld __instance)
-    {
-      TeleportWorld portalComp = __instance.GetComponent<TeleportWorld>();
+    // [HarmonyPatch(typeof(TeleportWorld), "Awake")]
+    // [HarmonyPostfix]
+    // private static void TeleportWorldSpawnPatch(ref TeleportWorld __instance)
+    // {
+    //   TeleportWorld portalComp = __instance.GetComponent<TeleportWorld>();
 
-      if (!portalComp) return;
+    //   if (!portalComp) return;
 
-      string portalText = portalComp.name;
-      portalText = portalText.Replace("(Clone)", "").ToLower();
+    //   string portalText = portalComp.name;
+    //   portalText = portalText.Replace("(Clone)", "").ToLower();
 
-      HoverText hoverComp = __instance.GetComponent<HoverText>();
-      string portalDestination = hoverComp.m_text;
+    //   HoverText hoverComp = __instance.GetComponent<HoverText>();
+    //   string portalDestination = hoverComp.m_text;
 
-      Mod.Log.LogInfo($"Found Portal: {portalText} ({portalDestination}) at {portalComp.transform.position.ToString()}");
-    }
+    //   Mod.Log.LogDebug($"Found Portal: {portalText} ({portalDestination}) at {portalComp.transform.position.ToString()}");
+    // }
   }
 
   internal class Player_Patches
