@@ -22,7 +22,10 @@ namespace AMP_Configurable
     public static ConfigEntry<bool> modEnabled;
     public static ConfigEntry<bool> diagnosticsEnabled;
     public static ConfigEntry<float> pinOverlapDistance;
-    public static ConfigEntry<int> pinRange;
+
+
+    public static ConfigEntry<float> pinRange;
+    public static ConfigEntry<bool> pinRangeExpRadiusMatching;
     public static ConfigEntry<float> minimapSizeMult;
     public static ConfigEntry<bool> hideAllLabels;
     public static ConfigEntry<string> hidePinLabels;
@@ -83,94 +86,83 @@ namespace AMP_Configurable
     private void Awake()
     {
       Log.ModLogger = Logger;
-      
+
       /** General Config **/
-      nexusID = Config.Bind(
-        "General", "NexusID", 2199, 
-        new ConfigDescription("Nexus mod ID for updates", null, new ConfigurationManagerAttributes { Order = 1 }));
-      modEnabled = Config.Bind(
-        "General", "Enabled", true, 
-        new ConfigDescription("Enable this mod", null, new ConfigurationManagerAttributes { Order = 2 }));
+      nexusID = Config.Bind("_General_", "nexusID", 2199,
+        new ConfigDescription("Nexus mod ID for updates", null, new ConfigurationManagerAttributes { Order = 1, DispName = "NexusID" }));
+      modEnabled = Config.Bind("_General_", "modEnabled", true,
+        new ConfigDescription("Enable this mod", null, new ConfigurationManagerAttributes { Order = 2, DispName = "Enabled" }));
 
-      /** Pins Config **/
-      minimapSizeMult = Config.Bind<float>(
-        "Pins", "Minimap Pin Size Multiplier", (float)1.25, 
-        new ConfigDescription(
-          "Pin sizes are multiplied by this number in the minimap.\nNote: Pins can also have a custom minimap size set in the pin packs .json config.\nThis multiplie will also be used on the custom minimap size of these pins.\nIf some pins seem to large please check any amp_*.json config files you have in your plugins folder and adjust the minimapSize acccordingly.", 
-          new AcceptableValueRange<float>((float)0.25, 5), new ConfigurationManagerAttributes { Order = 3 }));
+      /** Pin Config **/
       pinOverlapDistance = Config.Bind<float>(
-        "Pins", "Pin Overlap Distance", 10, 
-        new ConfigDescription("Distance around pins to prevent overlapping of similar pins. \nRecommended values are 5-10", 
-        new AcceptableValueRange<float>(1, 50), new ConfigurationManagerAttributes { Order = 4 }));
-      pinRange = Config.Bind(
-        "Pins", "Pin Range", 50, 
-        new ConfigDescription("Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nRecommended 50-75", 
-          new AcceptableValueRange<int>(5, 150), new ConfigurationManagerAttributes { Order = 5 }));
-      hideAllLabels = Config.Bind(
-        "Pins", "Hide All Labels", false, 
-        new ConfigDescription("Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*", 
-        null, new ConfigurationManagerAttributes { Order = 6 }));
-      hidePinLabels = Config.Bind(
-        "Pins", "Remove Pin Labels", "", 
-        new ConfigDescription("Hide individual pin type labels.\nValue should be a comma seperated list of pin labels.", 
-        null, new ConfigurationManagerAttributes { Order = 7 }));
-      hidePinTypes = Config.Bind(
-        "Pins", "Hide Pin Types", "", 
-        new ConfigDescription("Hide individual pin types.\nValue should be a comma seperated list of pin labels you would like to hide.", 
-        null, new ConfigurationManagerAttributes { Order = 8 }));
-      savePinTypes = Config.Bind(
-        "Pins", "Save Pin Types", "Crypt,Troll Cave,Sunken Crypt,Frost Cave,Infested Mine", 
-        new ConfigDescription("These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.", 
-        null, new ConfigurationManagerAttributes { Order = 9 }));
+        "1. Pins", "pinOverlapDistance", 10,
+        new ConfigDescription("Distance around pins to prevent overlapping of similar pins. \nRecommended values are 5-15",
+        new AcceptableValueRange<float>(1, 50),
+        new ConfigurationManagerAttributes { Order = 8, DispName = "Pin Overlap Distance" }));
+      pinRangeExpRadiusMatching = Config.Bind<bool>("1. Pins", "pinRangeExpRadiusMatching", true,
+        new ConfigDescription("Match Pin Range to the Player's Map Discovery Radius.\nShould be compatible with mods that change explore radius.", null,
+        new ConfigurationManagerAttributes { Order = 7, DispName = "Match Pin Range to Explore Radius" }));
+      pinRange = Config.Bind<float>(
+        "1. Pins", "pinRange", 50,
+        new ConfigDescription("Sets the range that pins will appear on the mini-map. Lower value means you need to be closer to set pin.\nDISABLED if Matching Player Explore Radius is enabled.\nRecommended 50-75",
+        new AcceptableValueRange<float>(5, 150),
+        new ConfigurationManagerAttributes { Order = 6, DispName = "Pin Range" }));
+      hideAllLabels = Config.Bind("1. Pins", "hideAllLabels", false,
+        new ConfigDescription("Hide all pin labels.\n*THIS WILL OVERRIDE THE INDIVIDUAL SETTINGS*", null,
+        new ConfigurationManagerAttributes { Order = 5, DispName = "Hide ALL Labels" }));
+      hidePinLabels = Config.Bind("1. Pins", "hidePinLabels", "",
+        new ConfigDescription("Hide individual pin type labels.\nValue should be a comma seperated list of pin labels.", null,
+        new ConfigurationManagerAttributes { Order = 4, DispName = "Hide Individual Labels" }));
+      hidePinTypes = Config.Bind("1. Pins", "hidePinTypes", "",
+        new ConfigDescription("Disable individual pin types.\nValue should be a comma seperated list of pin labels.", null,
+        new ConfigurationManagerAttributes { Order = 3, DispName = "Disable Pins" }));
+      savePinTypes = Config.Bind("1. Pins", "savePinTypes", "Crypt,Troll Cave,Sunken Crypt,Frost Cave,Infested Mine",
+        new ConfigDescription("These Pin Types will persist on the map after the player as left the area.\nValue should be a comma seperated list of pin types.", null,
+        new ConfigurationManagerAttributes { Order = 2, DispName = "Save Pins" }));
+      minimapSizeMult = Config.Bind<float>(
+        "1. Pins", "minimapSizeMult", (float)1.25,
+        new ConfigDescription(
+          "Pin sizes are multiplied by this number in the minimap.\nNote: Pins can also have a custom minimap size set in the pin packs .json config.\nThis multiplie will also be used on the custom minimap size of these pins.\nIf some pins seem to large please check any amp_*.json config files you have in your plugins folder and adjust the minimapSize acccordingly.",
+          new AcceptableValueRange<float>((float)0.25, 5),
+          new ConfigurationManagerAttributes { Order = 1, DispName = "Minimap Size Multiplier" }));
 
-      /** Pin Category Config **/
-      destructablesEnabled = Config.Bind(
-        "Pin Categories", "Resources", true, 
-        new ConfigDescription("Enable/Disable pins for\nOres, Trees, and other destructable resource nodes", 
-        null, new ConfigurationManagerAttributes { Order = 10 }));
-      pickablesEnabled = Config.Bind(
-        "Pin Categories", "Pickables", true, 
-        new ConfigDescription("Enable/Disable pins for\nBerries, Mushrooms, and other pickable items", 
-        null, new ConfigurationManagerAttributes { Order = 11 }));
-      locsEnabled = Config.Bind(
-        "Pin Categories", "Locations", true, 
-        new ConfigDescription("Enable/Disable pins for\nCrypts, Troll Caves, and other discoverable locations", 
-        null, new ConfigurationManagerAttributes { Order = 12 }));
-      spwnsEnabled = Config.Bind(
-        "Pin Categories", "Spawners", true, 
-        new ConfigDescription("Enable/Disable pins for\nGreydwarf nests, Skeleton Bone Piles, and other creature spawners", 
-        null, new ConfigurationManagerAttributes { Order = 13 }));
-      creaturesEnabled = Config.Bind(
-        "Pin Categories", "Creatures", true, 
-        new ConfigDescription("Enable/Disable pins for\nSerpents, and other creatures when they spawn with in range of the player", 
-        null, new ConfigurationManagerAttributes { Order = 14 }));
+      destructablesEnabled = Config.Bind("2. Pins Enable/Disable", "destructablesEnabled", true,
+        new ConfigDescription("Enable/Disable pins for\nOres, Trees, and other destructable resource nodes", null,
+        new ConfigurationManagerAttributes { Order = 5, DispName = "Resources" }));
+      pickablesEnabled = Config.Bind("2. Pins Enable/Disable", "pickablesEnabled", true,
+        new ConfigDescription("Enable/Disable pins for\nBerries, Mushrooms, and other pickable items", null,
+        new ConfigurationManagerAttributes { Order = 4, DispName = "Pickables" }));
+      locsEnabled = Config.Bind("2. Pins Enable/Disable", "locsEnabled", true,
+        new ConfigDescription("Enable/Disable pins for\nCrypts, Troll Caves, and other discoverable locations", null,
+        new ConfigurationManagerAttributes { Order = 3, DispName = "Locations" }));
+      spwnsEnabled = Config.Bind("2. Pins Enable/Disable", "spwnsEnabled", true,
+        new ConfigDescription("Enable/Disable pins for\nGreydwarf nests, Skeleton Bone Piles, and other creature spawners", null,
+        new ConfigurationManagerAttributes { Order = 2, DispName = "Spawners" }));
+      creaturesEnabled = Config.Bind("2. Pins Enable/Disable", "creaturesEnabled", true,
+        new ConfigDescription("Enable/Disable pins for\nSerpents, and other creatures when they spawn with in range of the player", null,
+        new ConfigurationManagerAttributes { Order = 1, DispName = "Creatures" }));
 
       /** Logging Config **/
-      loggingEnabled = Config.Bind(
-        "Logging", "Enable Logging", true, 
-        new ConfigDescription("Enables/Disables Log output from the mod.", 
-        null, new ConfigurationManagerAttributes { Order = 15 }));
-      objectLogging = Config.Bind(
-        "Logging", "Enable Object Logging", false, 
-        new ConfigDescription("Writes object ids to log.\nThese can be used to create AMPED PinTypes in json config files", 
-        null, new ConfigurationManagerAttributes { Order = 16 }));
-      objectLogFilter = Config.Bind(
-        "Logging", "Object Log Filter", "", 
-        new ConfigDescription("Comma seperated list of object ids to filter out during logging process. Only applies when Object Logging is enabled", 
-        null, new ConfigurationManagerAttributes { Order = 17 }));
+      loggingEnabled = Config.Bind("3. Logging", "loggingEnabled", false,
+        new ConfigDescription("Toggle all logs from AMPED on/off", null,
+        new ConfigurationManagerAttributes { Order = 6, DispName = "Enable Logging" }));
+      objectLogging = Config.Bind("3. Logging", "objectLogging", false,
+        new ConfigDescription("Writes object ids to log.\nThese can be used to create AMPED PinTypes in json config files", null,
+        new ConfigurationManagerAttributes { Order = 5, DispName = "Object Id Logging" }));
+      onlyLogUnique = Config.Bind<bool>("3. Logging", "onlyLogUnique", true,
+       new ConfigDescription("Sets AMPED to only log out an objectId once, instead of every time an object spawns in.\nIt will logout a full list upon game exit.", null,
+       new ConfigurationManagerAttributes { Order = 4, DispName = "Unique Objects Only" }));
+      logKnownPinObjects = Config.Bind<bool>("3. Logging", "logKnownPinObjects", false,
+        new ConfigDescription("Allow logging of objects that currently have a configured Pin Type.", null,
+        new ConfigurationManagerAttributes { Order = 3, DispName = "Log Known Pin Objects" }));
+      objectLogFilter = Config.Bind("3. Logging", "objectLogFilter", "",
+        new ConfigDescription("Comma seperated list of object ids to filter out during logging process. Only applies when Object Logging is enabled", null,
+        new ConfigurationManagerAttributes { Order = 2, DispName = "Object Log Filter" }));
+      diagnosticsEnabled = Config.Bind("3. Logging", "diagnosticsEnabled", false,
+        new ConfigDescription("Enables log output with function timing diagnostics. Used for developer optimization purposes", null,
+        new ConfigurationManagerAttributes { Order = 1, DispName = "Enable Debug Diagnostics" }));
+
       filterObjectIds = objectLogFilter.Value.Split(',');
-      onlyLogUnique = Config.Bind<bool>(
-        "Logging", "Only Log Unique Object Ids", true, 
-        new ConfigDescription("Sets AMPED to only log out an objectId once, instead of every time an object spawns in.\nIt will logout a full list upon game exit.", 
-        null, new ConfigurationManagerAttributes { Order = 17 }));
-      logKnownPinObjects = Config.Bind<bool>(
-        "Logging", "Log Known Pin Object Ids", false, 
-        new ConfigDescription("Allow logging of objects that currently have a configured Pin Type.", 
-        null, new ConfigurationManagerAttributes { Order = 17 }));
-      diagnosticsEnabled = Config.Bind(
-        "Logging", "Enable Timing Diagnostics", false, 
-        new ConfigDescription("Enables log output with function timing diagnostics. Used for developer optimization purposes", 
-        null, new ConfigurationManagerAttributes { Order = 18 }));
 
       /** Load Pin Type Config from JSON files **/
       string defaultPinConfPath = ResourceUtils.GetDefaultPinConfig();
@@ -188,8 +180,6 @@ namespace AMP_Configurable
         }
       }
 
-      Config.SettingChanged += UpdatePinsFromSettings;
-
       if (!modEnabled.Value)
       {
         enabled = false;
@@ -204,25 +194,35 @@ namespace AMP_Configurable
 
       pinItems = new Dictionary<Vector3, PinType>();
       dupPinLocs = new Dictionary<Vector3, Minimap.PinData>();
+      autoPins = new List<Minimap.PinData>();
+
+      Config.SettingChanged += UpdatePinsFromSettings;
 
       Assets.Init();
     }
 
     private void OnDestroy()
     {
-      if(objectLogging.Value && uniqueObjectIds.Count > 0)
+      if (objectLogging.Value && uniqueObjectIds.Count > 0)
       {
         Mod.Log.LogInfo($"AMP Found {uniqueObjectIds.Count} Object Ids");
         foreach (string objectId in uniqueObjectIds)
-         Mod.Log.LogInfo($"[AMP object_id] {objectId}");
+          Mod.Log.LogInfo($"[AMP object_id] {objectId}");
       }
     }
 
-    public static void UpdatePinsFromSettings(object sender, SettingChangedEventArgs changedSetting)
+    public static void UpdatePinsFromSettings(object sender, SettingChangedEventArgs arg)
     {
-      Log.LogDebug($"Setting change detected on {changedSetting.ToString()}");
-      forcePinRefresh();
+      Log.LogDebug($"Setting change detected on {arg.ChangedSetting.Definition.Key}");
+
+      if (pinRangeExpRadiusMatching.Value)
+        if (Minimap.instance != null)
+        {
+          pinRange.Value = Minimap.instance.m_exploreRadius;
+        } else pinRange.Value = 50;
+
       filterObjectIds = objectLogFilter.Value.Split(',');
+      forcePinRefresh();
     }
 
     private static void LoadPinsFromConfig(string confFilePath)
@@ -277,12 +277,14 @@ namespace AMP_Configurable
       public static void LogObject(string type, string name, Vector3 pos)
       {
         if (!Mod.loggingEnabled.Value || !Mod.objectLogging.Value || filterObjectIds.Contains(name)) return;
-        if(!Mod.logKnownPinObjects.Value && Mod.objectPins.ContainsKey(name)) return;
+        if (!Mod.logKnownPinObjects.Value && Mod.objectPins.ContainsKey(name)) return;
         if (Mod.onlyLogUnique.Value && !Mod.uniqueObjectIds.Contains(name))
         {
           LogInfo($"[AMP - {type}] Found Object Id {name}");
           Mod.uniqueObjectIds.Add(name);
-        } else if(!Mod.onlyLogUnique.Value) {
+        }
+        else if (!Mod.onlyLogUnique.Value)
+        {
           LogInfo($"[AMP - {type}] Found {name} at {pos.ToString()} distance from player[{Player_Patches.currPos.ToString()}] {distanceFromPlayer(pos).ToString()}");
         }
       }
@@ -292,11 +294,14 @@ namespace AMP_Configurable
     {
       string cleanedId = objectId.Replace("(Clone)", "").ToLower();
       Mod.Log.LogObject(objectType, cleanedId, position);
-      if (Mod.objectPins.TryGetValue(cleanedId, out PinType type)) 
+      if (Mod.objectPins.TryGetValue(cleanedId, out PinType type))
       {
         Mod.Log.LogDebug($"Mod.pinObject Adding {cleanedId} [{position}] to pinItems");
+        type.isPinned = false;
+        type.pinCat = objectType;
         Mod.pinItems[position] = type;
-        Mod.pinItems[position].isPinned = false;
+        Mod.mtypePins[type.type].pinCat = objectType;
+        Mod.objectPins[cleanedId].pinCat = objectType;
       }
     }
 
@@ -351,7 +356,7 @@ namespace AMP_Configurable
       checkPins();
     }
 
-    public static float distanceFromPlayer(Vector3 pos) 
+    public static float distanceFromPlayer(Vector3 pos)
     {
       return Vector3.Distance(Player_Patches.currPos, pos);
     }
@@ -362,6 +367,15 @@ namespace AMP_Configurable
       checkingPins = true;
       Mod.Log.LogDebug($"Mod.checkPins Looking for items to pin. Checking {pinItems.Count()} pinnable items");
       var watch = System.Diagnostics.Stopwatch.StartNew();
+
+      // Compatibility check for pinRange. Other mods can change the exploreRadius 
+      if (pinRangeExpRadiusMatching.Value)
+      {
+        if (Minimap.instance != null)
+        {
+          pinRange.Value = Minimap.instance.m_exploreRadius;
+        } else pinRange.Value = 50;
+      }
 
       // Check if there are any pins to add
       Dictionary<Vector3, PinType> tempPinItems = new Dictionary<Vector3, PinType>(pinItems);
@@ -379,7 +393,7 @@ namespace AMP_Configurable
         }
 
         // Clean pinItems of items that are far enough away to get re-added by objects "Awake" state
-        if(!firstLoad && distance >= 300)
+        if (!firstLoad && distance >= 300)
         {
           Mod.Log.LogDebug($"Mod.checkPins Distance is more than 300 for {pinItem.Value.label} [{pinItem.Key.ToString()}]. Distance: {distance.ToString()}. Removing from pinItems");
           pinItems.Remove(pinItem.Key);
@@ -389,9 +403,9 @@ namespace AMP_Configurable
       Mod.Log.LogDebug($"Mod.checkPins checking for out of range items on {autoPins.Count()} registered auto pins");
       // Temp pin list is used to avoid enumeration errors when updating autoPins inside of loop
       List<Minimap.PinData> tempPinList = new List<Minimap.PinData>(autoPins);
-      foreach (Minimap.PinData pin in tempPinList) 
+      foreach (Minimap.PinData pin in tempPinList)
       {
-        if (!pin.m_save && distanceFromPlayer(pin.m_pos) > pinRange.Value) 
+        if (!pin.m_save && distanceFromPlayer(pin.m_pos) > pinRange.Value)
         {
           Mod.Log.LogDebug($"Mod.checkPins {pin.m_name}[{pin.m_type}] is out of range, removing pin.");
           Minimap.instance.RemovePin(pin);
@@ -569,7 +583,14 @@ namespace AMP_Configurable
           pinSize = pin.size;
           break;
       }
+
       hidePin = Mod.hidePinTypes.Value != "" && Mod.hidePinTypes.Value.Split(',').Contains(pin.label);
+
+      if(!Mod.destructablesEnabled.Value && pin.pinCat == "Destructable Resource") hidePin = true;
+      if(!Mod.pickablesEnabled.Value && pin.pinCat == "Pickable") hidePin = true;
+      if(!Mod.locsEnabled.Value && pin.pinCat == "Location") hidePin = true;
+      if(!Mod.spwnsEnabled.Value && pin.pinCat == "Spawner") hidePin = true;
+      if(!Mod.creaturesEnabled.Value && pin.pinCat == "Creature") hidePin = true;
 
       watch.Stop();
       var elapsedMs = watch.ElapsedMilliseconds;

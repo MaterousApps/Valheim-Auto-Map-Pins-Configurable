@@ -15,6 +15,7 @@ namespace AMP_Configurable.PinConfig
     public string[] object_ids;
     public Minimap.PinData minimapPin = null;
     public bool isPinned = false;
+    public string pinCat = "";
   }
 
   [Serializable]
