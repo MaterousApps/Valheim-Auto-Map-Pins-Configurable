@@ -103,6 +103,7 @@
       "label": "Crypt",
       "icon": "surtling_core.png",
       "size": 25,
+      "minimapSize": 50,
       "object_ids": ["Crypt1", "Crypt2", "Crypt3", "Crypt4"]
     },
     {
@@ -110,6 +111,7 @@
       "label": "Sunken Crypt",
       "icon": "witheredbone.png",
       "size": 25,
+      "minimapSize": 50,
       "object_ids": [
         "SunkenCrypt1",
         "SunkenCrypt2",
@@ -122,6 +124,7 @@
       "label": "Troll Cave",
       "icon": "TrophyFrostTroll.png",
       "size": 25,
+      "minimapSize": 50,
       "object_ids": ["TrollCave01", "TrollCave02", "TrollCave"]
     },
     {
@@ -136,27 +139,33 @@
       "label": "Skeleton",
       "icon": "TrophySkeleton.png",
       "size": 25,
-      "object_ids": ["Evil bone pile"]
+      "object_ids": ["BonePileSpawner"]
     },
     {
       "type": 118,
       "label": "Draugr",
       "icon": "TrophyDraugr.png",
       "size": 25,
-      "object_ids": ["Body Pile"]
+      "object_ids": ["Spawner_DraugrPile"]
     },
     {
       "type": 119,
-      "label": "Greydwarf",
+      "label": "Greydwarf Nest",
       "icon": "TrophyGreydwarf.png",
       "size": 25,
-      "object_ids": ["Greydwarf nest", "Greydwarf_camp1"]
+      "object_ids": [
+        "Greydwarf nest",
+        "Greydwarf_camp1",
+        "Spawner_GreydwarfNest",
+        "Greydwarf_camp2"
+      ]
     },
     {
       "type": 120,
       "label": "Serpent",
       "icon": "TrophySerpent.png",
       "size": 25,
+      "minimapSize": 50,
       "object_ids": ["$enemy_serpent"]
     },
     {
@@ -178,6 +187,7 @@
       "label": "Fuling Camp",
       "icon": "TrophyGoblin.png",
       "size": 25,
+      "minimapSize": 50,
       "object_ids": ["GoblinCamp1", "GoblinCamp2", "GoblinCamp3", "GoblinCamp4"]
     },
     {
@@ -185,6 +195,7 @@
       "label": "Frost Cave",
       "icon": "TrophyGolem.png",
       "size": 25,
+      "minimapSize": 50,
       "object_ids": [
         "MountainCave01",
         "MountainCave02",
@@ -225,6 +236,7 @@
       "label": "Infested Tree",
       "icon": "InfestedTree01.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["InfestedTree01"]
     },
     {
@@ -322,6 +334,7 @@
       "label": "Infested Mine",
       "icon": "Mistlands_DvergrTownEntrance2.png",
       "size": 20,
+      "minimapSize": 50,
       "object_ids": [
         "Mistlands_DvergrTownEntrance1",
         "Mistlands_DvergrTownEntrance2"
@@ -422,6 +435,7 @@
       "label": "Fuling Tower",
       "icon": "StoneTower1.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["Ruin3", "StoneTower1", "StoneTower3"]
     },
     {

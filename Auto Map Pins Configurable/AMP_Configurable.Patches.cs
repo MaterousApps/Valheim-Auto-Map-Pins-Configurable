@@ -1,9 +1,7 @@
-﻿using AMP_Configurable.Commands;
-using AMP_Configurable.PinConfig;
+﻿using AMP_Configurable.PinConfig;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace AMP_Configurable.Patches
@@ -12,6 +10,7 @@ namespace AMP_Configurable.Patches
   {
     public static int count = 0;
     public static bool checkedSavedPins = false;
+    public static Minimap.MapMode mapMode = Minimap.MapMode.Small;
 
     [HarmonyReversePatch]
     [HarmonyPatch(typeof(Minimap), "ScreenToWorldPoint", new System.Type[] { typeof(Vector3) })]
@@ -22,11 +21,7 @@ namespace AMP_Configurable.Patches
     private static void Minimap_Awake()
     {
       checkedSavedPins = false;
-      Mod.addedPinLocs.Clear();
       Mod.dupPinLocs.Clear();
-      Mod.autoPins.Clear();
-      Mod.pinRemList.Clear();
-      Mod.savedPins.Clear();
     }
 
     [HarmonyPatch(typeof(Minimap), "Start")]
@@ -42,20 +37,50 @@ namespace AMP_Configurable.Patches
       }
     }
 
+    // [HarmonyPatch(typeof(Minimap), "AddPin")]
+    // [HarmonyPrefix]
+    // private static bool Minimap_AddPin(
+    //   ref Minimap __instance,
+    //   List<Minimap.PinData> ___m_pins,
+    //   Vector3 pos,
+    //   Minimap.PinType type,
+    //   string name,
+    //   bool save,
+    //   bool isChecked)
+    // {
+    //   // bool shouldAddPin = ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
+    //   // if(shouldAddPin) Mod.Log.LogInfo($"Patches.Minimap.AddPin Attempting to pin {name} [{type}]");
+    //   // return shouldAddPin;
+    //   Mod.Log.LogInfo($"Patches.Minimap.AddPin Attempting to pin {name} [{type}]");
+    //   return true;
+    // }
+
     [HarmonyPatch(typeof(Minimap), "AddPin")]
-    [HarmonyPrefix]
-    private static bool Minimap_AddPin(
-      ref Minimap __instance,
-      List<Minimap.PinData> ___m_pins,
-      Vector3 pos,
-      Minimap.PinType type,
-      string name,
-      bool save,
-      bool isChecked)
+    [HarmonyPostfix]
+    private static Minimap.PinData Minimap_AddPin_PostFix(Minimap.PinData pin)
     {
-      bool shouldAddPin = ((type != Minimap.PinType.Death ? 0 : (Mod.SimilarPinExists(pos, type, ___m_pins, name, PinnedObject.aIcon, out Minimap.PinData _) ? 1 : 0)) & (save ? 1 : 0)) == 0;
-      if (Mod.loggingEnabled.Value && shouldAddPin) Mod.Log.LogInfo($"[AMP] Trying to add pin {type}");
-      return shouldAddPin;
+      // Check if the pin is a part of AMPED pinItems and then set data accordingly
+      if (Mod.pinItems.TryGetValue(pin.m_pos, out PinType pinTypeData))
+      {
+        Mod.pinItems[pin.m_pos].isPinned = true;
+        Mod.pinItems[pin.m_pos].minimapPin = pin;
+        Mod.autoPins.Add(pin);
+      }
+      return pin;
+    }
+
+    [HarmonyPatch(typeof(Minimap), "RemovePin", new Type[] { typeof(Minimap.PinData) })]
+    [HarmonyPrefix]
+    private static void Minimap_RemovePin(ref Minimap __instance, Minimap.PinData pin)
+    {
+      if (Mod.pinItems.ContainsKey(pin.m_pos))
+      {
+        Mod.pinItems[pin.m_pos].minimapPin = null;
+        Mod.pinItems[pin.m_pos].isPinned = false;
+      }
+
+      if(Mod.dupPinLocs.ContainsKey(pin.m_pos)) Mod.dupPinLocs.Remove(pin.m_pos);
+      if (Mod.autoPins.Contains(pin)) Mod.autoPins.Remove(pin);
     }
 
     [HarmonyPatch(typeof(Minimap), "UpdateProfilePins")]
@@ -65,49 +90,84 @@ namespace AMP_Configurable.Patches
     {
       if (!checkedSavedPins)
       {
-        foreach (Minimap.PinData pins in ___m_pins)
+        Mod.Log.LogDebug("Minimap.UpdateProfilePins checking saved pins");
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        foreach (Minimap.PinData pin in ___m_pins)
         {
-          if ((int)pins.m_type >= 100)
+          if ((int)pin.m_type >= 100)
           {
-            if (!Mod.savedPins.Contains(pins))
-              Mod.savedPins.Add(pins);
-
-            PinnedObject.loadData(null, pins.m_type.ToString());
-
-            if (pins.m_type == (Minimap.PinType)PinnedObject.pType && !Mod.filteredPins.Contains(PinnedObject.aName))
+            PinnedObject.loadData(null, (int)pin.m_type);
+            if (PinnedObject.hidePin)
             {
-              pins.m_icon = PinnedObject.aIcon;
-              pins.m_worldSize = PinnedObject.pinSize;
-              if (!PinnedObject.showName)
-              {
-                pins.m_name = string.Empty;
-              }
+              Minimap.instance.RemovePin(pin);
+              continue;
             }
+
+            if (pin.m_type == (Minimap.PinType)PinnedObject.pType)
+            {
+              pin.m_icon = PinnedObject.aIcon;
+              pin.m_worldSize = PinnedObject.pinSize;
+              if (!PinnedObject.showName) pin.m_name = string.Empty;
+            }
+
+            if (Mod.mtypePins.TryGetValue((int)pin.m_type, out PinType pinTypeData))
+            {
+              Mod.pinItems[pin.m_pos] = pinTypeData;
+              Mod.pinItems[pin.m_pos].minimapPin = pin;
+            }
+            Mod.autoPins.Add(pin);
           }
         }
         checkedSavedPins = true;
 
-        Mod.checkPins(Player_Patches.currPos);
+        Mod.checkPins(true);
+        watch.Stop();
+        var elapsedMs = watch.ElapsedMilliseconds;
+        Mod.Log.LogDebug($"Minimap.UpdateProfilePins checking saved pins took {elapsedMs}ms");
       }
-
     }
 
-    [HarmonyPatch(typeof(Minimap), "UpdatePins")]
-    [HarmonyPrefix]
-    private static void Minimap_UpdatePins(
-      Minimap __instance,
-      ref List<Minimap.PinData> ___m_pins)
-    {
-      if (Mod.filteredPins.Count() == 0)
-        return;
+    /** Keeping code in comment since UpdatePins will be used in creature tracking feature **/
+    // [HarmonyPatch(typeof(Minimap), "UpdatePins")]
+    // [HarmonyPrefix]
+    // private static void Minimap_UpdatePins(
+    //   Minimap __instance,
+    //   ref List<Minimap.PinData> ___m_pins)
+    // {
+    //   if (Mod.filteredPins.Count() == 0)
+    //     return;
 
-      foreach (Minimap.PinData p in ___m_pins)
+    //   Mod.Log.LogDebug("Minimap: Update Pins - Filtering pins");
+    //   foreach (Minimap.PinData p in ___m_pins)
+    //   {
+    //     if (Mod.filteredPins.Contains(p.m_type.ToString()))
+    //     {
+    //       Mod.FilterPins();
+    //     }
+    //   }
+    // }
+
+    [HarmonyPatch(typeof(Minimap), "SetMapMode")]
+    [HarmonyPostfix]
+    private static void Minimap_ChangeMapMode(
+      Minimap __instance,
+      ref Minimap.MapMode ___m_mode)
+    {
+      Mod.Log.LogDebug($"Minimap.SetMapMode - Mode changed to {___m_mode}");
+      var watch = System.Diagnostics.Stopwatch.StartNew();
+
+      mapMode = ___m_mode;
+      foreach (Minimap.PinData pin in Mod.autoPins)
       {
-        if (Mod.filteredPins.Contains(p.m_type.ToString()))
-        {
-          Mod.FilterPins();
-        }
+        if(!Mod.mtypePins.TryGetValue((int)pin.m_type, out PinType typeConf)) continue;
+        float new_size = typeConf.size;
+        if (___m_mode == Minimap.MapMode.Small) 
+          new_size = (typeConf.minimapSize != 0 ? typeConf.minimapSize : typeConf.size) * Mod.minimapSizeMult.Value;
+
+        pin.m_worldSize = new_size;
       }
+      watch.Stop();
+      Mod.Log.LogDebug($"Minimap.SetMapMode timing {watch.ElapsedMilliseconds}ms");
     }
 
     [HarmonyPatch(typeof(Minimap), "OnMapRightClick")]
@@ -116,22 +176,16 @@ namespace AMP_Configurable.Patches
         Minimap __instance,
         ref List<Minimap.PinData> ___m_pins)
     {
+      Mod.Log.LogDebug("Minimap.OnMapRightClick");
       ZLog.Log("[AMP] Right click");
 
       Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
-
-      //Mod.Log.LogInfo(string.Format("WorldPoint = {0}", worldPoint));
-      Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 5, ___m_pins);
-
-      //Mod.Log.LogInfo(string.Format("Pin Name - {0}, Pin Icon - {1}, Pin Type {2}", closestPin.m_name, closestPin.m_icon.name, closestPin.m_type));
+      Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 10, ___m_pins);
 
       if (closestPin == null || closestPin.m_icon.name == "mapicon_start" || closestPin.m_type == Minimap.PinType.Death)
         return true;
 
       __instance.RemovePin(closestPin);
-      Mod.addedPinLocs.Remove(closestPin.m_pos);
-      Mod.autoPins.Remove(closestPin);
-      Mod.remPinDict.Remove(closestPin.m_pos);
       return false;
     }
 
@@ -141,196 +195,187 @@ namespace AMP_Configurable.Patches
         Minimap __instance,
         ref List<Minimap.PinData> ___m_pins)
     {
+      Mod.Log.LogDebug("Minimap.OnMapLeftClick");
       ZLog.Log("[AMP] Left click");
       Vector3 worldPoint = ScreenToWorldPoint(__instance, Input.mousePosition);
 
-      Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 5, ___m_pins);
+      Minimap.PinData closestPin = Mod.GetNearestPin(worldPoint, 10, ___m_pins);
 
       if (closestPin == null) return true;
 
       closestPin.m_checked = !closestPin.m_checked;
       return false;
     }
-
   }
 
-  [HarmonyPatch(typeof(Destructible), "Start")]
-  internal class DestructiblePatchSpawn
+  internal class Pin_Registration_Patches : MonoBehaviour
   {
-    private static void Postfix(ref Destructible __instance)
+    [HarmonyPatch(typeof(Destructible), "Start")]
+    [HarmonyPostfix]
+    private static void DestructibleSpawnPatch(ref Destructible __instance)
     {
       if (!Mod.destructablesEnabled.Value) return;
-      HoverText hoverTextComp = __instance.GetComponent<HoverText>();
+      HoverText comp = __instance.GetComponent<HoverText>();
+      if (!comp) return;
 
-      if (!hoverTextComp) return;
-
-      string hoverText = hoverTextComp.m_text;
-      hoverText = hoverText.Replace("(Clone)", "");
-
-      PinType type = null;
-      Mod.Log.LogDestructible(hoverText, hoverTextComp.transform.position);
-
-      if (Mod.objectPins.ContainsKey(hoverText))
-        type = Mod.mtypePins[Mod.objectPins[hoverText]];
-
-      if (type != null && !Mod.pinItems.ContainsKey(hoverTextComp.transform.position))
-        Mod.pinItems.Add(hoverTextComp.transform.position, type);
+      string objectId = comp.m_text;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Destructable Resource", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(Pickable), "Awake")]
-  internal class PickablePatchSpawn
-  {
-    private static void Postfix(ref Pickable __instance)
+    [HarmonyPatch(typeof(Pickable), "Awake")]
+    [HarmonyPostfix]
+    private static void PickableSpawnPatch(ref Pickable __instance)
     {
       if (!Mod.pickablesEnabled.Value) return;
-      Pickable pickableComp = __instance.GetComponent<Pickable>();
+      Pickable comp = __instance.GetComponent<Pickable>();
+      if (!comp) return;
 
-      if (!pickableComp) return;
-
-      string pickableText = pickableComp.name;
-      pickableText = pickableText.Replace("(Clone)", "");
-      PinType type = null;
-      Mod.Log.LogPickable(pickableText, pickableComp.transform.position);
-
-      if (Mod.objectPins.ContainsKey(pickableText))
-        type = Mod.mtypePins[Mod.objectPins[pickableText]];
-
-      if (type != null && !Mod.pinItems.ContainsKey(pickableComp.transform.position))
-        Mod.pinItems.Add(pickableComp.transform.position, type);
+      string objectId = comp.name;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Pickable", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(Location), "Awake")]
-  internal class LocationPatchSpawn
-  {
-    private static void Postfix(ref Location __instance)
+    [HarmonyPatch(typeof(Location), "Awake")]
+    [HarmonyPostfix]
+    private static void LocationSpawnPatch(ref Location __instance)
     {
       if (!Mod.locsEnabled.Value) return;
-      Location locComp = __instance.GetComponent<Location>();
+      Location comp = __instance.GetComponent<Location>();
+      if (!comp) return;
 
-      if (!locComp) return;
-
-      string locText = locComp.name;
-      locText = locText.Replace("(Clone)", "");
-      PinType type = null;
-      Mod.Log.LogLocation(locText, locComp.transform.position);
-
-      if (Mod.objectPins.ContainsKey(locText))
-        type = Mod.mtypePins[Mod.objectPins[locText]];
-
-      if (type != null && !Mod.pinItems.ContainsKey(locComp.transform.position))
-        Mod.pinItems.Add(locComp.transform.position, type);
+      string objectId = comp.name;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Location", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(SpawnArea), "Awake")]
-  internal class SpawnAreaPatchSpawn
-  {
-    private static void Postfix(ref SpawnArea __instance)
-    {
+    [HarmonyPatch(typeof(SpawnArea), "Awake")]
+    [HarmonyPostfix]
+    private static void SpawnAreaSpawnPatch(ref Location __instance)
+      {
       if (!Mod.spwnsEnabled.Value) return;
-      HoverText spawnComp = __instance.GetComponent<HoverText>();
+      HoverText comp = __instance.GetComponent<HoverText>();
+      if (!comp) return;
 
-      if (!spawnComp) return;
-
-      string spawnText = spawnComp.m_text;
-      spawnText = spawnText.Replace("(Clone)", "");
-      PinType type = null;
-      Mod.Log.LogSpawn(spawnText, spawnComp.transform.position);
-
-      if (Mod.objectPins.ContainsKey(spawnText))
-        type = Mod.mtypePins[Mod.objectPins[spawnText]];
-
-      if (type != null && !Mod.pinItems.ContainsKey(spawnComp.transform.position))
-        Mod.pinItems.Add(spawnComp.transform.position, type);
+      string objectId = comp.m_text;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Spawner", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(Character), "Awake")]
-  internal class CharacterPatchSpawn
-  {
-    private static void Postfix(ref CreatureSpawner __instance)
+    [HarmonyPatch(typeof(Character), "Awake")]
+    [HarmonyPostfix]
+    private static void CharacterSpawnPatch(ref CreatureSpawner __instance)
     {
       if (!Mod.creaturesEnabled.Value) return;
-      Character creatureComp = __instance.GetComponent<Character>();
+      Character comp = __instance.GetComponent<Character>();
+      if (!comp) return;
 
-      if (!creatureComp) return;
-
-      string creatureText = creatureComp.m_name;
-      creatureText = creatureText.Replace("(Clone)", "");
-      PinType type = null;
-      Mod.Log.LogCreature(creatureText, creatureComp.transform.position);
-
-      if (Mod.objectPins.ContainsKey(creatureText))
-        type = Mod.mtypePins[Mod.objectPins[creatureText]];
-
-      if (type != null && !Mod.pinItems.ContainsKey(creatureComp.transform.position))
-        Mod.pinItems.Add(creatureComp.transform.position, type);
+      string objectId = comp.name;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Creature", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(MineRock), "Start")]
-  internal class MineRockPatchSpawn
-  {
-    private static void Postfix(ref MineRock __instance)
+    [HarmonyPatch(typeof(MineRock), "Start")]
+    [HarmonyPostfix]
+    private static void MineRockSpawnPatch(ref MineRock __instance)
     {
       if (!Mod.destructablesEnabled.Value) return;
-      MineRock mineComp = __instance.GetComponent<MineRock>();
+      MineRock comp = __instance.GetComponent<MineRock>();
+      if (!comp) return;
 
-      if (!mineComp) return;
-
-      string mineText = mineComp.name;
-      PinType type = null;
-      Mod.Log.LogDestructible(mineText, mineComp.transform.position);
-
-      if (Mod.objectPins.ContainsKey(mineText))
-        type = Mod.mtypePins[Mod.objectPins[mineText]];
-
-      if (type != null && !Mod.pinItems.ContainsKey(mineComp.transform.position))
-        Mod.pinItems.Add(mineComp.transform.position, type);
+      string objectId = comp.name;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Destructable Resource", objectId, position);
     }
-  }
 
-  [HarmonyPatch(typeof(Leviathan), "Awake")]
-  internal class LeviathanPatchSpawn
-  {
-    private static void Postfix(ref Leviathan __instance)
+    [HarmonyPatch(typeof(Leviathan), "Awake")]
+    [HarmonyPostfix]
+    private static void LeviathanSpawnPatch(ref Leviathan __instance)
     {
       if (!Mod.creaturesEnabled.Value) return;
-      Leviathan levComp = __instance.GetComponent<Leviathan>();
+      Leviathan comp = __instance.GetComponent<Leviathan>();
+      if (!comp) return;
 
-      if (!levComp) return;
-
-      string levText = levComp.name;
-      levText = levText.Replace("(Clone)", "");
-      PinType type = null;
-      Mod.Log.LogCreature(levText, levComp.transform.position);
-
-      if (Mod.objectPins.ContainsKey(levText))
-        type = Mod.mtypePins[Mod.objectPins[levText]];
-
-      if (type != null && !Mod.pinItems.ContainsKey(levComp.transform.position))
-        Mod.pinItems.Add(levComp.transform.position, type);
+      string objectId = comp.name;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Destructable Resource", objectId, position);
     }
+
+    [HarmonyPatch(typeof(TreeBase), "Awake")]
+    [HarmonyPostfix]
+    private static void TreeBaseSpawnPatch(ref TreeBase __instance)
+    {
+      if (!Mod.destructablesEnabled.Value) return;
+      TreeBase comp = __instance.GetComponent<TreeBase>();
+      if (!comp) return;
+
+      string objectId = comp.name;
+      Vector3 position = comp.transform.position;
+      Mod.pinObject("Destructable Resource", objectId, position);
+    }
+
+    // [HarmonyPatch(typeof(Vagon), "Awake")]
+    // [HarmonyPostfix]
+    // private static void VagonSpawnPatch(ref Vagon __instance)
+    // {
+    //   Vagon cartComp = __instance.GetComponent<Vagon>();
+
+    //   if (!cartComp) return;
+
+    //   string cartText = cartComp.m_name;
+    //   cartText = cartText.Replace("(Clone)", "").ToLower();
+
+    //   Mod.Log.LogDebug($"Found wagon: {cartText} at {cartComp.transform.position.ToString()}");
+    // }
+
+    // [HarmonyPatch(typeof(Ship), "Awake")]
+    // [HarmonyPostfix]
+    // private static void ShipSpawnPatch(ref Ship __instance)
+    // {
+    //   Ship shipComp = __instance.GetComponent<Ship>();
+
+    //   if (!shipComp) return;
+
+    //   string shipText = shipComp.name;
+    //   shipText = shipText.Replace("(Clone)", "").ToLower();
+
+    //   Mod.Log.LogDebug($"Found Ship: {shipText} at {shipComp.transform.position.ToString()}");
+    // }
+
+    // [HarmonyPatch(typeof(TeleportWorld), "Awake")]
+    // [HarmonyPostfix]
+    // private static void TeleportWorldSpawnPatch(ref TeleportWorld __instance)
+    // {
+    //   TeleportWorld portalComp = __instance.GetComponent<TeleportWorld>();
+
+    //   if (!portalComp) return;
+
+    //   string portalText = portalComp.name;
+    //   portalText = portalText.Replace("(Clone)", "").ToLower();
+
+    //   HoverText hoverComp = __instance.GetComponent<HoverText>();
+    //   string portalDestination = hoverComp.m_text;
+
+    //   Mod.Log.LogDebug($"Found Portal: {portalText} ({portalDestination}) at {portalComp.transform.position.ToString()}");
+    // }
   }
+
   internal class Player_Patches
   {
     public static Vector3 currPos;
     public static Vector3 prevPos;
-    private const int interval = 30;
+    public const int interval = 120;
 
     [HarmonyPatch(typeof(Player), "Awake")]
     internal class PlayerAwakePatch
     {
       private static void Postfix(ref Player __instance)
       {
-        if (!Player.m_localPlayer)
+        if (!Player.m_localPlayer || !__instance.IsOwner() || Game.IsPaused() || Mod.checkingPins)
           return;
 
         currPos = __instance.transform.position;
         prevPos = __instance.transform.position;
-
       }
     }
 
@@ -339,67 +384,23 @@ namespace AMP_Configurable.Patches
     {
       private static void Postfix(ref Player __instance)
       {
-        if (Game.IsPaused()) return;
-        if (!Player.m_localPlayer)
-          return;
+        if (!Player.m_localPlayer || !__instance.IsOwner() || Game.IsPaused() || Mod.checkingPins || Mod.hasMoved) return;
 
         Mod.currEnv = EnvMan.instance.GetCurrentEnvironment().m_name;
 
         if (Time.frameCount % interval == 0)
         {
           currPos = __instance.transform.position;
-
-          if (Vector3.Distance(currPos, prevPos) > 5)
-          {
-            Mod.hasMoved = true;
-            prevPos = currPos;
-          }
-          else
-          {
-            Mod.hasMoved = false;
-          }
+          Mod.hasMoved = Vector3.Distance(currPos, prevPos) > 5;
         }
 
         if (Mod.hasMoved)
         {
-          Mod.checkPins(currPos);
+          Mod.hasMoved = false;
+          prevPos = currPos;
+          Mod.Log.LogDebug("Patches.PlayerUpdatePatch player movement detected. Check Pins");
+          Mod.checkPins();
         }
-      }
-    }
-  }
-
-  internal static class AMPCommandPatcher
-  {
-    private static Harmony harmony;
-    private static bool initComplete;
-
-    public static Harmony Harmony
-    {
-      get => harmony;
-      set => harmony = value;
-    }
-
-    public static bool InitComplete
-    {
-      get => initComplete;
-      set => initComplete = value;
-    }
-
-    public static void InitPatch()
-    {
-      if (InitComplete)
-        return;
-      try
-      {
-        harmony = Harmony.CreateAndPatchAll(typeof(AMPCommandPatcher).Assembly, null);
-      }
-      catch (Exception ex)
-      {
-        AMP_Commands.PrintOut("Something failed, there is a strong possibility another mod blocked this operation.");
-      }
-      finally
-      {
-        InitComplete = true;
       }
     }
   }
