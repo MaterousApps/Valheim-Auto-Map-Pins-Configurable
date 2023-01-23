@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\JotunnLib.2.10.3\build\JotunnLib.props" Condition="Exists('..\packages\JotunnLib.2.10.3\build\JotunnLib.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -97,8 +98,9 @@
     <Compile Include="AMP_Configurable.cs" />
     <Compile Include="AMP_Configurable.Patches.cs" />
     <Compile Include="AMP_Configurable.Modules.cs" />
-    <Compile Include="AMP_Configurable.Commands.cs" />
     <Compile Include="AMP_Configurable.PinConfig.cs" />
+    <Compile Include="AMP_Configurable.UI.cs" />
+    <Compile Include="ConfigurationManagerAttributes.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -121,13 +123,13 @@
     <Exec Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\plugins\&quot; /q /y /i" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)\AMP_Enhanced\amp_pin_types.json" "C:\Users\Jordan\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Dev\BepInEx\plugins\raziell74-AMPED_Auto_Map_Pins_Enhanced\" /q /y /i
-xcopy "$(ProjectDir)\AMP_Enhanced\pin-icons" "C:\Users\Jordan\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Dev\BepInEx\plugins\raziell74-AMPED_Auto_Map_Pins_Enhanced" /c /q /y /i
+    <PostBuildEvent>xcopy "$(ProjectDir)\AMP_Enhanced\amp_pin_types.json" "C:\Users\Jordan\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Dev\BepInEx\plugins\raziell74-AMPED_Auto_Map_Pins_Enhanced\AMP_Enhanced\" /q /y /i
+xcopy "$(ProjectDir)\AMP_Enhanced\pin-icons" "C:\Users\Jordan\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Dev\BepInEx\plugins\raziell74-AMPED_Auto_Map_Pins_Enhanced\AMP_Enhanced\pin-icons\" /c /q /y /i
 xcopy "$(ProjectDir)\icon.png" "$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\" /q /y /i
 xcopy "$(ProjectDir)\README.md" "$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\" /q /y /i
 xcopy "$(ProjectDir)\manifest.json" "$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\" /q /y /i
-xcopy "$(ProjectDir)\AMP_Enhanced\amp_pin_types.json" "$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\plugins\AMPED_Enhanced\" /q /y /i
-xcopy "$(ProjectDir)\AMP_Enhanced\pin-icons" "$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\plugins\AMPED_Enhanced\pin-icons" /c /q /y /i
+xcopy "$(ProjectDir)\AMP_Enhanced\amp_pin_types.json" "$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\plugins\AMP_Enhanced\" /q /y /i
+xcopy "$(ProjectDir)\AMP_Enhanced\pin-icons" "$(ProjectDir)\bin\Release\AMPED-AutoMapPinsEnhanced_v1.3.5\plugins\AMP_Enhanced\pin-icons" /c /q /y /i
 </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" />
@@ -136,5 +138,6 @@ xcopy "$(ProjectDir)\AMP_Enhanced\pin-icons" "$(ProjectDir)\bin\Release\AMPED-Au
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
+    <Error Condition="!Exists('..\packages\JotunnLib.2.10.3\build\JotunnLib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JotunnLib.2.10.3\build\JotunnLib.props'))" />
   </Target>
 </Project>

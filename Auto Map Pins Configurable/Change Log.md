@@ -1,6 +1,8 @@
 # Change Log
 
 ### Version v1.3.5
+  * Performance Overhaul. Updated and refactored a large portion of the mod to run faster as to not cause as much FPS drops for potato computers
+  * Updated and reorganized configuration. It should be backwards compatible but if you experience issues, delete your `amped.mod.auto_map_pins.cfg` and restart the game to geneate a clean config.
   * 
 
 ### Version v1.3.4

@@ -1,5 +1,4 @@
-﻿using AMP_Configurable.Commands;
-using AMP_Configurable.Patches;
+﻿using AMP_Configurable.Patches;
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
@@ -20,7 +19,6 @@ namespace AMP_Configurable.Modules
 
     public void Start()
     {
-      AMP_Commands.ConsoleOpt = this;
       Ready();
     }
 
@@ -38,7 +36,6 @@ namespace AMP_Configurable.Modules
         if (Input.GetKeyDown(KeyCode.Return) && text.Equals(string.Empty) && !consoleLastMessage.Equals(string.Empty))
         {
           consoleHistory.Add(consoleLastMessage);
-          AMP_Commands.ProcessCommands(consoleLastMessage);
           this.consoleLastMessage = string.Empty;
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -55,22 +52,15 @@ namespace AMP_Configurable.Modules
       Console.instance.m_input.caretPosition = Console.instance.m_input.text.Length;
     }
 
-
-
     private void Update()
     {
       HandleConsole();
-
     }
 
     private void OnDestroy()
     {
-      if (AMPCommandPatcher.Harmony == null)
-        return;
-      AMPCommandPatcher.Harmony.UnpatchSelf();
+      
     }
-
-
 
     private class History
     {

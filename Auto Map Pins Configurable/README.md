@@ -1,4 +1,4 @@
-# AMPED - Auto Map Pins Enhanced v1.3.1 - Configuration overhaul
+# AMPED - Auto Map Pins Enhanced
 Author: JordanRichmeier
 Nexus: [AMPED - Auto Map Pins Enhanced](https://www.nexusmods.com/valheim/mods/2199)
 Source: [Github](https://github.com/raziell74/Valheim-Auto-Map-Pins-Configurable/)
@@ -74,3 +74,4 @@ Contibutions from the following modders was invaluable and appreciated:
   * Add a separate json file for custom user pins, this is so people can put out their own icon and pin packs without having to worry about my updates overriding their changes to amp_pin_types.json 
   * Live tracking of creature pins (could be FPS intensive)
   * Automatic unpinning: when pickable has been picked, after ore has been completely mined, after a location has been destroyed.
+  * Allow users to pick from any loaded pin-icon image to make their own manual pins. 
