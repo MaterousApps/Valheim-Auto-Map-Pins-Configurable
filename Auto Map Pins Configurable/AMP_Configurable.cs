@@ -4,7 +4,6 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
-using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +32,8 @@ namespace AMP_Configurable
     public static ConfigEntry<bool> loggingEnabled;
     public static ConfigEntry<bool> objectLogging;
     public static ConfigEntry<string> objectLogFilter;
+    public static ConfigEntry<bool> onlyLogUnique;
+    public static ConfigEntry<bool> logKnownPinObjects;
 
     //** Pin Category control **//
     public static ConfigEntry<bool> destructablesEnabled;
@@ -46,6 +47,7 @@ namespace AMP_Configurable
     public static bool checkingPins = false;
     public static string currEnv = "";
     public static string[] filterObjectIds;
+    public static List<string> uniqueObjectIds = new List<string>();
 
     //*** PUBLIC PIN TRACKING VARIABLES ***//
     /** <Dictionary> mtypePins 
@@ -157,6 +159,14 @@ namespace AMP_Configurable
         new ConfigDescription("Comma seperated list of object ids to filter out during logging process. Only applies when Object Logging is enabled", 
         null, new ConfigurationManagerAttributes { Order = 17 }));
       filterObjectIds = objectLogFilter.Value.Split(',');
+      onlyLogUnique = Config.Bind<bool>(
+        "Logging", "Only Log Unique Object Ids", true, 
+        new ConfigDescription("Sets AMPED to only log out an objectId once, instead of every time an object spawns in.\nIt will logout a full list upon game exit.", 
+        null, new ConfigurationManagerAttributes { Order = 17 }));
+      logKnownPinObjects = Config.Bind<bool>(
+        "Logging", "Log Known Pin Object Ids", false, 
+        new ConfigDescription("Allow logging of objects that currently have a configured Pin Type.", 
+        null, new ConfigurationManagerAttributes { Order = 17 }));
       diagnosticsEnabled = Config.Bind(
         "Logging", "Enable Timing Diagnostics", false, 
         new ConfigDescription("Enables log output with function timing diagnostics. Used for developer optimization purposes", 
@@ -189,20 +199,23 @@ namespace AMP_Configurable
       new Harmony("amped.mod.auto_map_pins").PatchAll();
 
       Harmony.CreateAndPatchAll(typeof(Minimap_Patch), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(Destructable_Patch), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(Pickable_Patch), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(LocationPatchSpawn), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(SpawnAreaPatchSpawn), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(MineRockPatchSpawn), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(PortalPatch), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(ShipPatch), "amped.mod.auto_map_pins");
-      Harmony.CreateAndPatchAll(typeof(CartPatch), "amped.mod.auto_map_pins");
+      Harmony.CreateAndPatchAll(typeof(Pin_Registration_Patches), "amped.mod.auto_map_pins");
       Harmony.CreateAndPatchAll(typeof(Player_Patches), "amped.mod.auto_map_pins");
 
       pinItems = new Dictionary<Vector3, PinType>();
       dupPinLocs = new Dictionary<Vector3, Minimap.PinData>();
 
       Assets.Init();
+    }
+
+    private void OnDestroy()
+    {
+      if(objectLogging.Value && uniqueObjectIds.Count > 0)
+      {
+        Mod.Log.LogInfo($"AMP Found {uniqueObjectIds.Count} Object Ids");
+        foreach (string objectId in uniqueObjectIds)
+         Mod.Log.LogInfo($"[AMP object_id] {objectId}");
+      }
     }
 
     public static void UpdatePinsFromSettings(object sender, SettingChangedEventArgs changedSetting)
@@ -224,7 +237,7 @@ namespace AMP_Configurable
         mtypePins[pinType.type] = pinType;
         foreach (string objectId in pinType.object_ids)
         {
-          Mod.Log.LogInfo($"Adding {objectId.ToLower().Trim()} to pin type dictionary");
+          Mod.Log.LogDebug($"Adding {objectId.ToLower().Trim()} to pin type dictionary");
           objectPins[objectId.ToLower().Trim()] = pinType;
         }
       }
@@ -264,7 +277,14 @@ namespace AMP_Configurable
       public static void LogObject(string type, string name, Vector3 pos)
       {
         if (!Mod.loggingEnabled.Value || !Mod.objectLogging.Value || filterObjectIds.Contains(name)) return;
-        LogInfo($"[AMP - {type}] Found {name} at {pos.ToString()} distance from player[{Player_Patches.currPos.ToString()}] {distanceFromPlayer(pos).ToString()}");
+        if(!Mod.logKnownPinObjects.Value && Mod.objectPins.ContainsKey(name)) return;
+        if (Mod.onlyLogUnique.Value && !Mod.uniqueObjectIds.Contains(name))
+        {
+          LogInfo($"[AMP - {type}] Found Object Id {name}");
+          Mod.uniqueObjectIds.Add(name);
+        } else if(!Mod.onlyLogUnique.Value) {
+          LogInfo($"[AMP - {type}] Found {name} at {pos.ToString()} distance from player[{Player_Patches.currPos.ToString()}] {distanceFromPlayer(pos).ToString()}");
+        }
       }
     }
 
@@ -276,6 +296,7 @@ namespace AMP_Configurable
       {
         Mod.Log.LogDebug($"Mod.pinObject Adding {cleanedId} [{position}] to pinItems");
         Mod.pinItems[position] = type;
+        Mod.pinItems[position].isPinned = false;
       }
     }
 
@@ -353,14 +374,14 @@ namespace AMP_Configurable
         // Add pins within range
         if (distance <= pinRange.Value)
         {
-          Mod.Log.LogDebug($"Mod.Checkpins found pinnable item in range. Pinning {pinItem.Value.label}");
+          Mod.Log.LogDebug($"Mod.checkPins found pinnable item in range. Pinning {pinItem.Value.label}");
           PinnedObject.pinOb(pinItem.Value, pinItem.Key);
         }
 
         // Clean pinItems of items that are far enough away to get re-added by objects "Awake" state
-        if(!firstLoad && distance >= 350)
+        if(!firstLoad && distance >= 300)
         {
-          Mod.Log.LogDebug($"Mod.Checkpins Distance is more than 350 for {pinItem.Value.label} [{pinItem.Key.ToString()}]. Distance: {distance.ToString()}. Removing from pinItems");
+          Mod.Log.LogDebug($"Mod.checkPins Distance is more than 300 for {pinItem.Value.label} [{pinItem.Key.ToString()}]. Distance: {distance.ToString()}. Removing from pinItems");
           pinItems.Remove(pinItem.Key);
         }
       }
