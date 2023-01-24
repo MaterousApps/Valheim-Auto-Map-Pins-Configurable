@@ -556,13 +556,13 @@ namespace AMP_Configurable
       {
         if (!Mod.mtypePins.ContainsKey(m_type))
         {
-          if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Failed to load pin data from minimap pin type {m_type}");
+          Mod.Log.LogInfo($"[AMP] Failed to load pin data from minimap pin type {m_type}");
           aName = "";
           return;
         }
 
         pin = Mod.mtypePins[m_type];
-        if (Mod.loggingEnabled.Value) Mod.Log.LogInfo($"[AMP] Loading pin {pin.label} from minimap type {m_type}");
+        Mod.Log.LogDebug($"[AMP] Loading pin {pin.label} from minimap type {m_type}");
       }
 
       pinType = pin;

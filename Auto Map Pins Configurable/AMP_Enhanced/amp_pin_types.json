@@ -40,6 +40,7 @@
       "label": "Flametal",
       "icon": "flametalore.png",
       "size": 20,
+      "minimapSize": 50,
       "object_ids": ["MineRock_Meteorite", "Meteorite"]
     },
     {
@@ -152,7 +153,7 @@
       "type": 119,
       "label": "Greydwarf Nest",
       "icon": "TrophyGreydwarf.png",
-      "size": 25,
+      "size": 20,
       "object_ids": [
         "Greydwarf nest",
         "Greydwarf_camp1",
@@ -173,6 +174,7 @@
       "label": "Leviathan",
       "icon": "chitin.png",
       "size": 25,
+      "minimapSize": 75,
       "object_ids": ["Leviathan"]
     },
     {
@@ -244,6 +246,7 @@
       "label": "Dvergr Tower",
       "icon": "Mistlands_GuardTower1_new.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": [
         "Mistlands_GuardTower1_ruined_new2",
         "Mistlands_GuardTower3_new",
@@ -285,6 +288,7 @@
       "label": "Runestone",
       "icon": "runestone.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": [
         "Runestone_Greydwarfs",
         "Runestone_Draugr",
@@ -345,6 +349,7 @@
       "label": "Dvergr Excavation",
       "icon": "Mistlands_Excavation1.png",
       "size": 20,
+      "minimapSize": 50,
       "object_ids": [
         "Mistlands_Excavation1",
         "Mistlands_Excavation2",
@@ -356,6 +361,7 @@
       "label": "Swamp Hut",
       "icon": "SwampHut2.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": [
         "SwampHut1",
         "SwampHut2",
@@ -414,6 +420,7 @@
       "label": "Stone Circle",
       "icon": "StoneCircle.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["StoneCircle"]
     },
     {
@@ -428,6 +435,7 @@
       "label": "Dolmen",
       "icon": "Dolmen01.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["Dolmen01", "Dolmen02", "Dolmen03"]
     },
     {
@@ -443,6 +451,7 @@
       "label": "Harbour",
       "icon": "Mistlands_Harbour1.png",
       "size": 20,
+      "minimapSize": 42,
       "object_ids": ["Mistlands_Harbour1"]
     },
     {
@@ -450,6 +459,7 @@
       "label": "Viaduct",
       "icon": "Mistlands_Viaduct1.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["Mistlands_Viaduct1", "Mistlands_Viaduct2"]
     },
     {
@@ -464,6 +474,7 @@
       "label": "Shipwreck",
       "icon": "ShipWreck02.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["ShipWreck01", "ShipWreck02", "ShipWreck03", "ShipWreck04"]
     },
     {
@@ -471,6 +482,7 @@
       "label": "Farm Village",
       "icon": "WoodHouse5.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["WoodFarm1", "WoodVillage1"]
     }
   ]
