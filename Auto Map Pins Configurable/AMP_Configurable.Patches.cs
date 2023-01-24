@@ -3,6 +3,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Utilities;
 
 namespace AMP_Configurable.Patches
 {
@@ -91,7 +92,8 @@ namespace AMP_Configurable.Patches
       if (!checkedSavedPins)
       {
         Mod.Log.LogDebug("Minimap.UpdateProfilePins checking saved pins");
-        var watch = System.Diagnostics.Stopwatch.StartNew();
+        DiagnosticUtils timer = new DiagnosticUtils();
+        timer.startTimer();
         foreach (Minimap.PinData pin in ___m_pins)
         {
           if ((int)pin.m_type >= 100)
@@ -121,9 +123,7 @@ namespace AMP_Configurable.Patches
         checkedSavedPins = true;
 
         Mod.checkPins(true);
-        watch.Stop();
-        var elapsedMs = watch.ElapsedMilliseconds;
-        Mod.Log.LogDebug($"Minimap.UpdateProfilePins checking saved pins took {elapsedMs}ms");
+        Mod.Log.LogDebug($"Minimap.UpdateProfilePins checking saved pins took {timer.stopTimer()}ms");
       }
     }
 
@@ -154,7 +154,8 @@ namespace AMP_Configurable.Patches
       ref Minimap.MapMode ___m_mode)
     {
       Mod.Log.LogDebug($"Minimap.SetMapMode - Mode changed to {___m_mode}");
-      var watch = System.Diagnostics.Stopwatch.StartNew();
+      DiagnosticUtils timer = new DiagnosticUtils();
+      timer.startTimer();
 
       mapMode = ___m_mode;
       foreach (Minimap.PinData pin in Mod.autoPins)
@@ -166,8 +167,7 @@ namespace AMP_Configurable.Patches
 
         pin.m_worldSize = new_size;
       }
-      watch.Stop();
-      Mod.Log.LogDebug($"Minimap.SetMapMode timing {watch.ElapsedMilliseconds}ms");
+      Mod.Log.LogDebug($"Minimap.SetMapMode timing {timer.stopTimer()}ms");
     }
 
     [HarmonyPatch(typeof(Minimap), "OnMapRightClick")]
