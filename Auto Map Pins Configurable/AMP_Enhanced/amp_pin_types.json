@@ -40,7 +40,7 @@
       "label": "Flametal",
       "icon": "flametalore.png",
       "size": 20,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": ["MineRock_Meteorite", "Meteorite"]
     },
     {
@@ -104,7 +104,7 @@
       "label": "Crypt",
       "icon": "surtling_core.png",
       "size": 25,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": ["Crypt1", "Crypt2", "Crypt3", "Crypt4"]
     },
     {
@@ -112,7 +112,7 @@
       "label": "Sunken Crypt",
       "icon": "witheredbone.png",
       "size": 25,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": [
         "SunkenCrypt1",
         "SunkenCrypt2",
@@ -125,7 +125,7 @@
       "label": "Troll Cave",
       "icon": "TrophyFrostTroll.png",
       "size": 25,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": ["TrollCave01", "TrollCave02", "TrollCave"]
     },
     {
@@ -166,7 +166,7 @@
       "label": "Serpent",
       "icon": "TrophySerpent.png",
       "size": 25,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": ["$enemy_serpent"]
     },
     {
@@ -174,7 +174,7 @@
       "label": "Leviathan",
       "icon": "chitin.png",
       "size": 25,
-      "minimapSize": 75,
+      "minimapSize": 42,
       "object_ids": ["Leviathan"]
     },
     {
@@ -182,6 +182,7 @@
       "label": "Tar Pit",
       "icon": "TrophyGrowth.png",
       "size": 25,
+      "minimapSize": 35,
       "object_ids": ["TarPit1", "TarPit2", "TarPit3", "TarPit4"]
     },
     {
@@ -189,7 +190,7 @@
       "label": "Fuling Camp",
       "icon": "TrophyGoblin.png",
       "size": 25,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": ["GoblinCamp1", "GoblinCamp2", "GoblinCamp3", "GoblinCamp4"]
     },
     {
@@ -197,7 +198,7 @@
       "label": "Frost Cave",
       "icon": "TrophyGolem.png",
       "size": 25,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": [
         "MountainCave01",
         "MountainCave02",
@@ -274,6 +275,7 @@
       "label": "Ruins",
       "icon": "StoneHouse3.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["StoneHouse3", "StoneHouse4", "Ruin1"]
     },
     {
@@ -281,6 +283,7 @@
       "label": "Stone Tower",
       "icon": "Ruin2.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["Ruin2"]
     },
     {
@@ -306,7 +309,7 @@
       "type": 308,
       "label": "Giant Remains",
       "icon": "Mistlands_Giant1.png",
-      "size": 20,
+      "size": 25,
       "object_ids": ["Mistlands_Giant1", "Mistlands_Giant2"]
     },
     {
@@ -314,6 +317,7 @@
       "label": "Stone Tower",
       "icon": "StoneTowerRuins07.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": [
         "StoneTowerRuins03",
         "StoneTowerRuins07",
@@ -327,6 +331,7 @@
       "label": "Log Cabin",
       "icon": "AbandonedLogCabin03.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": [
         "AbandonedLogCabin02",
         "AbandonedLogCabin03",
@@ -338,7 +343,7 @@
       "label": "Infested Mine",
       "icon": "Mistlands_DvergrTownEntrance2.png",
       "size": 20,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": [
         "Mistlands_DvergrTownEntrance1",
         "Mistlands_DvergrTownEntrance2"
@@ -349,7 +354,7 @@
       "label": "Dvergr Excavation",
       "icon": "Mistlands_Excavation1.png",
       "size": 20,
-      "minimapSize": 50,
+      "minimapSize": 35,
       "object_ids": [
         "Mistlands_Excavation1",
         "Mistlands_Excavation2",
@@ -375,6 +380,7 @@
       "label": "Swamp Tower",
       "icon": "SwampRuin1.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["SwampRuin1", "SwampRuin2"]
     },
     {
@@ -399,6 +405,7 @@
       "label": "Wood House",
       "icon": "WoodHouse5.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": [
         "WoodHouse1",
         "WoodHouse2",
@@ -428,6 +435,7 @@
       "label": "Well",
       "icon": "MountainWell1.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["MountainWell1"]
     },
     {
@@ -451,7 +459,7 @@
       "label": "Harbour",
       "icon": "Mistlands_Harbour1.png",
       "size": 20,
-      "minimapSize": 42,
+      "minimapSize": 35,
       "object_ids": ["Mistlands_Harbour1"]
     },
     {
@@ -467,6 +475,7 @@
       "label": "Stone Tower",
       "icon": "StoneTowerRuins05.png",
       "size": 20,
+      "minimapSize": 35,
       "object_ids": ["StoneTowerRuins04", "StoneTowerRuins05"]
     },
     {

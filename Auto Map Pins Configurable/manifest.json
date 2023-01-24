@@ -1,6 +1,6 @@
 {
   "name": "AMPED_Auto_Map_Pins_Enhanced",
-  "version_number": "1.3.5",
+  "version_number": "1.3.50",
   "website_url": "https://www.nexusmods.com/valheim/mods/2199",
   "description": "This is the successor to Materous' AutoMapPins with Configuration. Absolutely loved his edition but it needed to be a bit more dynamic and updated for Mistlands.",
   "dependencies": ["denikson-BepInExPack_Valheim-5.4.1700"]
