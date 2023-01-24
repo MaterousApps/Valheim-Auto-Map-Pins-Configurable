@@ -80,7 +80,7 @@ namespace AMP_Configurable.Patches
         Mod.pinItems[pin.m_pos].isPinned = false;
       }
 
-      if(Mod.dupPinLocs.ContainsKey(pin.m_pos)) Mod.dupPinLocs.Remove(pin.m_pos);
+      if (Mod.dupPinLocs.ContainsKey(pin.m_pos)) Mod.dupPinLocs.Remove(pin.m_pos);
       if (Mod.autoPins.Contains(pin)) Mod.autoPins.Remove(pin);
     }
 
@@ -160,9 +160,9 @@ namespace AMP_Configurable.Patches
       mapMode = ___m_mode;
       foreach (Minimap.PinData pin in Mod.autoPins)
       {
-        if(!Mod.mtypePins.TryGetValue((int)pin.m_type, out PinType typeConf)) continue;
+        if (!Mod.mtypePins.TryGetValue((int)pin.m_type, out PinType typeConf)) continue;
         float new_size = typeConf.size;
-        if (___m_mode == Minimap.MapMode.Small) 
+        if (___m_mode == Minimap.MapMode.Small)
           new_size = (typeConf.minimapSize != 0 ? typeConf.minimapSize : typeConf.size) * Mod.minimapSizeMult.Value;
 
         pin.m_worldSize = new_size;
@@ -252,7 +252,7 @@ namespace AMP_Configurable.Patches
     [HarmonyPatch(typeof(SpawnArea), "Awake")]
     [HarmonyPostfix]
     private static void SpawnAreaSpawnPatch(ref Location __instance)
-      {
+    {
       if (!Mod.spwnsEnabled.Value) return;
       HoverText comp = __instance.GetComponent<HoverText>();
       if (!comp) return;
@@ -365,6 +365,26 @@ namespace AMP_Configurable.Patches
     public static Vector3 currPos;
     public static Vector3 prevPos;
     public const int interval = 120;
+    public static Player player;
+    public static bool hasWishbone = false;
+
+    public static void checkForWishbone()
+    {
+      if (Mod.wishboneMode.Value == "disabled") hasWishbone = true;
+
+      Inventory playerInventory = player.GetInventory();
+      List<ItemDrop.ItemData> inventoryItems = Mod.wishboneMode.Value == "equipped" ? 
+        playerInventory.GetEquipedtems() : playerInventory.GetAllItems();
+      
+      foreach (ItemDrop.ItemData item in inventoryItems)
+      {
+        Mod.Log.LogInfo($"Inventory Item: {item.m_dropPrefab.name}");
+        if(item.m_dropPrefab.name == "Wishbone") {
+          hasWishbone = true;
+          break;
+        }
+      }
+    }
 
     [HarmonyPatch(typeof(Player), "Awake")]
     internal class PlayerAwakePatch
@@ -374,8 +394,9 @@ namespace AMP_Configurable.Patches
         if (!Player.m_localPlayer || !__instance.IsOwner() || Game.IsPaused() || Mod.checkingPins)
           return;
 
-        currPos = __instance.transform.position;
-        prevPos = __instance.transform.position;
+        player = __instance;
+        currPos = player.transform.position;
+        prevPos = player.transform.position;
       }
     }
 

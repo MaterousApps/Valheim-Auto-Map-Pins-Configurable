@@ -44,6 +44,7 @@ namespace AMP_Configurable
     public static ConfigEntry<bool> locsEnabled;
     public static ConfigEntry<bool> spwnsEnabled;
     public static ConfigEntry<bool> creaturesEnabled;
+    public static ConfigEntry<string> wishboneMode;
 
     //***PUBLIC VARIABLES***//
     public static bool hasMoved = false;
@@ -130,19 +131,22 @@ namespace AMP_Configurable
 
       destructablesEnabled = Config.Bind("2. Pins Enable/Disable", "destructablesEnabled", true,
         new ConfigDescription("Enable/Disable pins for\nOres, Trees, and other destructable resource nodes", null,
-        new ConfigurationManagerAttributes { Order = 5, DispName = "Resources" }));
+        new ConfigurationManagerAttributes { Order = 6, DispName = "Resources" }));
       pickablesEnabled = Config.Bind("2. Pins Enable/Disable", "pickablesEnabled", true,
         new ConfigDescription("Enable/Disable pins for\nBerries, Mushrooms, and other pickable items", null,
-        new ConfigurationManagerAttributes { Order = 4, DispName = "Pickables" }));
+        new ConfigurationManagerAttributes { Order = 5, DispName = "Pickables" }));
       locsEnabled = Config.Bind("2. Pins Enable/Disable", "locsEnabled", true,
         new ConfigDescription("Enable/Disable pins for\nCrypts, Troll Caves, and other discoverable locations", null,
-        new ConfigurationManagerAttributes { Order = 3, DispName = "Locations" }));
+        new ConfigurationManagerAttributes { Order = 4, DispName = "Locations" }));
       spwnsEnabled = Config.Bind("2. Pins Enable/Disable", "spwnsEnabled", true,
         new ConfigDescription("Enable/Disable pins for\nGreydwarf nests, Skeleton Bone Piles, and other creature spawners", null,
-        new ConfigurationManagerAttributes { Order = 2, DispName = "Spawners" }));
+        new ConfigurationManagerAttributes { Order = 3, DispName = "Spawners" }));
       creaturesEnabled = Config.Bind("2. Pins Enable/Disable", "creaturesEnabled", true,
         new ConfigDescription("Enable/Disable pins for\nSerpents, and other creatures when they spawn with in range of the player", null,
-        new ConfigurationManagerAttributes { Order = 1, DispName = "Creatures" }));
+        new ConfigurationManagerAttributes { Order = 2, DispName = "Creatures" }));
+      wishboneMode = Config.Bind<string>("2. Pins Enable/Disable", "wishboneMode", "equipped",
+        new ConfigDescription("equipped: Wishbone must be equipped to show hidden item pins\ninventory: Wishbone must be in players inventory to show hidden item pins\ndisabled: hidden item pins will always show", null,
+        new ConfigurationManagerAttributes { Order = 1, DispName = "Wishbone Mode" }));
 
       /** Logging Config **/
       loggingEnabled = Config.Bind("3. Logging", "loggingEnabled", false,
@@ -370,6 +374,8 @@ namespace AMP_Configurable
       DiagnosticUtils timer = new DiagnosticUtils();
       timer.startTimer();
 
+      Player_Patches.checkForWishbone();
+
       // Compatibility check for pinRange. Other mods can change the exploreRadius 
       if (pinRangeExpRadiusMatching.Value)
       {
@@ -588,6 +594,16 @@ namespace AMP_Configurable
       if(!Mod.locsEnabled.Value && pin.pinCat == "Location") hidePin = true;
       if(!Mod.spwnsEnabled.Value && pin.pinCat == "Spawner") hidePin = true;
       if(!Mod.creaturesEnabled.Value && pin.pinCat == "Creature") hidePin = true;
+
+      if(
+        Mod.wishboneMode.Value != "disabled" &&
+        Player_Patches.hasWishbone &&
+        (
+          pin.object_ids.Contains("$piece_mudpile") ||
+          pin.object_ids.Contains("$piece_deposit_silver") || 
+          pin.object_ids.Contains("$piece_deposit_silvervein")
+        )
+      ) hidePin = true;
 
       Mod.Log.LogDebug($"PinnedObject.loadData took {timer.stopTimer()}ms");
     }
