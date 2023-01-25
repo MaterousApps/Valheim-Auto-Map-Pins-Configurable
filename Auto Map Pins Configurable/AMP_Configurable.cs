@@ -44,7 +44,15 @@ namespace AMP_Configurable
     public static ConfigEntry<bool> locsEnabled;
     public static ConfigEntry<bool> spwnsEnabled;
     public static ConfigEntry<bool> creaturesEnabled;
-    public static ConfigEntry<string> wishboneMode;
+
+    public enum WishboneModes
+    {
+      equipped,
+      inventory,
+      disabled
+    }
+
+    public static ConfigEntry<WishboneModes> wishboneMode;
 
     //***PUBLIC VARIABLES***//
     public static bool hasMoved = false;
@@ -53,6 +61,8 @@ namespace AMP_Configurable
     public static string[] filterLogObjectIds;
     public static List<string> uniqueObjectIds = new List<string>();
     public static string[] hiddenObjectPins;
+    public static string defaultPinConfPath;
+    public static string[] configFiles;
 
     //*** PUBLIC PIN TRACKING VARIABLES ***//
     /** <Dictionary> mtypePins 
@@ -144,7 +154,7 @@ namespace AMP_Configurable
       creaturesEnabled = Config.Bind("2. Pins Enable/Disable", "creaturesEnabled", true,
         new ConfigDescription("Enable/Disable pins for\nSerpents, and other creatures when they spawn with in range of the player", null,
         new ConfigurationManagerAttributes { Order = 2, DispName = "Creatures" }));
-      wishboneMode = Config.Bind<string>("2. Pins Enable/Disable", "wishboneMode", "equipped",
+      wishboneMode = Config.Bind<WishboneModes>("2. Pins Enable/Disable", "wishboneMode", WishboneModes.equipped,
         new ConfigDescription("equipped: Wishbone must be equipped to show hidden item pins\ninventory: Wishbone must be in players inventory to show hidden item pins\ndisabled: hidden item pins will always show", null,
         new ConfigurationManagerAttributes { Order = 1, DispName = "Wishbone Mode" }));
 
@@ -171,13 +181,20 @@ namespace AMP_Configurable
       filterLogObjectIds = objectLogFilter.Value.Split(',');
 
       /** Load Pin Type Config from JSON files **/
-      string defaultPinConfPath = ResourceUtils.GetDefaultPinConfig();
-      string[] configFiles = ResourceUtils.GetPinConfigFiles();
+      defaultPinConfPath = ResourceUtils.GetDefaultPinConfig();
+      configFiles = ResourceUtils.GetPinConfigFiles();
       objectPins = new Dictionary<string, PinType>();
       mtypePins = new Dictionary<int, PinType>();
       autoPins = new List<Minimap.PinData>();
+
       if (configFiles != null)
       {
+        FileSystemWatcher watcher = new FileSystemWatcher(Paths.PluginPath);
+        watcher.Filter = "amp_*.json";
+        watcher.IncludeSubdirectories = true;
+        watcher.EnableRaisingEvents = true;
+        watcher.Changed += OnConfigFileChange;
+
         LoadPinsFromConfig(defaultPinConfPath);
         foreach (string confPath in configFiles)
         {
@@ -217,6 +234,19 @@ namespace AMP_Configurable
       }
     }
 
+    public static void OnConfigFileChange(object sender, FileSystemEventArgs e)
+    {
+        if (e.ChangeType != WatcherChangeTypes.Changed) return;
+        Mod.Log.LogDebug($"Config Changed: {Path.GetFileName(e.FullPath)}");
+
+        LoadPinsFromConfig(defaultPinConfPath);
+        foreach (string confPath in configFiles)
+        {
+          if (Path.GetFileName(confPath) == "amp_pin_types.json") continue;
+          LoadPinsFromConfig(confPath);
+        }
+    }
+
     public static void UpdatePinsFromSettings(object sender, SettingChangedEventArgs arg)
     {
       Log.LogDebug($"Setting change detected on {arg.ChangedSetting.Definition.Key}");
@@ -240,14 +270,43 @@ namespace AMP_Configurable
       pinTypes = ResourceUtils.LoadPinConfig(confFilePath);
       foreach (PinType pinType in pinTypes.pins)
       {
-        // Load mtype and objectId referance dictionary
-        mtypePins[pinType.type] = pinType;
+        if(!mtypePins.ContainsKey(pinType.type)) {
+          mtypePins[pinType.type] = pinType;
+
+          foreach (string objectId in pinType.object_ids)
+          {
+            Mod.Log.LogDebug($"Adding {objectId.ToLower().Trim()} to pin type dictionary");
+            objectPins[objectId.ToLower().Trim()] = pinType;
+          }
+          continue;
+        }
+        
+        mtypePins[pinType.type].label = pinType.label;
+        mtypePins[pinType.type].icon = pinType.icon;
+        mtypePins[pinType.type].size = pinType.size;
+        mtypePins[pinType.type].minimapSize = pinType.minimapSize;
+        mtypePins[pinType.type].object_ids = pinType.object_ids;        
+
         foreach (string objectId in pinType.object_ids)
         {
-          Mod.Log.LogDebug($"Adding {objectId.ToLower().Trim()} to pin type dictionary");
-          objectPins[objectId.ToLower().Trim()] = pinType;
+          string cleanedObjId = objectId.ToLower().Trim();
+          if (!objectPins.ContainsKey(cleanedObjId))
+          {
+            objectPins[cleanedObjId] = pinType;
+            continue;
+          }
+
+          objectPins[cleanedObjId].label = pinType.label;
+          objectPins[cleanedObjId].icon = pinType.icon;
+          objectPins[cleanedObjId].size = pinType.size;
+          objectPins[cleanedObjId].minimapSize = pinType.minimapSize;
+          objectPins[cleanedObjId].object_ids = pinType.object_ids;
         }
       }
+
+      //Assets.Init();
+
+      forcePinRefresh();
     }
 
     /** Log Class
@@ -374,8 +433,6 @@ namespace AMP_Configurable
       DiagnosticUtils timer = new DiagnosticUtils();
       timer.startTimer();
 
-      Player_Patches.checkForWishbone();
-
       // Compatibility check for pinRange. Other mods can change the exploreRadius 
       if (pinRangeExpRadiusMatching.Value)
       {
@@ -466,8 +523,8 @@ namespace AMP_Configurable
 
       loadData(null, (int)pin.m_type);
 
-      // If the pin is set to be hidden remove it from the map
-      if (hidePin)
+      // If the pin is set to be hidden remove it from the map, unless it's saved
+      if (hidePin && !pin.m_save)
       {
         Minimap.instance.RemovePin(pin);
         return null;
@@ -594,10 +651,10 @@ namespace AMP_Configurable
       if(!Mod.locsEnabled.Value && pin.pinCat == "Location") hidePin = true;
       if(!Mod.spwnsEnabled.Value && pin.pinCat == "Spawner") hidePin = true;
       if(!Mod.creaturesEnabled.Value && pin.pinCat == "Creature") hidePin = true;
-
+ 
       if(
-        Mod.wishboneMode.Value != "disabled" &&
-        Player_Patches.hasWishbone &&
+        Mod.wishboneMode.Value != Mod.WishboneModes.disabled &&
+        !Player_Patches.hasWishbone &&
         (
           pin.object_ids.Contains("$piece_mudpile") ||
           pin.object_ids.Contains("$piece_deposit_silver") || 
@@ -616,10 +673,17 @@ namespace AMP_Configurable
 
   public class Assets
   {
+    public static Dictionary<string, Sprite> loaded = null;
     public static void Init()
     {
+      if(loaded == null) loaded = new Dictionary<string, Sprite>();
       foreach (KeyValuePair<int, PinType> mtype in Mod.mtypePins)
-        mtype.Value.sprite = LoadSprite(mtype.Value.icon);
+      {
+        if(!loaded.ContainsKey(mtype.Value.icon))
+          loaded[mtype.Value.icon] = LoadSprite(mtype.Value.icon);
+
+        mtype.Value.sprite = loaded[mtype.Value.icon];
+      }
     }
 
     internal static Texture2D LoadTexture(byte[] file)

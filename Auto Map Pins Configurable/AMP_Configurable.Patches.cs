@@ -365,25 +365,40 @@ namespace AMP_Configurable.Patches
     public static Vector3 currPos;
     public static Vector3 prevPos;
     public const int interval = 120;
-    public static Player player;
+    public static Player player = null;
     public static bool hasWishbone = false;
 
     public static void checkForWishbone()
     {
-      if (Mod.wishboneMode.Value == "disabled") hasWishbone = true;
+      if(player == null) return;
+      List<ItemDrop.ItemData> inventoryItems;
+      bool origHasWishbone = hasWishbone;
 
-      Inventory playerInventory = player.GetInventory();
-      List<ItemDrop.ItemData> inventoryItems = Mod.wishboneMode.Value == "equipped" ? 
-        playerInventory.GetEquipedtems() : playerInventory.GetAllItems();
-      
+      switch (Mod.wishboneMode.Value)
+      {
+        case Mod.WishboneModes.equipped:
+          inventoryItems = player.GetInventory().GetEquipedtems();
+          break;
+        case Mod.WishboneModes.inventory:
+          inventoryItems = player.GetInventory().GetAllItems();
+          break;
+        default:
+          hasWishbone = true;
+          if(origHasWishbone != hasWishbone) Mod.forcePinRefresh();
+          return;
+      }
+
+      hasWishbone = false;
       foreach (ItemDrop.ItemData item in inventoryItems)
       {
-        Mod.Log.LogInfo($"Inventory Item: {item.m_dropPrefab.name}");
-        if(item.m_dropPrefab.name == "Wishbone") {
+        if (item.m_dropPrefab.name == "Wishbone")
+        {
           hasWishbone = true;
           break;
         }
       }
+
+      if(origHasWishbone != hasWishbone) Mod.forcePinRefresh();
     }
 
     [HarmonyPatch(typeof(Player), "Awake")]
@@ -397,6 +412,7 @@ namespace AMP_Configurable.Patches
         player = __instance;
         currPos = player.transform.position;
         prevPos = player.transform.position;
+        checkForWishbone();
       }
     }
 
@@ -411,7 +427,9 @@ namespace AMP_Configurable.Patches
 
         if (Time.frameCount % interval == 0)
         {
+          player = __instance;
           currPos = __instance.transform.position;
+          checkForWishbone();
           Mod.hasMoved = Vector3.Distance(currPos, prevPos) > 5;
         }
 
